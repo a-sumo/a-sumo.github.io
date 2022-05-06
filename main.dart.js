@@ -61171,7 +61171,7 @@ var $async$pX=A.Q(function(a,b){if(a===1)return A.M(b,r)
 while(true)switch(s){case 0:q.a.toString
 p=t.N
 s=2
-return A.a_(A.axj(A.qo("https://troisieme-oeil.herokuapp.com/rtc/chat/publisher/uid/"+B.h.i(0)+"?expiry=450"),A.X(["Access-Control-Allow-Origin","*"],p,p)),$async$pX)
+return A.a_(A.axj(A.qo("https://troisieme-oeil.herokuapp.com/rtc/chat/publisher/uid/"+B.h.i(0)),A.X(["Access-Control-Allow-Origin","*"],p,p)),$async$pX)
 case 2:o=b
 if(o.b===200)q.az(new A.a6o(o))
 else A.hz("Failed to fetch the token")
