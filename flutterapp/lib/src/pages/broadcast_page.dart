@@ -222,7 +222,19 @@ class _BroadcastPageState extends State<BroadcastPage> {
         return Container(
             child: Column(
           children: <Widget>[
-            _expandedVideoView([views[0]])
+            _expandedVideoView([views[0]]),
+            RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+      ),
           ],
         ));
       case 2:
@@ -230,7 +242,19 @@ class _BroadcastPageState extends State<BroadcastPage> {
             child: Column(
           children: <Widget>[
             _expandedVideoView([views[0]]),
-            _expandedVideoView([views[1]])
+            _expandedVideoView([views[1]]),
+            RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+      ),
           ],
         ));
       case 3:
@@ -238,7 +262,19 @@ class _BroadcastPageState extends State<BroadcastPage> {
             child: Column(
           children: <Widget>[
             _expandedVideoView(views.sublist(0, 2)),
-            _expandedVideoView(views.sublist(2, 3))
+            _expandedVideoView(views.sublist(2, 3)),
+            RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+      ),
           ],
         ));
       case 4:
@@ -246,12 +282,39 @@ class _BroadcastPageState extends State<BroadcastPage> {
             child: Column(
           children: <Widget>[
             _expandedVideoView(views.sublist(0, 2)),
-            _expandedVideoView(views.sublist(2, 4))
+            _expandedVideoView(views.sublist(2, 4)),
+            RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+      ),
           ],
         ));
       default:
     }
-    return Container();
+    return Container(
+      alignment: Alignment.bottomCenter,
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      child: RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+      ),
+    );
   }
 
   void _onCallEnd(BuildContext context) {

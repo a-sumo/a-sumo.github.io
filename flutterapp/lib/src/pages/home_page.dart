@@ -14,9 +14,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   //String baseUrl = 'https://troisieme-oeil.herokuapp.com'; //Add the link to your deployed server here
-  String baseUrl = 'https://jbagoratoken.herokuapp.com';
+  //String baseUrl = 'https://jbagoratoken.herokuapp.com'; bonne version
   //String baseUrl = 'https://thirdeyejb.herokuapp.com'; // remplacer node par jb
-  //String baseUrl = 'https://retestthirdeye.herokuapp.com';
+  String baseUrl = 'https://thirdeyearcelor.herokuapp.com';
   int uid = 0;
 //$tring token = "";
 
@@ -38,14 +38,26 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         token = response.body;
         token = jsonDecode(token)['rtcToken'];
+        visu = true;
+        loadingToken = false;
       });
     } else {
       print('Failed to fetch the token');
     }
   }
 
+  void loadToken() {
+    setState(() {
+      loadingToken = true;
+    });
+    getToken();
+  }
+
   final _channelName = TextEditingController();
   String check = '';
+
+  bool visu = false;
+  bool loadingToken = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +68,10 @@ class _MyHomePageState extends State<MyHomePage> {
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Colors.orange, Colors.white10]),
+                colors: [
+                  Color.fromARGB(143, 250, 45, 55),
+                  Color.fromARGB(146, 33, 195, 240)
+                ]),
           ),
           child: Center(
             child: Column(
@@ -67,24 +82,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
-                      color: Colors.deepOrange),
+                      color: Colors.black),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.remove_red_eye,
-                      color: Colors.deepOrange,
+                      color: Colors.black,
                       size: 25,
                     ),
                     Icon(
                       Icons.remove_red_eye,
-                      color: Colors.deepOrange,
+                      color: Colors.black,
                       size: 50,
                     ),
                     Icon(
                       Icons.remove_red_eye,
-                      color: Colors.deepOrange,
+                      color: Colors.black,
                       size: 25,
                     ),
                   ],
@@ -92,49 +107,89 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: 15,
                 ),
-                Container(
+                /*Container(
                   child: Image.asset(
                     "assets/arcelor-mittal.png",
                   ),
-                  height: 150,
-                  width: 150,
+                  height: 100,
+                  width: 100,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: Colors.white),
-                ),
+                ),*/
                 SizedBox(
                   height: 25,
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * 0.85,
-                  height: MediaQuery.of(context).size.height * 0.2,
+                  height: MediaQuery.of(context).size.height * 0.14,
                   child: TextFormField(
                     controller: _channelName,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.grey),
+                        borderSide:
+                            BorderSide(color: Color.fromARGB(255, 60, 60, 60)),
                       ),
                       hintText: 'Nom du Channel',
                     ),
                   ),
                 ),
-                TextButton(
-                  onPressed: () => onJoin(isBroadcaster: false),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        'Regarder la Diffusion  ',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      Icon(
-                        Icons.remove_red_eye,
-                      )
-                    ],
+                ElevatedButton(
+                  onPressed: loadToken,
+                  child: Text(
+                    "New Token !",
+                    style: TextStyle(fontSize: 30),
                   ),
+                  style: ElevatedButton.styleFrom(
+                      primary: Color.fromARGB(255, 50, 107, 153)),
                 ),
-                TextButton(
+                SizedBox(
+                  height: 50,
+                ),
+                loadingToken
+                    ? CircularProgressIndicator(
+                        backgroundColor: Colors.grey,
+                        color: Color.fromARGB(255, 94, 183, 255),
+                        strokeWidth: 5,
+                      )
+                    : SizedBox(),
+                SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: visu
+                      ? () {
+                          onJoin(isBroadcaster: false);
+                        }
+                      : null,
+                  child: Icon(
+                    Icons.remove_red_eye,
+                    size: 80,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                      fixedSize: Size(200, 200),
+                      shape: CircleBorder(),
+                      primary: Color.fromARGB(255, 18, 173, 204)),
+                ),
+                /* Row(
+                  children: [
+                    TextButton(
+                      onPressed: () => onJoin(isBroadcaster: false),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Regarder la Diffusion  ',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Icon(
+                            Icons.remove_red_eye,
+                          )
+                        ],
+                      ),
+                    ),
+                    TextButton(
                   style: TextButton.styleFrom(
                     primary: Colors.pink,
                   ),
@@ -150,20 +205,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-                ElevatedButton(
-                    onPressed: getToken,
-                    child: Text(
-                      "New Token !",
-                      style: TextStyle(fontSize: 30),
-                    )),
-                Text(
+                  ],
+                ),*/
+                SizedBox(
+                  height: 30,
+                ),
+                /*Text(
                   token,
                   style: TextStyle(fontSize: 10),
                 ),
                 Text(
                   check,
                   style: TextStyle(color: Colors.red),
-                )
+                ),*/
+
+                visu
+                    ? Text(
+                        "Token généré ! Vous pouvez désormais vous connecter ",
+                        style: TextStyle(fontSize: 20),
+                      )
+                    : SizedBox()
               ],
             ),
           ),
