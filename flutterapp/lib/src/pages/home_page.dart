@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text(
                   "Troisième Oeil",
                   style: TextStyle(
-                      fontSize: 40,
+                      fontSize: 48,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
                 ),
@@ -136,10 +136,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: loadToken,
                   child: Text(
                     "Se connecter",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 24),
                   ),
                   style: ElevatedButton.styleFrom(
-                    fixedSize: Size(180,60),
+                    fixedSize: Size(200,80),
                       primary: Color.fromARGB(255, 50, 107, 153)),
                 ),
                 SizedBox(
@@ -156,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 20,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Column(
                       children: [
@@ -168,19 +168,20 @@ class _MyHomePageState extends State<MyHomePage> {
                               : null,
                           child: Icon(
                             Icons.remove_red_eye,
-                            size: 70,
+                            size: 80,
                           ),
                           style: ElevatedButton.styleFrom(
-                              fixedSize: Size(160, 160),
+                              fixedSize: Size(200, 200),
                               shape: CircleBorder(),
                               primary: Color.fromARGB(255, 18, 173, 204)),
                         ),
                         SizedBox(height: 14,),
                         Text("Visionner le Stream", 
-                          style: visu ? TextStyle(fontWeight: FontWeight.bold,): TextStyle(fontWeight: FontWeight.normal)
+                          style: visu ? TextStyle(fontWeight: FontWeight.bold, fontSize: 20,): TextStyle(fontWeight: FontWeight.normal)
                         ),
                       ],
                     ),
+                    SizedBox(width: 80,),
                     Column(
                       children: [
                         ElevatedButton(
@@ -191,16 +192,16 @@ class _MyHomePageState extends State<MyHomePage> {
                               : null,
                           child: Icon(
                             Icons.live_tv,
-                            size: 70,
+                            size: 80,
                           ),
                           style: ElevatedButton.styleFrom(
-                              fixedSize: Size(160, 160),
+                              fixedSize: Size(200, 200),
                               shape: CircleBorder(),
                               primary: Color.fromARGB(255, 18, 173, 204)),
                         ),
                         SizedBox(height: 14,),
                         Text("Commencer à Streamer", 
-                          style: visu ? TextStyle(fontWeight: FontWeight.bold,): TextStyle(fontWeight: FontWeight.normal)
+                          style: visu ? TextStyle(fontWeight: FontWeight.bold, fontSize: 20,): TextStyle(fontWeight: FontWeight.normal)
                         ),
                       ],
                     ),
@@ -257,7 +258,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ? Center(
                       child: Text(
                           " Vous pouvez désormais accéder au Stream ! ",
-                          style: TextStyle(fontSize: 14),
+                          style: TextStyle(fontSize: 18),
                         ),
                     )
                     : SizedBox()

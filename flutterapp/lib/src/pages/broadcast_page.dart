@@ -208,8 +208,8 @@ class _BroadcastPageState extends State<BroadcastPage> {
     return list;
   }
 
-  double vueHeight = 600;
-  double vueWidth = 300;
+  double vueHeight = 560;
+  double vueWidth = 280;
   bool angleVue = true;
 
   /// Video view row wrapper
@@ -231,12 +231,12 @@ class _BroadcastPageState extends State<BroadcastPage> {
     final views = _getRenderViews();
     switch (views.length) {
       case 1:
-        if (!angleVue) {
-          vueHeight = 400;
-          vueWidth = 800;
-        } else {
-          vueHeight = 600;
-          vueWidth = 300;
+        if (!angleVue) { // format paysage à 1 écran
+          vueHeight = MediaQuery.of(context).size.height - 130;
+          vueWidth = MediaQuery.of(context).size.width - 50;
+        } else { // format portrait à 1 écran
+          vueHeight = MediaQuery.of(context).size.height - 130;
+          vueWidth = vueHeight / 2;
         }
         return Container(
             padding: EdgeInsets.all(20),
@@ -255,7 +255,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                          "Voici un texte qui sera utilisé afin d'afficher différentes informations à l'avenir"),
+                          "Bienvenue dans le Projet Troisième Oeil ! Admirez les flux vidéos", style: TextStyle(fontSize: 20),),
                       RawMaterialButton(
                         onPressed: () => _onCallEnd(context),
                         child: Icon(
@@ -280,18 +280,21 @@ class _BroadcastPageState extends State<BroadcastPage> {
                         fillColor: Colors.blue,
                         padding: const EdgeInsets.all(15.0),
                       ),
+                      
                     ],
                   ),
                 ),
               ],
             ));
       case 2:
-        if (!angleVue) {
-          vueHeight = 200;
-          vueWidth = 400;
+        if (!angleVue) { // format paysage a 2 écrans
+          vueHeight = (1/2)*MediaQuery.of(context).size.height - 100;
+          vueWidth = (1/2)*MediaQuery.of(context).size.width - 50;
         } else {
-          vueHeight = 600;
-          vueWidth = 300;
+          vueHeight = MediaQuery.of(context).size.height - 130;
+          vueWidth = vueHeight / 2;
+          //vueHeight = 560; // format portrait à 2 écrans
+          //vueWidth = 280;
         }
         return Container(
             padding: EdgeInsets.all(20),
@@ -311,7 +314,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                          "Voici un texte qui sera utilisé afin d'afficher différentes informations à l'avenir"),
+                          "Bienvenue dans le Projet Troisième Oeil ! Admirez les flux vidéos", style: TextStyle(fontSize: 20),),
                       RawMaterialButton(
                         onPressed: () => _onCallEnd(context),
                         child: Icon(
