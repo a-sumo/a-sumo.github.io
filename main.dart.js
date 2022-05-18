@@ -7417,7 +7417,7 @@ this.a=c},
 vw:function vw(a,b){var _=this
 _.e=a
 _.f=$
-_.r=!1
+_.r=!0
 _.y=560
 _.z=280
 _.Q=!0
@@ -33379,10 +33379,10 @@ l=A.eK(j,14,j)
 o=A.iC(A.a([o,n,A.kK(A.a([m,l,A.lD("Commencer \xe0 Streamer",p?A.eL(j,j,j,j,j,j,j,j,j,j,j,20,j,B.aR,j,j,!0,j,j,j,j,j,j,j,j):A.eL(j,j,j,j,j,j,j,j,j,j,j,j,j,B.p,j,j,!0,j,j,j,j,j,j,j,j))],g),B.b6)],g),B.aE,B.ah)
 n=A.eK(j,30,j)
 return A.aaz(A.dW(j,A.yL(A.kK(A.a([h,f,e,s,d,r,q,o,n,k.y?A.yL(A.lD(" Vous pouvez d\xe9sormais acc\xe9der au Stream ! Channel actuel : "+k.f,A.eL(j,j,j,j,j,j,j,j,j,j,j,18,j,j,j,j,!0,j,j,j,j,j,j,j,j)),j,j):A.eK(j,j,j)],g),B.aE),j,j),j,j,new A.fT(j,j,j,j,j,new A.l6(B.jP,B.jO,B.bT,i,j,j),B.bn),j,j,j,j),!0)},
-NO(){this.F4()
-this.aj(new A.a0W(this))},
-NQ(){this.F4()
-this.aj(new A.a0X(this))},
+NO(){this.aj(new A.a0W(this))
+this.F4()},
+NQ(){this.aj(new A.a0X(this))
+this.F4()},
 YU(){var s=this
 s.aj(new A.a12(s))
 if(s.Q==="chat")s.aj(new A.a13(s))
