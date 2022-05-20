@@ -1,9 +1,14 @@
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:TOPAZ/src/pages/broadcast_page.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:TOPAZ/src/utils/appId.dart';
+import 'package:TOPAZ/src/utils/ProductDataModel.dart';
+import 'package:TOPAZ/src/utils/item_card.dart';
+
+import 'package:flutter/foundation.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -270,6 +275,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: 30,
                 ),
+
                 /*Text(
                   token,
                   style: TextStyle(fontSize: 10),
@@ -295,7 +301,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _channel1() {
-    
     setState(() {
       _channelName = "chat";
       channelName = "chat";
@@ -304,7 +309,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _channel2() {
-    
     setState(() {
       _channelName = "test";
       channelName = "test";
@@ -328,6 +332,13 @@ class _MyHomePageState extends State<MyHomePage> {
         bgcolor2 = Color.fromARGB(43, 160, 234, 206);
       });
     }
+  }
+
+  Future<List<ProductDataModel>>ReadJsonData() async{
+     final jsondata = await rootBundle.loadString('assets/trychecklist.json');
+     final list = json.decode(jsondata) as List<dynamic>;
+
+     return list.map((e) => ProductDataModel.fromJson(e)).toList();
   }
 
   Future<void> onJoin({required bool isBroadcaster}) async {

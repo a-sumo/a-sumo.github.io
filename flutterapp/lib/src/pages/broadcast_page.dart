@@ -2,10 +2,15 @@ import 'dart:convert';
 import 'package:TOPAZ/src/pages/home_page.dart';
 import 'package:TOPAZ/src/utils/appId.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+import 'package:TOPAZ/src/utils/ProductDataModel.dart';
+import 'package:TOPAZ/src/utils/item_card.dart';
+
+import 'package:flutter/foundation.dart';
 
 class BroadcastPage extends StatefulWidget {
   final String channelName;
@@ -164,7 +169,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
                   elevation: 2.0,
                   fillColor: muted ? Colors.blueAccent : Colors.white,
                   padding: const EdgeInsets.all(12.0),
-                ),/*
+                ), /*
                 RawMaterialButton(
                   onPressed: () => _onCallEnd(context),
                   child: Icon(
@@ -210,6 +215,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
 
   double vueHeight = 560;
   double vueWidth = 280;
+  double widthinfo1 = 0;
   bool angleVue = true;
 
   /// Video view row wrapper
@@ -226,36 +232,118 @@ class _BroadcastPageState extends State<BroadcastPage> {
     );
   }
 
+  List<String> testcheck = ["text1", "text2", "text3"];
+  bool checkbool = false;
+
+  void toogleCheckChange(bool? checkBoxState) {
+    if (checkBoxState != null) {
+      setState(() {
+        checkbool = checkBoxState;
+      });
+    }
+  }
+
   /// Video layout wrapper
   Widget _broadcastView() {
     final views = _getRenderViews();
     switch (views.length) {
       case 1:
-        if (!angleVue) { // format paysage à 1 écran
+        setState(() {
+          widthinfo1 = MediaQuery.of(context).size.width / 2;
+        });
+        if (!angleVue) {
+          // format paysage à 1 écran
+          vueHeight = MediaQuery.of(context).size.height / 2.4;
+          vueWidth = MediaQuery.of(context).size.height / 1.25;
+          widthinfo1 = MediaQuery.of(context).size.width / 3;
+        } else {
+          // format portrait à 1 écran
           vueHeight = MediaQuery.of(context).size.height - 130;
-          vueWidth = MediaQuery.of(context).size.width - 50;
-        } else { // format portrait à 1 écran
-          vueHeight = MediaQuery.of(context).size.height - 130;
-          vueWidth = vueHeight / 2;
+          vueWidth = MediaQuery.of(context).size.height / 2;
+          widthinfo1 = MediaQuery.of(context).size.width / 2;
         }
+
         return Container(
             padding: EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _expandedVideoView([views[0]]),
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: widthinfo1,
+                      height: vueHeight,
+                      child: FutureBuilder(
+                        future: ReadJsonData(),
+                        builder: (context, data) {
+                          if (data.hasError) {
+                            return Center(child: Text("${data.error}"));
+                          } else if (data.hasData) {
+                            var items = data.data as List<ProductDataModel>;
+                            return ListView.builder(
+                                itemCount: items == null ? 0 : items.length,
+                                itemBuilder: (context, index) {
+                                  return ItemCard(
+                                    name: (items[index].name.toString()),
+                                    prix: (items[index].price.toString()),
+                                    description:
+                                        (items[index].description.toString()),
+                                    image: (items[index].imageURL.toString()),
+                                  );
+                                });
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _expandedVideoView([views[0]]),
+                      ],
+                    ),
                   ],
                 ),
+
+                /*for(var i in testcheck)CheckboxListTile(
+                  title: Text(i.toString()),
+                  subtitle: const Text('Voici un texte de test !'),
+                  secondary: const Icon(Icons.code),
+                  activeColor: Colors.green,
+                  checkColor: Colors.white,
+                  value: checkbool,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      checkbool = value!;
+                    });
+                  },
+                ),*/
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      /*Column(
+                      children: [
+                        for (var i in testcheck)
+                          CheckboxListTile(
+                            title: Text(i.toString()),
+                            secondary: Icon(Icons.beach_access),
+                            value: _checkbool,
+                            onChanged: toogleCheckChange,
+                            activeColor: Colors.green,
+                            checkColor: Colors.black,
+                          )
+                      ],
+                    ),*/
                       Text(
-                          "Bienvenue dans le Projet Troisième Oeil ! Admirez les flux vidéos", style: TextStyle(fontSize: 20),),
+                        "Bienvenue dans le Projet Troisième Oeil ! Admirez les flux vidéos",
+                        style: TextStyle(fontSize: 20),
+                      ),
                       RawMaterialButton(
                         onPressed: () => _onCallEnd(context),
                         child: Icon(
@@ -280,16 +368,16 @@ class _BroadcastPageState extends State<BroadcastPage> {
                         fillColor: Colors.blue,
                         padding: const EdgeInsets.all(15.0),
                       ),
-                      
                     ],
                   ),
                 ),
               ],
             ));
       case 2:
-        if (!angleVue) { // format paysage a 2 écrans
-          vueHeight = (1/2)*MediaQuery.of(context).size.height - 100;
-          vueWidth = (1/2)*MediaQuery.of(context).size.width - 50;
+        if (!angleVue) {
+          // format paysage a 2 écrans
+          vueHeight = (1 / 2) * MediaQuery.of(context).size.height - 100;
+          vueWidth = (1 / 2) * MediaQuery.of(context).size.width - 50;
         } else {
           vueHeight = MediaQuery.of(context).size.height - 130;
           vueWidth = vueHeight / 2;
@@ -314,7 +402,9 @@ class _BroadcastPageState extends State<BroadcastPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                          "Bienvenue dans le Projet Troisième Oeil ! Admirez les flux vidéos", style: TextStyle(fontSize: 20),),
+                        "Bienvenue dans le Projet Troisième Oeil ! Admirez les flux vidéos",
+                        style: TextStyle(fontSize: 20),
+                      ),
                       RawMaterialButton(
                         onPressed: () => _onCallEnd(context),
                         child: Icon(
@@ -379,15 +469,28 @@ class _BroadcastPageState extends State<BroadcastPage> {
             fillColor: Colors.redAccent,
             padding: const EdgeInsets.all(15.0),
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           CircularProgressIndicator(
-                        backgroundColor: Colors.grey,
-                        color: Color.fromARGB(255, 94, 183, 255),
-                        strokeWidth: 10,
-                      )
+            backgroundColor: Colors.grey,
+            color: Color.fromARGB(255, 94, 183, 255),
+            strokeWidth: 10,
+          )
         ],
       ),
     );
+  }
+
+  bool _onTestCheck() {
+    return true;
+  }
+
+  Future<List<ProductDataModel>> ReadJsonData() async {
+    final jsondata = await rootBundle.loadString('assets/trychecklist.json');
+    final list = json.decode(jsondata) as List<dynamic>;
+
+    return list.map((e) => ProductDataModel.fromJson(e)).toList();
   }
 
   void _onCallEnd(BuildContext context) {
