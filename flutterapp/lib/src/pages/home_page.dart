@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutterapp/src/pages/broadcast_page.dart';
+import 'package:TOPAZ/src/pages/broadcast_page.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutterapp/src/utils/appId.dart';
+import 'package:TOPAZ/src/utils/appId.dart';
 
 class MyHomePage extends StatefulWidget {
-  String channelName = "chat";
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -20,14 +18,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int uid = 0;
 //$tring token = "";
 
+  String channelName = "chat";
+
   Future<void> getToken() async {
     //Headers("Access-Control-Allow-Origin");
     final response = await http.get(
-      Uri.parse(baseUrl +
-              '/rtc/' +
-              widget.channelName +
-              '/publisher/uid/' +
-              uid.toString()
+      Uri.parse(
+          baseUrl + '/rtc/' + channelName + '/publisher/uid/' + uid.toString()
           // To add expiry time uncomment the below given line with the time in seconds
           //+ '?expiry=450'
           ),
@@ -40,6 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
         token = jsonDecode(token)['rtcToken'];
         visu = true;
         loadingToken = false;
+        quelChannel();
       });
     } else {
       print('Failed to fetch the token');
@@ -53,11 +51,14 @@ class _MyHomePageState extends State<MyHomePage> {
     getToken();
   }
 
-  final String _channelName = "chat";
+  late String _channelName = "chat";
   String check = '';
 
   bool visu = false;
   bool loadingToken = false;
+  String channelActif = "";
+  Color bgcolor1 = Color.fromARGB(143, 250, 45, 55);
+  Color bgcolor2 = Color.fromARGB(146, 33, 195, 240);
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color.fromARGB(143, 250, 45, 55),
-                  Color.fromARGB(146, 33, 195, 240)
-                ]),
+                colors: [bgcolor1, bgcolor2]),
           ),
           child: Center(
             child: Column(
@@ -117,34 +115,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: 25,
                 ),
-                /*Container(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  height: MediaQuery.of(context).size.height * 0.14,
-                  child: TextFormField(
-                    controller: _channelName,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide:
-                            BorderSide(color: Color.fromARGB(255, 60, 60, 60)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: _channel1,
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(140, 60),
+                            primary: Color.fromARGB(255, 118, 31, 37)),
+                        child: Text("Channel 1"),
                       ),
-                      hintText: 'Nom du Channel',
                     ),
-                  ),
-                ),*/
-                ElevatedButton(
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: _channel2,
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(140, 60),
+                            primary: Color.fromARGB(255, 25, 101, 53)),
+                        child: Text("Channel 2"),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                /*ElevatedButton(
                   onPressed: loadToken,
                   child: Text(
                     "Se connecter",
                     style: TextStyle(fontSize: 24),
                   ),
                   style: ElevatedButton.styleFrom(
-                    fixedSize: Size(200,80),
+                      fixedSize: Size(200, 80),
                       primary: Color.fromARGB(255, 50, 107, 153)),
                 ),
                 SizedBox(
-                  height: 50,
-                ),
+                  height: 30,
+                ),*/
                 loadingToken
                     ? CircularProgressIndicator(
                         backgroundColor: Colors.grey,
@@ -175,13 +186,21 @@ class _MyHomePageState extends State<MyHomePage> {
                               shape: CircleBorder(),
                               primary: Color.fromARGB(255, 18, 173, 204)),
                         ),
-                        SizedBox(height: 14,),
-                        Text("Visionner le Stream", 
-                          style: visu ? TextStyle(fontWeight: FontWeight.bold, fontSize: 20,): TextStyle(fontWeight: FontWeight.normal)
+                        SizedBox(
+                          height: 14,
                         ),
+                        Text("Visionner le Stream",
+                            style: visu
+                                ? TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  )
+                                : TextStyle(fontWeight: FontWeight.normal)),
                       ],
                     ),
-                    SizedBox(width: 80,),
+                    SizedBox(
+                      width: 80,
+                    ),
                     Column(
                       children: [
                         ElevatedButton(
@@ -199,10 +218,16 @@ class _MyHomePageState extends State<MyHomePage> {
                               shape: CircleBorder(),
                               primary: Color.fromARGB(255, 18, 173, 204)),
                         ),
-                        SizedBox(height: 14,),
-                        Text("Commencer à Streamer", 
-                          style: visu ? TextStyle(fontWeight: FontWeight.bold, fontSize: 20,): TextStyle(fontWeight: FontWeight.normal)
+                        SizedBox(
+                          height: 14,
                         ),
+                        Text("Commencer à Streamer",
+                            style: visu
+                                ? TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  )
+                                : TextStyle(fontWeight: FontWeight.normal)),
                       ],
                     ),
                   ],
@@ -256,16 +281,53 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 visu
                     ? Center(
-                      child: Text(
-                          " Vous pouvez désormais accéder au Stream ! ",
+                        child: Text(
+                          " Vous pouvez désormais accéder au Stream ! Channel actuel : " +
+                              channelName,
                           style: TextStyle(fontSize: 18),
                         ),
-                    )
+                      )
                     : SizedBox()
               ],
             ),
           ),
         ));
+  }
+
+  void _channel1() {
+    
+    setState(() {
+      _channelName = "chat";
+      channelName = "chat";
+    });
+    loadToken();
+  }
+
+  void _channel2() {
+    
+    setState(() {
+      _channelName = "test";
+      channelName = "test";
+    });
+    loadToken();
+  }
+
+  void quelChannel() {
+    setState(() {
+      channelActif = channelName;
+    });
+    if (channelActif == "chat") {
+      setState(() {
+        bgcolor1 = Color.fromARGB(239, 221, 36, 8);
+        bgcolor2 = Color.fromARGB(43, 234, 160, 163);
+      });
+    }
+    if (channelActif == "test") {
+      setState(() {
+        bgcolor1 = Color.fromARGB(223, 14, 146, 64);
+        bgcolor2 = Color.fromARGB(43, 160, 234, 206);
+      });
+    }
   }
 
   Future<void> onJoin({required bool isBroadcaster}) async {

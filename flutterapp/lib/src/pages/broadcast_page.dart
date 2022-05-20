@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:flutterapp/src/pages/home_page.dart';
-import 'package:flutterapp/src/utils/appId.dart';
+import 'package:TOPAZ/src/pages/home_page.dart';
+import 'package:TOPAZ/src/utils/appId.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:agora_rtc_engine/rtc_engine.dart';
@@ -21,7 +21,7 @@ class BroadcastPage extends StatefulWidget {
 
 class _BroadcastPageState extends State<BroadcastPage> {
   final urlToken =
-      "https://troisieme-oeil.herokuapp.com/rtc/channelName/role/userAccount/uid/";
+      "https://thirdeyearcelor.herokuapp.com/rtc/channelName/role/userAccount/uid/";
 
   /*var _postsJson = [];
 
@@ -44,7 +44,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
 
   final _users = <int>[];
   late RtcEngine _engine;
-  bool muted = false;
+  bool muted = true;
   late int streamId;
 
   @override
@@ -203,7 +203,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
     }
     _users.forEach((int uid) => list.add(RtcRemoteView.SurfaceView(
           uid: uid,
-          channelId: "chat",
+          channelId: "",
         )));
     return list;
   }
