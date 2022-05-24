@@ -3,8 +3,9 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "assets/AssetManifest.json": "e321a61529e49e27491ca5722f361d62",
+  "assets/AssetManifest.json": "362e955a4c24f12da49541254e13e3b2",
 "assets/assets/arcelor-mittal.png": "37a5cb4441e40a214c5c786378ea5343",
+"assets/assets/trychecklist.json": "c32952eda1cfe6c65961c61f24d38cf8",
 "assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
 "assets/fonts/MaterialIcons-Regular.otf": "7e7a6cccddf6d7b20012a548461d5d81",
 "assets/NOTICES": "dfc133877a4bab7abdd784a44c18b12c",
@@ -19,9 +20,9 @@ const RESOURCES = {
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
-"index.html": "4369940ff8e60eec0f28138cc7bbc538",
-"/": "4369940ff8e60eec0f28138cc7bbc538",
-"main.dart.js": "e8f107e490f0714342435ad3546b656c",
+"index.html": "56898235abb0f44ce8a673a7d35e6f5a",
+"/": "56898235abb0f44ce8a673a7d35e6f5a",
+"main.dart.js": "2cfea4f60cb86897c1250102ce033168",
 "manifest.json": "3a5b6095130313cef6dbb5db78bc1986",
 "version.json": "0eb9a411b828bc8772ceb7d875bab7bf"
 };
