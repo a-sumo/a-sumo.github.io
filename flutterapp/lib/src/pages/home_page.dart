@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:TOPAZ/src/pages/broadcast_page.dart';
@@ -7,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:TOPAZ/src/utils/appId.dart';
 import 'package:TOPAZ/src/utils/ProductDataModel.dart';
 import 'package:TOPAZ/src/utils/item_card.dart';
+import 'package:TOPAZ/src/utils/globals.dart' as globals;
 
 import 'package:flutter/foundation.dart';
 
@@ -130,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: ElevatedButton.styleFrom(
                             fixedSize: Size(140, 60),
                             primary: Color.fromARGB(255, 118, 31, 37)),
-                        child: Text("Channel 1"),
+                        child: Text("Oeil Rouge"),
                       ),
                     ),
                     Padding(
@@ -140,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: ElevatedButton.styleFrom(
                             fixedSize: Size(140, 60),
                             primary: Color.fromARGB(255, 25, 101, 53)),
-                        child: Text("Channel 2"),
+                        child: Text("Oeil Vert"),
                       ),
                     ),
                   ],
@@ -179,7 +181,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ElevatedButton(
                           onPressed: visu
                               ? () {
-                                  onJoin(isBroadcaster: false);
+                                  //onJoin(isBroadcaster: false);
+                                  _casUsage();
                                 }
                               : null,
                           child: Icon(
@@ -288,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 visu
                     ? Center(
                         child: Text(
-                          " Vous pouvez désormais accéder au Stream ! Channel actuel : " +
+                          " Vous pouvez désormais accéder au Stream ! Oeil actuel : " +
                               channelName,
                           style: TextStyle(fontSize: 18),
                         ),
@@ -334,11 +337,77 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Future<List<ProductDataModel>>ReadJsonData() async{
-     final jsondata = await rootBundle.loadString('assets/trychecklist.json');
-     final list = json.decode(jsondata) as List<dynamic>;
+  Future<void> _casUsage() async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text("Quel mode de Visionnage souhaitez vous ?"),
+            content: Column(
+              children: [
+                SizedBox(height: 10,),
+                ElevatedButton(
+                    onPressed: lancerAsset1, child: Text("Monter une voiture"), style: ElevatedButton.styleFrom(
+                              fixedSize: Size(200, 50),
+                              primary: Color.fromARGB(255, 18, 173, 204)),),
+                SizedBox(height: 10,),
+                ElevatedButton(
+                    onPressed: lancerAsset2,
+                    child: Text("Lancer flutter sur pc"), style: ElevatedButton.styleFrom(
+                              fixedSize: Size(200, 50),
+                              primary: Color.fromARGB(255, 18, 173, 204)),),
+                SizedBox(height: 10,),
+                ElevatedButton(
+                    onPressed: sansAsset,
+                    child: Text("Uniquement visionner"), style: ElevatedButton.styleFrom(
+                              fixedSize: Size(200, 50),
+                              primary: Color.fromARGB(255, 12, 118, 139)),),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Annuler"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
 
-     return list.map((e) => ProductDataModel.fromJson(e)).toList();
+  void lancerAsset1() {
+    setState(() {
+      globals.modeOn = true;
+      globals.asset0 = globals.asset1;
+    });
+    onJoin(isBroadcaster: false);
+  }
+
+  void lancerAsset2() {
+    setState(() {
+      globals.modeOn = true;
+      globals.asset0 = globals.asset2;
+    });
+    onJoin(isBroadcaster: false);
+  }
+
+  void sansAsset() {
+    setState(() {
+      globals.modeOn = false;
+    });
+    onJoin(isBroadcaster: false);
+  }
+  
+
+  
+
+  Future<List<ProductDataModel>> ReadJsonData() async {
+    final jsondata = await rootBundle.loadString(globals.asset0);
+    final list = json.decode(jsondata) as List<dynamic>;
+
+    return list.map((e) => ProductDataModel.fromJson(e)).toList();
   }
 
   Future<void> onJoin({required bool isBroadcaster}) async {

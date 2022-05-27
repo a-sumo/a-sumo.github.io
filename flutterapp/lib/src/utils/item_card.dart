@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'globals.dart' as globals;
 
 class ItemCard extends StatelessWidget {
+  var bag = false;
+
   final String name;
   final String prix;
   final String description;
   final String image;
+
   ItemCard({
     required this.name,
     required this.prix,
@@ -12,8 +16,17 @@ class ItemCard extends StatelessWidget {
     required this.image,
   });
 
-  void CCheck() {
-    checkColor = Colors.green;
+  //List<String> listebag = [];
+
+  Color bagplus() {
+    globals.listbag.add(name);
+    //listebag.insert(0, name);
+    return Colors.green;
+  }
+
+  Color bagmoins() {
+    globals.listbag.remove(name);
+    return Colors.grey;
   }
 
   Color checkColor = Colors.grey;
@@ -21,12 +34,13 @@ class ItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        CCheck();
-        print("Tache complétée !");
+        //CCheck();
+        bag = !bag;
+        (context as Element).markNeedsBuild();
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-        //width: 300,
+        width: 300,
         height: 150,
         decoration: BoxDecoration(
           color: Colors.black,
@@ -140,15 +154,17 @@ class ItemCard extends StatelessWidget {
                     padding: EdgeInsets.all(5),
                     margin: EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.4),
+                      color: bag
+                          ? Colors.green.withOpacity(0.4)
+                          : Colors.grey.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.check,
-                          color: checkColor,
-                          size: 30,
+                          color: bag ? bagplus() : bagmoins(),
+                          size: 40,
                         ),
                       ],
                     ),

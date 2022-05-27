@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:TOPAZ/src/pages/home_page.dart';
 import 'package:TOPAZ/src/utils/appId.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -9,7 +10,7 @@ import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:TOPAZ/src/utils/ProductDataModel.dart';
 import 'package:TOPAZ/src/utils/item_card.dart';
-
+import 'package:TOPAZ/src/utils/globals.dart' as globals;
 import 'package:flutter/foundation.dart';
 
 class BroadcastPage extends StatefulWidget {
@@ -248,19 +249,14 @@ class _BroadcastPageState extends State<BroadcastPage> {
     final views = _getRenderViews();
     switch (views.length) {
       case 1:
-        setState(() {
-          widthinfo1 = MediaQuery.of(context).size.width / 2;
-        });
         if (!angleVue) {
           // format paysage à 1 écran
-          vueHeight = MediaQuery.of(context).size.height / 2.4;
-          vueWidth = MediaQuery.of(context).size.height / 1.25;
-          widthinfo1 = MediaQuery.of(context).size.width / 3;
+          vueHeight = MediaQuery.of(context).size.height / 1.5;
+          vueWidth = MediaQuery.of(context).size.width - 50;
         } else {
           // format portrait à 1 écran
           vueHeight = MediaQuery.of(context).size.height - 130;
-          vueWidth = MediaQuery.of(context).size.height / 2;
-          widthinfo1 = MediaQuery.of(context).size.width / 2;
+          vueWidth = vueHeight / 2;
         }
 
         return Container(
@@ -268,11 +264,54 @@ class _BroadcastPageState extends State<BroadcastPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                Row(
+                if(globals.modeOn && !angleVue) Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
-                      width: widthinfo1,
+                      width: 9000,
+                      height: vueHeight/3,
+                      child: FutureBuilder(
+                        future: ReadJsonData(),
+                        builder: (context, data) {
+                          if (data.hasError) {
+                            return Center(child: Text("${data.error}"));
+                          } else if (data.hasData) {
+                            var items = data.data as List<ProductDataModel>;
+                            return ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                                itemCount: items == null ? 0 : items.length,
+                                itemBuilder: (context, index) {
+                                  return ItemCard(
+                                    name: (items[index].name.toString()),
+                                    prix: (items[index].price.toString()),
+                                    description:
+                                        (items[index].description.toString()),
+                                    image: (items[index].imageURL.toString()),
+                                  );
+                                });
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _expandedVideoView([views[0]]),
+                      ],
+                    ),
+                  ],
+                ) else
+
+
+               globals.modeOn ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: 400,
                       height: vueHeight,
                       child: FutureBuilder(
                         future: ReadJsonData(),
@@ -307,7 +346,12 @@ class _BroadcastPageState extends State<BroadcastPage> {
                       ],
                     ),
                   ],
-                ),
+                ):Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _expandedVideoView([views[0]]),
+                      ],
+                    ),
 
                 /*for(var i in testcheck)CheckboxListTile(
                   title: Text(i.toString()),
@@ -368,11 +412,23 @@ class _BroadcastPageState extends State<BroadcastPage> {
                         fillColor: Colors.blue,
                         padding: const EdgeInsets.all(15.0),
                       ),
+                      RawMaterialButton(
+                        onPressed: () => _Recap(),
+                        child: Icon(
+                          Icons.pages,
+                          color: Colors.white,
+                          size: 35.0,
+                        ),
+                        shape: CircleBorder(),
+                        elevation: 2.0,
+                        fillColor: Colors.blue,
+                        padding: const EdgeInsets.all(15.0),
+                      ),
                     ],
                   ),
                 ),
               ],
-            ));
+            )); ///////////////////////////////////////     avec ou sans mode    /////////////////////////////////////////////
       case 2:
         if (!angleVue) {
           // format paysage a 2 écrans
@@ -487,7 +543,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
   }
 
   Future<List<ProductDataModel>> ReadJsonData() async {
-    final jsondata = await rootBundle.loadString('assets/trychecklist.json');
+    final jsondata = await rootBundle.loadString(globals.asset0);
     final list = json.decode(jsondata) as List<dynamic>;
 
     return list.map((e) => ProductDataModel.fromJson(e)).toList();
@@ -517,6 +573,32 @@ class _BroadcastPageState extends State<BroadcastPage> {
         angleVue = true;
       });
     }
+  }
+
+  Future<void> _Recap() async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text("Récap des étapes éffectuées"),
+            content: Column(
+              children: [
+                for (int i = 0; i < globals.listbag.length; i++)
+                  Text(globals.listbag[i].toString())
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Close"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+    print(globals.listbag);
   }
 
   void _onToggleMute() {
