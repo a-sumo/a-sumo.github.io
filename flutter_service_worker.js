@@ -3,13 +3,14 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "assets/AssetManifest.json": "3ffe969d8d34f1229eeebe150111901e",
+  "assets/AssetManifest.json": "33fb17adda29bd1d533872df000fb197",
 "assets/assets/arcelor-mittal.png": "37a5cb4441e40a214c5c786378ea5343",
 "assets/assets/ndchecklist.json": "c9024cc3781dc1078714084140d914eb",
+"assets/assets/testpano.jpg": "9545a0fcf46f533cca2aacf9712d08b5",
 "assets/assets/trychecklist.json": "c32952eda1cfe6c65961c61f24d38cf8",
 "assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
 "assets/fonts/MaterialIcons-Regular.otf": "7e7a6cccddf6d7b20012a548461d5d81",
-"assets/NOTICES": "dfc133877a4bab7abdd784a44c18b12c",
+"assets/NOTICES": "4e4ac5757672b32adefc0bf3eda9e366",
 "assets/packages/agora_rtc_engine/assets/AgoraRtcWrapper.bundle.js": "d08573d6e0f8b6bff73a66ce65f514ff",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "6d342eb68f170c97609e9da345464e5e",
 "canvaskit/canvaskit.js": "c2b4e5f3d7a3d82aed024e7249a78487",
@@ -21,9 +22,9 @@ const RESOURCES = {
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
-"index.html": "e0653c75aba5b13e66712ec10aa5efb5",
-"/": "e0653c75aba5b13e66712ec10aa5efb5",
-"main.dart.js": "d16cc7d9436f375404752f059aa68603",
+"index.html": "d333bcb457c3afcd4faa0eaa801418e5",
+"/": "d333bcb457c3afcd4faa0eaa801418e5",
+"main.dart.js": "31d20f496e30eddc3ab01385a1b8cea5",
 "manifest.json": "3a5b6095130313cef6dbb5db78bc1986",
 "version.json": "0eb9a411b828bc8772ceb7d875bab7bf"
 };
