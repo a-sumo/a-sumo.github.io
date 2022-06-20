@@ -10,7 +10,7 @@ const RESOURCES = {
 "assets/assets/trychecklist.json": "c32952eda1cfe6c65961c61f24d38cf8",
 "assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
 "assets/fonts/MaterialIcons-Regular.otf": "7e7a6cccddf6d7b20012a548461d5d81",
-"assets/NOTICES": "4e4ac5757672b32adefc0bf3eda9e366",
+"assets/NOTICES": "b4b47526af3772e618ab99193b64e71b",
 "assets/packages/agora_rtc_engine/assets/AgoraRtcWrapper.bundle.js": "d08573d6e0f8b6bff73a66ce65f514ff",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "6d342eb68f170c97609e9da345464e5e",
 "canvaskit/canvaskit.js": "c2b4e5f3d7a3d82aed024e7249a78487",
@@ -22,9 +22,9 @@ const RESOURCES = {
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
-"index.html": "d333bcb457c3afcd4faa0eaa801418e5",
-"/": "d333bcb457c3afcd4faa0eaa801418e5",
-"main.dart.js": "31d20f496e30eddc3ab01385a1b8cea5",
+"index.html": "c8d91e9b924c5e976688b502092569fc",
+"/": "c8d91e9b924c5e976688b502092569fc",
+"main.dart.js": "ea9274f44ff41c374500767803199d3a",
 "manifest.json": "3a5b6095130313cef6dbb5db78bc1986",
 "version.json": "0eb9a411b828bc8772ceb7d875bab7bf"
 };
