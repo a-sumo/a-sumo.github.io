@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
     getToken();
   }
 
-  final String _channelName = "chat";
+  final _channelName = TextEditingController();
   String check = '';
 
   bool visu = false;
@@ -104,6 +104,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: 15,
+                ),
                 /*Container(
                   child: Image.asset(
                     "assets/arcelor-mittal.png",
@@ -117,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: 25,
                 ),
-                /*Container(
+                Container(
                   width: MediaQuery.of(context).size.width * 0.85,
                   height: MediaQuery.of(context).size.height * 0.14,
                   child: TextFormField(
@@ -131,15 +134,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       hintText: 'Nom du Channel',
                     ),
                   ),
-                ),*/
+                ),
                 ElevatedButton(
                   onPressed: loadToken,
                   child: Text(
-                    "Se connecter",
-                    style: TextStyle(fontSize: 20),
+                    "New Token !",
+                    style: TextStyle(fontSize: 30),
                   ),
                   style: ElevatedButton.styleFrom(
-                    fixedSize: Size(180,60),
                       primary: Color.fromARGB(255, 50, 107, 153)),
                 ),
                 SizedBox(
@@ -155,56 +157,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: 20,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: visu
-                              ? () {
-                                  onJoin(isBroadcaster: false);
-                                }
-                              : null,
-                          child: Icon(
-                            Icons.remove_red_eye,
-                            size: 70,
-                          ),
-                          style: ElevatedButton.styleFrom(
-                              fixedSize: Size(160, 160),
-                              shape: CircleBorder(),
-                              primary: Color.fromARGB(255, 18, 173, 204)),
-                        ),
-                        SizedBox(height: 14,),
-                        Text("Visionner le Stream", 
-                          style: visu ? TextStyle(fontWeight: FontWeight.bold,): TextStyle(fontWeight: FontWeight.normal)
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: visu
-                              ? () {
-                                  onJoin(isBroadcaster: true);
-                                }
-                              : null,
-                          child: Icon(
-                            Icons.live_tv,
-                            size: 70,
-                          ),
-                          style: ElevatedButton.styleFrom(
-                              fixedSize: Size(160, 160),
-                              shape: CircleBorder(),
-                              primary: Color.fromARGB(255, 18, 173, 204)),
-                        ),
-                        SizedBox(height: 14,),
-                        Text("Commencer à Streamer", 
-                          style: visu ? TextStyle(fontWeight: FontWeight.bold,): TextStyle(fontWeight: FontWeight.normal)
-                        ),
-                      ],
-                    ),
-                  ],
+                ElevatedButton(
+                  onPressed: visu
+                      ? () {
+                          onJoin(isBroadcaster: false);
+                        }
+                      : null,
+                  child: Icon(
+                    Icons.remove_red_eye,
+                    size: 80,
+                  ),
+                  style: ElevatedButton.styleFrom(
+                      fixedSize: Size(200, 200),
+                      shape: CircleBorder(),
+                      primary: Color.fromARGB(255, 18, 173, 204)),
                 ),
                 /* Row(
                   children: [
@@ -254,12 +220,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),*/
 
                 visu
-                    ? Center(
-                      child: Text(
-                          " Vous pouvez désormais accéder au Stream ! ",
-                          style: TextStyle(fontSize: 14),
-                        ),
-                    )
+                    ? Text(
+                        "Token généré ! Vous pouvez désormais vous connecter ",
+                        style: TextStyle(fontSize: 20),
+                      )
                     : SizedBox()
               ],
             ),
@@ -273,7 +237,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => BroadcastPage(
-          channelName: _channelName,
+          channelName: _channelName.text,
           isBroadcaster: isBroadcaster,
         ),
       ),

@@ -7,6 +7,8 @@ import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 
+
+
 class BroadcastPage extends StatefulWidget {
   final String channelName;
   final bool isBroadcaster;
@@ -20,8 +22,8 @@ class BroadcastPage extends StatefulWidget {
 }
 
 class _BroadcastPageState extends State<BroadcastPage> {
-  final urlToken =
-      "https://troisieme-oeil.herokuapp.com/rtc/channelName/role/userAccount/uid/";
+
+  final urlToken = "https://troisieme-oeil.herokuapp.com/rtc/channelName/role/userAccount/uid/";
 
   /*var _postsJson = [];
 
@@ -41,6 +43,8 @@ class _BroadcastPageState extends State<BroadcastPage> {
   
     
  } */
+
+
 
   final _users = <int>[];
   late RtcEngine _engine;
@@ -62,6 +66,9 @@ class _BroadcastPageState extends State<BroadcastPage> {
     // initialize agora sdk
     initializeAgora();
   }
+
+
+
 
   Future<void> initializeAgora() async {
     await _initAgoraRtcEngine();
@@ -121,25 +128,12 @@ class _BroadcastPageState extends State<BroadcastPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromARGB(143, 126, 23, 28),
-                Color.fromARGB(146, 182, 110, 23)
-              ]),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            child: Stack(
-              children: <Widget>[
-                _broadcastView(),
-                _toolbar(),
-              ],
-            ),
-          ),
+      body: Center(
+        child: Stack(
+          children: <Widget>[
+            _broadcastView(),
+            _toolbar(),
+          ],
         ),
       ),
     );
@@ -164,7 +158,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
                   elevation: 2.0,
                   fillColor: muted ? Colors.blueAccent : Colors.white,
                   padding: const EdgeInsets.all(12.0),
-                ),/*
+                ),
                 RawMaterialButton(
                   onPressed: () => _onCallEnd(context),
                   child: Icon(
@@ -188,7 +182,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
                   elevation: 2.0,
                   fillColor: Colors.white,
                   padding: const EdgeInsets.all(12.0),
-                ),*/
+                ),
               ],
             ),
           )
@@ -208,18 +202,12 @@ class _BroadcastPageState extends State<BroadcastPage> {
     return list;
   }
 
-  double vueHeight = 600;
-  double vueWidth = 300;
-  bool angleVue = true;
-
   /// Video view row wrapper
   Widget _expandedVideoView(List<Widget> views) {
     final wrappedViews = views
         .map<Widget>((view) => Expanded(child: Container(child: view)))
         .toList();
-    return Container(
-      height: vueHeight,
-      width: vueWidth,
+    return Expanded(
       child: Row(
         children: wrappedViews,
       ),
@@ -231,122 +219,62 @@ class _BroadcastPageState extends State<BroadcastPage> {
     final views = _getRenderViews();
     switch (views.length) {
       case 1:
-        if (!angleVue) {
-          vueHeight = 400;
-          vueWidth = 800;
-        } else {
-          vueHeight = 600;
-          vueWidth = 300;
-        }
         return Container(
-            padding: EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _expandedVideoView([views[0]]),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                          "Voici un texte qui sera utilisé afin d'afficher différentes informations à l'avenir"),
-                      RawMaterialButton(
-                        onPressed: () => _onCallEnd(context),
-                        child: Icon(
-                          Icons.tv_off,
-                          color: Colors.white,
-                          size: 35.0,
-                        ),
-                        shape: CircleBorder(),
-                        elevation: 2.0,
-                        fillColor: Colors.redAccent,
-                        padding: const EdgeInsets.all(15.0),
-                      ),
-                      RawMaterialButton(
-                        onPressed: () => _modeVue(),
-                        child: Icon(
-                          Icons.screen_rotation,
-                          color: Colors.white,
-                          size: 35.0,
-                        ),
-                        shape: CircleBorder(),
-                        elevation: 2.0,
-                        fillColor: Colors.blue,
-                        padding: const EdgeInsets.all(15.0),
-                      ),
-                    ],
+          children: <Widget>[
+            _expandedVideoView([views[0]]),
+            RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
                   ),
-                ),
-              ],
-            ));
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+      ),
+          ],
+        ));
       case 2:
-        if (!angleVue) {
-          vueHeight = 200;
-          vueWidth = 400;
-        } else {
-          vueHeight = 600;
-          vueWidth = 300;
-        }
         return Container(
-            padding: EdgeInsets.all(20),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _expandedVideoView([views[0]]),
-                    _expandedVideoView([views[1]]),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                          "Voici un texte qui sera utilisé afin d'afficher différentes informations à l'avenir"),
-                      RawMaterialButton(
-                        onPressed: () => _onCallEnd(context),
-                        child: Icon(
-                          Icons.tv_off,
-                          color: Colors.white,
-                          size: 35.0,
-                        ),
-                        shape: CircleBorder(),
-                        elevation: 2.0,
-                        fillColor: Colors.redAccent,
-                        padding: const EdgeInsets.all(15.0),
-                      ),
-                      RawMaterialButton(
-                        onPressed: () => _modeVue(),
-                        child: Icon(
-                          Icons.screen_rotation,
-                          color: Colors.white,
-                          size: 35.0,
-                        ),
-                        shape: CircleBorder(),
-                        elevation: 2.0,
-                        fillColor: Colors.blue,
-                        padding: const EdgeInsets.all(15.0),
-                      ),
-                    ],
+          children: <Widget>[
+            _expandedVideoView([views[0]]),
+            _expandedVideoView([views[1]]),
+            RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
                   ),
-                ),
-              ],
-            ));
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+      ),
+          ],
+        ));
       case 3:
         return Container(
             child: Column(
           children: <Widget>[
             _expandedVideoView(views.sublist(0, 2)),
             _expandedVideoView(views.sublist(2, 3)),
+            RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+      ),
           ],
         ));
       case 4:
@@ -355,6 +283,18 @@ class _BroadcastPageState extends State<BroadcastPage> {
           children: <Widget>[
             _expandedVideoView(views.sublist(0, 2)),
             _expandedVideoView(views.sublist(2, 4)),
+            RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+      ),
           ],
         ));
       default:
@@ -362,55 +302,23 @@ class _BroadcastPageState extends State<BroadcastPage> {
     return Container(
       alignment: Alignment.bottomCenter,
       padding: const EdgeInsets.symmetric(vertical: 24),
-      child: Column(
-        children: [
-          RawMaterialButton(
-            onPressed: () => _onCallEnd(context),
-            child: Icon(
-              Icons.tv_off,
-              color: Colors.white,
-              size: 35.0,
-            ),
-            shape: CircleBorder(),
-            elevation: 2.0,
-            fillColor: Colors.redAccent,
-            padding: const EdgeInsets.all(15.0),
-          ),
-          SizedBox(height: 20,),
-          CircularProgressIndicator(
-                        backgroundColor: Colors.grey,
-                        color: Color.fromARGB(255, 94, 183, 255),
-                        strokeWidth: 10,
-                      )
-        ],
+      child: RawMaterialButton(
+        onPressed: () => _onCallEnd(context),
+        child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
       ),
     );
   }
 
   void _onCallEnd(BuildContext context) {
     Navigator.pop(context);
-  }
-
-  void _modeVue() {
-    if (angleVue) {
-      /*
-      setState(() {
-        vueHeight = 600;
-        vueWidth = 300;
-      });*/
-      setState(() {
-        angleVue = false;
-      });
-    } else {
-      /*
-      setState(() {
-        vueHeight = 300;
-        vueWidth = 600;
-      });*/
-      setState(() {
-        angleVue = true;
-      });
-    }
   }
 
   void _onToggleMute() {
