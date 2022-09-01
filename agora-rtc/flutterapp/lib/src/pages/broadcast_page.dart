@@ -1,0 +1,427 @@
+import 'dart:convert';
+import 'package:flutterapp/src/pages/home_page.dart';
+import 'package:flutterapp/src/utils/appId.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:agora_rtc_engine/rtc_engine.dart';
+import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
+import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+
+class BroadcastPage extends StatefulWidget {
+  final String channelName;
+  final bool isBroadcaster;
+
+  const BroadcastPage(
+      {Key? key, required this.channelName, required this.isBroadcaster})
+      : super(key: key);
+
+  @override
+  _BroadcastPageState createState() => _BroadcastPageState();
+}
+
+class _BroadcastPageState extends State<BroadcastPage> {
+  final urlToken =
+      "https://troisieme-oeil.herokuapp.com/rtc/channelName/role/userAccount/uid/";
+
+  /*var _postsJson = [];
+
+ void fetchToken() async{
+
+  try{
+    final rep = await http.get(Uri.parse(urlToken));
+    final JsonData = jsonDecode(rep.body) as List;
+
+    setState(() {
+      _postsJson = JsonData;
+    });
+
+  }catch(err){}
+
+  token = _postsJson[0];
+  
+    
+ } */
+
+  final _users = <int>[];
+  late RtcEngine _engine;
+  bool muted = false;
+  late int streamId;
+
+  @override
+  void dispose() {
+    // clear users
+    _users.clear();
+    // destroy sdk and leave channel
+    _engine.destroy();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // initialize agora sdk
+    initializeAgora();
+  }
+
+  Future<void> initializeAgora() async {
+    await _initAgoraRtcEngine();
+
+    //if (widget.isBroadcaster) streamId = await _engine?.createDataStream(false, false);
+
+    _engine.setEventHandler(RtcEngineEventHandler(
+      joinChannelSuccess: (channel, uid, elapsed) {
+        setState(() {
+          print('onJoinChannel: $channel, uid: $uid');
+        });
+      },
+      leaveChannel: (stats) {
+        setState(() {
+          print('onLeaveChannel');
+          _users.clear();
+        });
+      },
+      userJoined: (uid, elapsed) {
+        setState(() {
+          print('userJoined: $uid');
+
+          _users.add(uid);
+        });
+      },
+      userOffline: (uid, elapsed) {
+        setState(() {
+          print('userOffline: $uid');
+          _users.remove(uid);
+        });
+      },
+      streamMessage: (_, __, message) {
+        final String info = "here is the message $message";
+        print(info);
+      },
+      streamMessageError: (_, __, error, ___, ____) {
+        final String info = "here is the error $error";
+        print(info);
+      },
+    ));
+
+    await _engine.joinChannel(token, widget.channelName, null, 0);
+  }
+
+  Future<void> _initAgoraRtcEngine() async {
+    _engine = await RtcEngine.createWithConfig(RtcEngineConfig(appId));
+    await _engine.enableVideo();
+
+    await _engine.setChannelProfile(ChannelProfile.LiveBroadcasting);
+    if (widget.isBroadcaster) {
+      await _engine.setClientRole(ClientRole.Broadcaster);
+    } else {
+      await _engine.setClientRole(ClientRole.Audience);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color.fromARGB(143, 126, 23, 28),
+                Color.fromARGB(146, 182, 110, 23)
+              ]),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Stack(
+              children: <Widget>[
+                _broadcastView(),
+                _toolbar(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _toolbar() {
+    return widget.isBroadcaster
+        ? Container(
+            alignment: Alignment.bottomCenter,
+            padding: const EdgeInsets.symmetric(vertical: 48),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                RawMaterialButton(
+                  onPressed: _onToggleMute,
+                  child: Icon(
+                    muted ? Icons.mic_off : Icons.mic,
+                    color: muted ? Colors.white : Colors.blueAccent,
+                    size: 20.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: muted ? Colors.blueAccent : Colors.white,
+                  padding: const EdgeInsets.all(12.0),
+                ),/*
+                RawMaterialButton(
+                  onPressed: () => _onCallEnd(context),
+                  child: Icon(
+                    Icons.tv_off,
+                    color: Colors.white,
+                    size: 35.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.redAccent,
+                  padding: const EdgeInsets.all(15.0),
+                ),
+                RawMaterialButton(
+                  onPressed: _onSwitchCamera,
+                  child: Icon(
+                    Icons.switch_camera,
+                    color: Colors.blueAccent,
+                    size: 20.0,
+                  ),
+                  shape: CircleBorder(),
+                  elevation: 2.0,
+                  fillColor: Colors.white,
+                  padding: const EdgeInsets.all(12.0),
+                ),*/
+              ],
+            ),
+          )
+        : Container();
+  }
+
+  /// Helper function to get list of native views
+  List<Widget> _getRenderViews() {
+    final List<StatefulWidget> list = [];
+    if (widget.isBroadcaster) {
+      list.add(RtcLocalView.SurfaceView());
+    }
+    _users.forEach((int uid) => list.add(RtcRemoteView.SurfaceView(
+          uid: uid,
+          channelId: "chat",
+        )));
+    return list;
+  }
+
+  double vueHeight = 600;
+  double vueWidth = 300;
+  bool angleVue = true;
+
+  /// Video view row wrapper
+  Widget _expandedVideoView(List<Widget> views) {
+    final wrappedViews = views
+        .map<Widget>((view) => Expanded(child: Container(child: view)))
+        .toList();
+    return Container(
+      height: vueHeight,
+      width: vueWidth,
+      child: Row(
+        children: wrappedViews,
+      ),
+    );
+  }
+
+  /// Video layout wrapper
+  Widget _broadcastView() {
+    final views = _getRenderViews();
+    switch (views.length) {
+      case 1:
+        if (!angleVue) {
+          vueHeight = 400;
+          vueWidth = 800;
+        } else {
+          vueHeight = 600;
+          vueWidth = 300;
+        }
+        return Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _expandedVideoView([views[0]]),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                          "Voici un texte qui sera utilisé afin d'afficher différentes informations à l'avenir"),
+                      RawMaterialButton(
+                        onPressed: () => _onCallEnd(context),
+                        child: Icon(
+                          Icons.tv_off,
+                          color: Colors.white,
+                          size: 35.0,
+                        ),
+                        shape: CircleBorder(),
+                        elevation: 2.0,
+                        fillColor: Colors.redAccent,
+                        padding: const EdgeInsets.all(15.0),
+                      ),
+                      RawMaterialButton(
+                        onPressed: () => _modeVue(),
+                        child: Icon(
+                          Icons.screen_rotation,
+                          color: Colors.white,
+                          size: 35.0,
+                        ),
+                        shape: CircleBorder(),
+                        elevation: 2.0,
+                        fillColor: Colors.blue,
+                        padding: const EdgeInsets.all(15.0),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ));
+      case 2:
+        if (!angleVue) {
+          vueHeight = 200;
+          vueWidth = 400;
+        } else {
+          vueHeight = 600;
+          vueWidth = 300;
+        }
+        return Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _expandedVideoView([views[0]]),
+                    _expandedVideoView([views[1]]),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                          "Voici un texte qui sera utilisé afin d'afficher différentes informations à l'avenir"),
+                      RawMaterialButton(
+                        onPressed: () => _onCallEnd(context),
+                        child: Icon(
+                          Icons.tv_off,
+                          color: Colors.white,
+                          size: 35.0,
+                        ),
+                        shape: CircleBorder(),
+                        elevation: 2.0,
+                        fillColor: Colors.redAccent,
+                        padding: const EdgeInsets.all(15.0),
+                      ),
+                      RawMaterialButton(
+                        onPressed: () => _modeVue(),
+                        child: Icon(
+                          Icons.screen_rotation,
+                          color: Colors.white,
+                          size: 35.0,
+                        ),
+                        shape: CircleBorder(),
+                        elevation: 2.0,
+                        fillColor: Colors.blue,
+                        padding: const EdgeInsets.all(15.0),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ));
+      case 3:
+        return Container(
+            child: Column(
+          children: <Widget>[
+            _expandedVideoView(views.sublist(0, 2)),
+            _expandedVideoView(views.sublist(2, 3)),
+          ],
+        ));
+      case 4:
+        return Container(
+            child: Column(
+          children: <Widget>[
+            _expandedVideoView(views.sublist(0, 2)),
+            _expandedVideoView(views.sublist(2, 4)),
+          ],
+        ));
+      default:
+    }
+    return Container(
+      alignment: Alignment.bottomCenter,
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      child: Column(
+        children: [
+          RawMaterialButton(
+            onPressed: () => _onCallEnd(context),
+            child: Icon(
+              Icons.tv_off,
+              color: Colors.white,
+              size: 35.0,
+            ),
+            shape: CircleBorder(),
+            elevation: 2.0,
+            fillColor: Colors.redAccent,
+            padding: const EdgeInsets.all(15.0),
+          ),
+          SizedBox(height: 20,),
+          CircularProgressIndicator(
+                        backgroundColor: Colors.grey,
+                        color: Color.fromARGB(255, 94, 183, 255),
+                        strokeWidth: 10,
+                      )
+        ],
+      ),
+    );
+  }
+
+  void _onCallEnd(BuildContext context) {
+    Navigator.pop(context);
+  }
+
+  void _modeVue() {
+    if (angleVue) {
+      /*
+      setState(() {
+        vueHeight = 600;
+        vueWidth = 300;
+      });*/
+      setState(() {
+        angleVue = false;
+      });
+    } else {
+      /*
+      setState(() {
+        vueHeight = 300;
+        vueWidth = 600;
+      });*/
+      setState(() {
+        angleVue = true;
+      });
+    }
+  }
+
+  void _onToggleMute() {
+    setState(() {
+      muted = !muted;
+    });
+    _engine.muteLocalAudioStream(muted);
+  }
+
+  void _onSwitchCamera() {
+    //if (streamId != null) _engine.sendStreamMessage(streamId, "");
+    _engine.switchCamera();
+  }
+}
