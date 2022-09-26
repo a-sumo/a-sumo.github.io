@@ -1,13 +1,18 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutterapp/src/pages/broadcast_page.dart';
+import 'package:TOPAZ/src/pages/broadcast_page.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutterapp/src/utils/appId.dart';
+import 'package:TOPAZ/src/utils/appId.dart';
+import 'package:TOPAZ/src/utils/ProductDataModel.dart';
+import 'package:TOPAZ/src/utils/item_card.dart';
+import 'package:TOPAZ/src/utils/globals.dart' as globals;
+
+import 'package:flutter/foundation.dart';
 
 class MyHomePage extends StatefulWidget {
-  String channelName = "chat";
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -20,14 +25,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int uid = 0;
 //$tring token = "";
 
+  String channelName = "chat";
+
   Future<void> getToken() async {
     //Headers("Access-Control-Allow-Origin");
     final response = await http.get(
-      Uri.parse(baseUrl +
-              '/rtc/' +
-              widget.channelName +
-              '/publisher/uid/' +
-              uid.toString()
+      Uri.parse(
+          baseUrl + '/rtc/' + channelName + '/publisher/uid/' + uid.toString()
           // To add expiry time uncomment the below given line with the time in seconds
           //+ '?expiry=450'
           ),
@@ -40,6 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
         token = jsonDecode(token)['rtcToken'];
         visu = true;
         loadingToken = false;
+        quelChannel();
       });
     } else {
       print('Failed to fetch the token');
@@ -53,11 +58,14 @@ class _MyHomePageState extends State<MyHomePage> {
     getToken();
   }
 
-  final String _channelName = "chat";
+  late String _channelName = "chat";
   String check = '';
 
   bool visu = false;
   bool loadingToken = false;
+  String channelActif = "";
+  Color bgcolor1 = Color.fromARGB(143, 250, 45, 55);
+  Color bgcolor2 = Color.fromARGB(146, 33, 195, 240);
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
             gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color.fromARGB(143, 250, 45, 55),
-                  Color.fromARGB(146, 33, 195, 240)
-                ]),
+                colors: [bgcolor1, bgcolor2]),
           ),
           child: Center(
             child: Column(
@@ -80,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Text(
                   "Troisième Oeil",
                   style: TextStyle(
-                      fontSize: 40,
+                      fontSize: 48,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
                 ),
@@ -117,34 +122,47 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: 25,
                 ),
-                /*Container(
-                  width: MediaQuery.of(context).size.width * 0.85,
-                  height: MediaQuery.of(context).size.height * 0.14,
-                  child: TextFormField(
-                    controller: _channelName,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide:
-                            BorderSide(color: Color.fromARGB(255, 60, 60, 60)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: _channel1,
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(140, 60),
+                            primary: Color.fromARGB(255, 118, 31, 37)),
+                        child: Text("Oeil Rouge"),
                       ),
-                      hintText: 'Nom du Channel',
                     ),
-                  ),
-                ),*/
-                ElevatedButton(
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ElevatedButton(
+                        onPressed: _channel2,
+                        style: ElevatedButton.styleFrom(
+                            fixedSize: Size(140, 60),
+                            primary: Color.fromARGB(255, 25, 101, 53)),
+                        child: Text("Oeil Vert"),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 25,
+                ),
+                /*ElevatedButton(
                   onPressed: loadToken,
                   child: Text(
                     "Se connecter",
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 24),
                   ),
                   style: ElevatedButton.styleFrom(
-                    fixedSize: Size(180,60),
+                      fixedSize: Size(200, 80),
                       primary: Color.fromARGB(255, 50, 107, 153)),
                 ),
                 SizedBox(
-                  height: 50,
-                ),
+                  height: 30,
+                ),*/
                 loadingToken
                     ? CircularProgressIndicator(
                         backgroundColor: Colors.grey,
@@ -156,30 +174,40 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 20,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Column(
                       children: [
                         ElevatedButton(
                           onPressed: visu
                               ? () {
-                                  onJoin(isBroadcaster: false);
+                                  //onJoin(isBroadcaster: false);
+                                  _casUsage();
                                 }
                               : null,
                           child: Icon(
                             Icons.remove_red_eye,
-                            size: 70,
+                            size: 80,
                           ),
                           style: ElevatedButton.styleFrom(
-                              fixedSize: Size(160, 160),
+                              fixedSize: Size(200, 200),
                               shape: CircleBorder(),
                               primary: Color.fromARGB(255, 18, 173, 204)),
                         ),
-                        SizedBox(height: 14,),
-                        Text("Visionner le Stream", 
-                          style: visu ? TextStyle(fontWeight: FontWeight.bold,): TextStyle(fontWeight: FontWeight.normal)
+                        SizedBox(
+                          height: 14,
                         ),
+                        Text("Visionner le Stream",
+                            style: visu
+                                ? TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  )
+                                : TextStyle(fontWeight: FontWeight.normal)),
                       ],
+                    ),
+                    SizedBox(
+                      width: 80,
                     ),
                     Column(
                       children: [
@@ -191,17 +219,23 @@ class _MyHomePageState extends State<MyHomePage> {
                               : null,
                           child: Icon(
                             Icons.live_tv,
-                            size: 70,
+                            size: 80,
                           ),
                           style: ElevatedButton.styleFrom(
-                              fixedSize: Size(160, 160),
+                              fixedSize: Size(200, 200),
                               shape: CircleBorder(),
                               primary: Color.fromARGB(255, 18, 173, 204)),
                         ),
-                        SizedBox(height: 14,),
-                        Text("Commencer à Streamer", 
-                          style: visu ? TextStyle(fontWeight: FontWeight.bold,): TextStyle(fontWeight: FontWeight.normal)
+                        SizedBox(
+                          height: 14,
                         ),
+                        Text("Commencer à Streamer",
+                            style: visu
+                                ? TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  )
+                                : TextStyle(fontWeight: FontWeight.normal)),
                       ],
                     ),
                   ],
@@ -244,6 +278,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: 30,
                 ),
+
                 /*Text(
                   token,
                   style: TextStyle(fontSize: 10),
@@ -255,16 +290,124 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 visu
                     ? Center(
-                      child: Text(
-                          " Vous pouvez désormais accéder au Stream ! ",
-                          style: TextStyle(fontSize: 14),
+                        child: Text(
+                          " Vous pouvez désormais accéder au Stream ! Oeil actuel : " +
+                              channelName,
+                          style: TextStyle(fontSize: 18),
                         ),
-                    )
+                      )
                     : SizedBox()
               ],
             ),
           ),
         ));
+  }
+
+  void _channel1() {
+    setState(() {
+      _channelName = "chat";
+      channelName = "chat";
+    });
+    loadToken();
+  }
+
+  void _channel2() {
+    setState(() {
+      _channelName = "test";
+      channelName = "test";
+    });
+    loadToken();
+  }
+
+  void quelChannel() {
+    setState(() {
+      channelActif = channelName;
+    });
+    if (channelActif == "chat") {
+      setState(() {
+        bgcolor1 = Color.fromARGB(239, 221, 36, 8);
+        bgcolor2 = Color.fromARGB(43, 234, 160, 163);
+      });
+    }
+    if (channelActif == "test") {
+      setState(() {
+        bgcolor1 = Color.fromARGB(223, 14, 146, 64);
+        bgcolor2 = Color.fromARGB(43, 160, 234, 206);
+      });
+    }
+  }
+
+  Future<void> _casUsage() async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text("Quel mode de Visionnage souhaitez vous ?"),
+            content: Column(
+              children: [
+                SizedBox(height: 10,),
+                ElevatedButton(
+                    onPressed: lancerAsset1, child: Text("Monter une voiture"), style: ElevatedButton.styleFrom(
+                              fixedSize: Size(200, 50),
+                              primary: Color.fromARGB(255, 18, 173, 204)),),
+                SizedBox(height: 10,),
+                ElevatedButton(
+                    onPressed: lancerAsset2,
+                    child: Text("Lancer flutter sur pc"), style: ElevatedButton.styleFrom(
+                              fixedSize: Size(200, 50),
+                              primary: Color.fromARGB(255, 18, 173, 204)),),
+                SizedBox(height: 10,),
+                ElevatedButton(
+                    onPressed: sansAsset,
+                    child: Text("Uniquement visionner"), style: ElevatedButton.styleFrom(
+                              fixedSize: Size(200, 50),
+                              primary: Color.fromARGB(255, 12, 118, 139)),),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Annuler"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void lancerAsset1() {
+    setState(() {
+      globals.modeOn = true;
+      globals.asset0 = globals.asset1;
+    });
+    onJoin(isBroadcaster: false);
+  }
+
+  void lancerAsset2() {
+    setState(() {
+      globals.modeOn = true;
+      globals.asset0 = globals.asset2;
+    });
+    onJoin(isBroadcaster: false);
+  }
+
+  void sansAsset() {
+    setState(() {
+      globals.modeOn = false;
+    });
+    onJoin(isBroadcaster: false);
+  }
+  
+
+  
+
+  Future<List<ProductDataModel>> ReadJsonData() async {
+    final jsondata = await rootBundle.loadString(globals.asset0);
+    final list = json.decode(jsondata) as List<dynamic>;
+
+    return list.map((e) => ProductDataModel.fromJson(e)).toList();
   }
 
   Future<void> onJoin({required bool isBroadcaster}) async {

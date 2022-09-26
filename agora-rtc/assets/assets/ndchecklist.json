@@ -1,0 +1,32 @@
+[
+    {
+      "id": 0,
+      "name": "Etape 1",
+      "description": "Allumer le PC",
+      "imageUrl": "https://www.naturemwelt.lu/wp-content/uploads/2018/09/Arcelormittal-logo.svg.png",
+      "price": "1751"
+    },
+    {
+        "id": 1,
+        "name": "Etape 2",
+        "description": "Démarrer VSC",
+        "imageUrl": "https://www.naturemwelt.lu/wp-content/uploads/2018/09/Arcelormittal-logo.svg.png",
+        "price": "112"
+    },
+    {
+        "id": 2,
+        "name": "Etape 3",
+        "description": "Importer les plugins nécessaires",
+        "imageUrl": "https://www.naturemwelt.lu/wp-content/uploads/2018/09/Arcelormittal-logo.svg.png",
+        "price": "293"
+    },
+    {
+        "id": 3,
+        "name": "Etape 4",
+        "description": "Développer l'application",
+        "imageUrl": "https://www.naturemwelt.lu/wp-content/uploads/2018/09/Arcelormittal-logo.svg.png",
+        "price": "445"
+    }
+
+
+  ]

@@ -3,11 +3,14 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "assets/AssetManifest.json": "e321a61529e49e27491ca5722f361d62",
+  "assets/AssetManifest.json": "33fb17adda29bd1d533872df000fb197",
 "assets/assets/arcelor-mittal.png": "37a5cb4441e40a214c5c786378ea5343",
+"assets/assets/ndchecklist.json": "c9024cc3781dc1078714084140d914eb",
+"assets/assets/testpano.jpg": "9545a0fcf46f533cca2aacf9712d08b5",
+"assets/assets/trychecklist.json": "c32952eda1cfe6c65961c61f24d38cf8",
 "assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
 "assets/fonts/MaterialIcons-Regular.otf": "7e7a6cccddf6d7b20012a548461d5d81",
-"assets/NOTICES": "dfc133877a4bab7abdd784a44c18b12c",
+"assets/NOTICES": "b4b47526af3772e618ab99193b64e71b",
 "assets/packages/agora_rtc_engine/assets/AgoraRtcWrapper.bundle.js": "d08573d6e0f8b6bff73a66ce65f514ff",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "6d342eb68f170c97609e9da345464e5e",
 "canvaskit/canvaskit.js": "c2b4e5f3d7a3d82aed024e7249a78487",
@@ -19,11 +22,11 @@ const RESOURCES = {
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
 "icons/Icon-maskable-192.png": "c457ef57daa1d16f64b27b786ec2ea3c",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
-"index.html": "0299d69bc72148301348f28050a6c953",
-"/": "0299d69bc72148301348f28050a6c953",
-"main.dart.js": "38d205e7f678d3c9b9a2ccd1a7cca0b2",
+"index.html": "24e306459964ee5a04f92cdd609d2b87",
+"/": "24e306459964ee5a04f92cdd609d2b87",
+"main.dart.js": "1ae65baa1ec102d905b6e88e9135df70",
 "manifest.json": "3a5b6095130313cef6dbb5db78bc1986",
-"version.json": "c72dd9007e6fa6ce5029cbe514299506"
+"version.json": "0eb9a411b828bc8772ceb7d875bab7bf"
 };
 
 // The application shell files that are downloaded before a service worker can

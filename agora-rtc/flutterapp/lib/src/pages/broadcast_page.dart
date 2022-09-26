@@ -1,11 +1,17 @@
 import 'dart:convert';
-import 'package:flutterapp/src/pages/home_page.dart';
-import 'package:flutterapp/src/utils/appId.dart';
+import 'package:TOPAZ/src/pages/home_page.dart';
+import 'package:TOPAZ/src/utils/appId.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+import 'package:TOPAZ/src/utils/ProductDataModel.dart';
+import 'package:TOPAZ/src/utils/item_card.dart';
+import 'package:TOPAZ/src/utils/globals.dart' as globals;
+import 'package:flutter/foundation.dart';
 
 class BroadcastPage extends StatefulWidget {
   final String channelName;
@@ -21,7 +27,7 @@ class BroadcastPage extends StatefulWidget {
 
 class _BroadcastPageState extends State<BroadcastPage> {
   final urlToken =
-      "https://troisieme-oeil.herokuapp.com/rtc/channelName/role/userAccount/uid/";
+      "https://thirdeyearcelor.herokuapp.com/rtc/channelName/role/userAccount/uid/";
 
   /*var _postsJson = [];
 
@@ -44,7 +50,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
 
   final _users = <int>[];
   late RtcEngine _engine;
-  bool muted = false;
+  bool muted = true;
   late int streamId;
 
   @override
@@ -164,7 +170,7 @@ class _BroadcastPageState extends State<BroadcastPage> {
                   elevation: 2.0,
                   fillColor: muted ? Colors.blueAccent : Colors.white,
                   padding: const EdgeInsets.all(12.0),
-                ),/*
+                ), /*
                 RawMaterialButton(
                   onPressed: () => _onCallEnd(context),
                   child: Icon(
@@ -203,13 +209,14 @@ class _BroadcastPageState extends State<BroadcastPage> {
     }
     _users.forEach((int uid) => list.add(RtcRemoteView.SurfaceView(
           uid: uid,
-          channelId: "chat",
+          channelId: "",
         )));
     return list;
   }
 
-  double vueHeight = 600;
-  double vueWidth = 300;
+  double vueHeight = 560;
+  double vueWidth = 280;
+  double widthinfo1 = 0;
   bool angleVue = true;
 
   /// Video view row wrapper
@@ -226,36 +233,161 @@ class _BroadcastPageState extends State<BroadcastPage> {
     );
   }
 
+  List<String> testcheck = ["text1", "text2", "text3"];
+  bool checkbool = false;
+
+  void toogleCheckChange(bool? checkBoxState) {
+    if (checkBoxState != null) {
+      setState(() {
+        checkbool = checkBoxState;
+      });
+    }
+  }
+
   /// Video layout wrapper
   Widget _broadcastView() {
     final views = _getRenderViews();
     switch (views.length) {
       case 1:
         if (!angleVue) {
-          vueHeight = 400;
-          vueWidth = 800;
+          // format paysage à 1 écran
+          vueHeight = MediaQuery.of(context).size.height / 1.5;
+          vueWidth = MediaQuery.of(context).size.width - 50;
         } else {
-          vueHeight = 600;
-          vueWidth = 300;
+          // format portrait à 1 écran
+          vueHeight = MediaQuery.of(context).size.height - 130;
+          vueWidth = vueHeight / 2;
         }
+
         return Container(
             padding: EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    _expandedVideoView([views[0]]),
+                if(globals.modeOn && !angleVue) Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: 9000,
+                      height: vueHeight/3,
+                      child: FutureBuilder(
+                        future: ReadJsonData(),
+                        builder: (context, data) {
+                          if (data.hasError) {
+                            return Center(child: Text("${data.error}"));
+                          } else if (data.hasData) {
+                            var items = data.data as List<ProductDataModel>;
+                            return ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                                itemCount: items == null ? 0 : items.length,
+                                itemBuilder: (context, index) {
+                                  return ItemCard(
+                                    name: (items[index].name.toString()),
+                                    prix: (items[index].price.toString()),
+                                    description:
+                                        (items[index].description.toString()),
+                                    image: (items[index].imageURL.toString()),
+                                  );
+                                });
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _expandedVideoView([views[0]]),
+                      ],
+                    ),
                   ],
-                ),
+                ) else
+
+
+               globals.modeOn ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Container(
+                      width: 400,
+                      height: vueHeight,
+                      child: FutureBuilder(
+                        future: ReadJsonData(),
+                        builder: (context, data) {
+                          if (data.hasError) {
+                            return Center(child: Text("${data.error}"));
+                          } else if (data.hasData) {
+                            var items = data.data as List<ProductDataModel>;
+                            return ListView.builder(
+                                itemCount: items == null ? 0 : items.length,
+                                itemBuilder: (context, index) {
+                                  return ItemCard(
+                                    name: (items[index].name.toString()),
+                                    prix: (items[index].price.toString()),
+                                    description:
+                                        (items[index].description.toString()),
+                                    image: (items[index].imageURL.toString()),
+                                  );
+                                });
+                          } else {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _expandedVideoView([views[0]]),
+                      ],
+                    ),
+                  ],
+                ):Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        _expandedVideoView([views[0]]),
+                      ],
+                    ),
+
+                /*for(var i in testcheck)CheckboxListTile(
+                  title: Text(i.toString()),
+                  subtitle: const Text('Voici un texte de test !'),
+                  secondary: const Icon(Icons.code),
+                  activeColor: Colors.green,
+                  checkColor: Colors.white,
+                  value: checkbool,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      checkbool = value!;
+                    });
+                  },
+                ),*/
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      /*Column(
+                      children: [
+                        for (var i in testcheck)
+                          CheckboxListTile(
+                            title: Text(i.toString()),
+                            secondary: Icon(Icons.beach_access),
+                            value: _checkbool,
+                            onChanged: toogleCheckChange,
+                            activeColor: Colors.green,
+                            checkColor: Colors.black,
+                          )
+                      ],
+                    ),*/
                       Text(
-                          "Voici un texte qui sera utilisé afin d'afficher différentes informations à l'avenir"),
+                        "Bienvenue dans le Projet Troisième Oeil ! Admirez les flux vidéos",
+                        style: TextStyle(fontSize: 20),
+                      ),
                       RawMaterialButton(
                         onPressed: () => _onCallEnd(context),
                         child: Icon(
@@ -280,18 +412,33 @@ class _BroadcastPageState extends State<BroadcastPage> {
                         fillColor: Colors.blue,
                         padding: const EdgeInsets.all(15.0),
                       ),
+                      RawMaterialButton(
+                        onPressed: () => _Recap(),
+                        child: Icon(
+                          Icons.pages,
+                          color: Colors.white,
+                          size: 35.0,
+                        ),
+                        shape: CircleBorder(),
+                        elevation: 2.0,
+                        fillColor: Colors.blue,
+                        padding: const EdgeInsets.all(15.0),
+                      ),
                     ],
                   ),
                 ),
               ],
-            ));
+            )); ///////////////////////////////////////     avec ou sans mode    /////////////////////////////////////////////
       case 2:
         if (!angleVue) {
-          vueHeight = 200;
-          vueWidth = 400;
+          // format paysage a 2 écrans
+          vueHeight = (1 / 2) * MediaQuery.of(context).size.height - 100;
+          vueWidth = (1 / 2) * MediaQuery.of(context).size.width - 50;
         } else {
-          vueHeight = 600;
-          vueWidth = 300;
+          vueHeight = MediaQuery.of(context).size.height - 130;
+          vueWidth = vueHeight / 2;
+          //vueHeight = 560; // format portrait à 2 écrans
+          //vueWidth = 280;
         }
         return Container(
             padding: EdgeInsets.all(20),
@@ -311,7 +458,9 @@ class _BroadcastPageState extends State<BroadcastPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                          "Voici un texte qui sera utilisé afin d'afficher différentes informations à l'avenir"),
+                        "Bienvenue dans le Projet Troisième Oeil ! Admirez les flux vidéos",
+                        style: TextStyle(fontSize: 20),
+                      ),
                       RawMaterialButton(
                         onPressed: () => _onCallEnd(context),
                         child: Icon(
@@ -376,15 +525,28 @@ class _BroadcastPageState extends State<BroadcastPage> {
             fillColor: Colors.redAccent,
             padding: const EdgeInsets.all(15.0),
           ),
-          SizedBox(height: 20,),
+          SizedBox(
+            height: 20,
+          ),
           CircularProgressIndicator(
-                        backgroundColor: Colors.grey,
-                        color: Color.fromARGB(255, 94, 183, 255),
-                        strokeWidth: 10,
-                      )
+            backgroundColor: Colors.grey,
+            color: Color.fromARGB(255, 94, 183, 255),
+            strokeWidth: 10,
+          )
         ],
       ),
     );
+  }
+
+  bool _onTestCheck() {
+    return true;
+  }
+
+  Future<List<ProductDataModel>> ReadJsonData() async {
+    final jsondata = await rootBundle.loadString(globals.asset0);
+    final list = json.decode(jsondata) as List<dynamic>;
+
+    return list.map((e) => ProductDataModel.fromJson(e)).toList();
   }
 
   void _onCallEnd(BuildContext context) {
@@ -411,6 +573,32 @@ class _BroadcastPageState extends State<BroadcastPage> {
         angleVue = true;
       });
     }
+  }
+
+  Future<void> _Recap() async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: Text("Récap des étapes éffectuées"),
+            content: Column(
+              children: [
+                for (int i = 0; i < globals.listbag.length; i++)
+                  Text(globals.listbag[i].toString())
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Close"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+    print(globals.listbag);
   }
 
   void _onToggleMute() {
