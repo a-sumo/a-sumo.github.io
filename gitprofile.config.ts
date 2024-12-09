@@ -25,7 +25,7 @@ const CONFIG = {
       },
       manual: {
         // Properties for manually specifying projects
-        projects: ['a-sumo/hyperstep'], // List of repository names to display. example: ['arifszn/my-project1', 'arifszn/my-project2']
+        projects: ['a-sumo/hyperstep', 'multiview-rendering'], // List of repository names to display. example: ['arifszn/my-project1', 'arifszn/my-project2']
       },
     },
     external: {
@@ -45,7 +45,7 @@ const CONFIG = {
           link: 'https://github.com/a-sumo/webgl-imaging',
         },
         {
-          title: 'VR MIDI Controller (Unity)',
+          title: 'Holographic MIDI Controller (Unity)',
           description: '',
           imageUrl: '',
           link: 'https://www.youtube.com/watch?v=o-pGeCnhm_M',
