@@ -39,7 +39,7 @@ const CONFIG = {
           link: 'https://a-sumo.github.io/hyperstep/volume/',
         },
         {
-          title: 'MRI Scan Visualizer (TypeScript and Angular)',
+          title: 'MRI Scan Visualizer - Angular',
           description: '',
           imageUrl: 'https://a-sumo.github.io/data/mri_scan.png',
           link: 'https://github.com/a-sumo/webgl-imaging',
