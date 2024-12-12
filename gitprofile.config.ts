@@ -33,7 +33,7 @@ const CONFIG = {
       // To hide the `External Projects` section, keep it empty.
       projects: [
         {
-          title: 'Volumetric Audio Visualizer ( Three.js',
+          title: 'Volumetric Audio Visualizer -  Three.js',
           description: '',
           imageUrl: 'https://a-sumo.github.io/data/vol_synth.png',
           link: 'https://a-sumo.github.io/hyperstep/volume/',
@@ -45,7 +45,7 @@ const CONFIG = {
           link: 'https://github.com/a-sumo/webgl-imaging',
         },
         {
-          title: '3D MIDI Controller (Unity)',
+          title: '3D MIDI Controller - Unity',
           description: '',
           imageUrl: '',
           link: 'https://www.youtube.com/watch?v=o-pGeCnhm_M',
