@@ -222,7 +222,7 @@ const CONFIG = {
   },
 
   // Optional Footer. Supports plain text or HTML.
-  footer: `Copyright © Armand Sumo 2024`,
+  footer: `Copyright © Armand Sumo 2025`,
 
   enablePWA: true,
 };
