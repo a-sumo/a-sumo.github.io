@@ -13,7 +13,7 @@ const CONFIG = {
   projects: {
     github: {
       display: true, // Display GitHub projects?
-      header: 'Github Projects',
+      header: 'Github',
       mode: 'manual', // Mode can be: 'automatic' or 'manual'
       automatic: {
         sortBy: 'stars', // Sort projects by 'stars' or 'updated'
@@ -25,11 +25,11 @@ const CONFIG = {
       },
       manual: {
         // Properties for manually specifying projects
-        projects: ['a-sumo/hyperstep', 'a-sumo/multiview-rendering'], // List of repository names to display. example: ['arifszn/my-project1', 'arifszn/my-project2']
+        projects: ['a-sumo/hyperstep', 'a-sumo/webgl-imaging'], // List of repository names to display. example: ['arifszn/my-project1', 'arifszn/my-project2']
       },
     },
     external: {
-      header: 'Other Projects',
+      header: 'Demos and Code',
       // To hide the `External Projects` section, keep it empty.
       projects: [
         {
@@ -44,19 +44,12 @@ const CONFIG = {
           imageUrl: 'https://a-sumo.github.io/data/mri_scan.png',
           link: 'https://github.com/a-sumo/webgl-imaging',
         },
-        {
-          title: '3D MIDI Controller - Unity',
-          description: '',
-          imageUrl: '',
-          link: 'https://www.youtube.com/watch?v=o-pGeCnhm_M',
-        },
       ],
     },
   },
   seo: {
     title: 'Portfolio of Armand Sumo',
-    description:
-      'Portfolio of Armand Sumo, Full-Stack Web Developer interested in spatial computing.',
+    description: 'Front-End Developer.',
     imageURL: '',
   },
   social: {
@@ -88,8 +81,6 @@ const CONFIG = {
     'Python',
     'JavaScript / TypeScript',
     'C#',
-    'C++',
-    'OpenXR',
     'React.js',
     'Vue.js',
     'Three.js',
@@ -99,8 +90,8 @@ const CONFIG = {
   ],
   experiences: [
     {
-      company: 'Hyperstep',
-      position: 'XR Consultant',
+      company: '',
+      position: 'Front-End developer (Freelance)',
       from: 'October 2024',
       to: 'Present',
       companyLink: '',
@@ -121,7 +112,7 @@ const CONFIG = {
     },
     {
       company: 'ArcelorMittal France',
-      position: 'AR/VR Developer',
+      position: 'Unity 3D Developer',
       from: 'March 2022',
       to: 'September 2022',
       companyLink: 'https://france.arcelormittal.com',
