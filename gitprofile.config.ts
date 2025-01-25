@@ -78,15 +78,12 @@ const CONFIG = {
     fileUrl: 'https://a-sumo.github.io/data/resume.pdf', // Empty fileUrl will hide the `Download Resume` button.
   },
   skills: [
-    'Python',
     'JavaScript / TypeScript',
-    'C#',
-    'React.js',
-    'Vue.js',
-    'Three.js',
-    'Unity',
+    'React',
+    'Vue',
+    'Angular',
+    'Three',
     'WebGL',
-    'OpenGL',
   ],
   experiences: [
     {
