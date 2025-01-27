@@ -2,4 +2,4 @@
 layout: ../layouts/AboutLayout.astro
 title: "About"
 ---
-Armand Sumo is a front-end web developer based in France.
+Hi, I’m Armand Sumo, a software developer who loves creating immersive, interactive web experiences. I focus on front-end frameworks like React and 3D libraries like Three.js to bring user-centric solutions to life.
