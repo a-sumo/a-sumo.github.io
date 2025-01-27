@@ -78,7 +78,7 @@ export const SOCIALS: SocialObjects = [
     name: "YouTube",
     href: "https://www.youtube.com/@spatial_is",
     linkTitle: `${SITE.title} on YouTube`,
-    active: false,
+    active: true,
   },
   {
     name: "WhatsApp",
