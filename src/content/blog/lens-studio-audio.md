@@ -12,7 +12,5 @@ tags:
   - volume rendering
 ogImage: ""
 description: Building an audio visualizer using custom shader code in Lens Studio.
-canonicalURL: https://a-sumo.github.io/blog/
+canonicalURL: https://a-sumo.github.io/posts/lens-studio-audio/
 ---
-
-This project converts a series of depth map images from different viewpoints into a volumetric representation using OpenVDB. It processes images from six different views (nx, ny, nz, px, py, pz) and combines them into a single volumetric dataset.

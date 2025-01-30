@@ -11,7 +11,15 @@ tags:
   - tags
 ogImage: ""
 description: Building a Multiview-Renderer with Unity, Blender and OpenVDB.
-canonicalURL: https://a-sumo.github.io/blog/
+canonicalURL: https://a-sumo.github.io/posts/multiview-rendering/
 ---
 
 This project converts a series of depth map images from different viewpoints into a volumetric representation using OpenVDB. It processes images from six different views (nx, ny, nz, px, py, pz) and combines them into a single volumetric dataset.
+
+```js
+// Javascript code with syntax highlighting.
+var fun = function lang(l) {
+  dateformat.i18n = require('./lang/' + l);
+  return true;
+};
+```

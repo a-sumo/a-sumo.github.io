@@ -141,6 +141,13 @@ declare module 'astro:content' {
 
 	type ContentEntryMap = {
 		"blog": {
+"dragon-bounce.md": {
+	id: "dragon-bounce.md";
+  slug: "dragon-bounce";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".md"] };
 "lens-studio-audio.md": {
 	id: "lens-studio-audio.md";
   slug: "lens-studio-audio";
