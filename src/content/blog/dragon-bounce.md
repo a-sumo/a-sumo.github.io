@@ -24,13 +24,12 @@ description: Audio-reactive Dragon Ball radar with React-Three-Fiber (React, Red
 canonicalURL: https://a-sumo.github.io/posts/dragon-bounce/
 ---
 
-| Resource      | URL |
-|--------------|-----|
+
 | Live Demo    | [Dragon Bounce App](https://bounce-beta.vercel.app/) |
 | Source Code  | [GitHub Repository](https://github.com/a-sumo/bounce) |
 
 <!-- ## Introduction 🎮 -->
-![Dragon Bounce Logo](./public/thumbnails/dragon-bounce.png)
+![Dragon Bounce Thumbnail](./public/thumbnails/dragon-bounce.png)
 
 ## Demo Videos 🎥
 
