@@ -1,5 +1,5 @@
 ---
-title: Dynamic Canvas Textures on THREE.js materials, Audio Worklets with Wavesurfer.js and React Redux State Management.
+title: Dynamic Canvas Textures on GTLF models, Audio Worklets with Wavesurfer.js and React Redux State Management.
 author: Armand Sumo
 pubDatetime: 2025-01-30T16:28:00Z
 slug: dragon-bounce
