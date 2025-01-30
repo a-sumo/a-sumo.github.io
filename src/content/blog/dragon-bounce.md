@@ -30,7 +30,7 @@ canonicalURL: https://a-sumo.github.io/posts/dragon-bounce/
 | Source Code  | [GitHub Repository](https://github.com/a-sumo/bounce) |
 
 <!-- ## Introduction 🎮 -->
-
+![Dragon Bounce Logo](./public/thumbnails/dragon-bounce.png)
 
 ## Demo Videos 🎥
 
