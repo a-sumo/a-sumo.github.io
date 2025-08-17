@@ -4,7 +4,7 @@ export const SITE: Site = {
   website: "https://a-sumo.github.io/", // replace this with your deployed domain
   author: "Armand Sumo",
   profile: "https://a-sumo.github.io",
-  desc: "Armand Sumo's Blog about technology and arts.",
+  desc: "Armand Sumo's Blog about technology and design.",
   title: "Armand Sumo",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: false,
@@ -25,8 +25,8 @@ export const LOCALE = {
 } as const;
 
 export const LOGO_IMAGE = {
-  enable: false,
-  svg: true,
+  enable: true,
+  svg: false,
   width: 216,
   height: 46,
 };
@@ -60,7 +60,7 @@ export const SOCIALS: SocialObjects = [
     name: "Mail",
     href: "mailto:msum@flowfield.space",
     linkTitle: `Send an email to ${SITE.title}`,
-    active: true,
+    active: false,
   },
   {
     name: "X",
@@ -76,9 +76,9 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "YouTube",
-    href: "https://www.youtube.com/@spatial_is",
+    href: "https://www.youtube.com/@octant-ten-directions",
     linkTitle: `${SITE.title} on YouTube`,
-    active: true,
+    active: false,
   },
   {
     name: "WhatsApp",

@@ -1,7 +1,7 @@
 import satori from "satori";
 import type { CollectionEntry } from "astro:content";
 import { SITE } from "@config";
-import loadGoogleFonts, { type FontOptions } from "../loadGoogleFont";
+import loadAdobeFonts, { type FontOptions } from "../loadAdobeFont";
 
 export default async (post: CollectionEntry<"blog">) => {
   return satori(
@@ -31,7 +31,6 @@ export default async (post: CollectionEntry<"blog">) => {
           height: "80%",
         }}
       />
-
       <div
         style={{
           border: "4px solid #000",
@@ -57,9 +56,10 @@ export default async (post: CollectionEntry<"blog">) => {
           <p
             style={{
               fontSize: 72,
-              fontWeight: "bold",
+              fontWeight: "500",
               maxHeight: "84%",
               overflow: "hidden",
+              fontFamily: "freight-text-pro", // Using Adobe serif font for titles
             }}
           >
             {post.data.title}
@@ -71,6 +71,7 @@ export default async (post: CollectionEntry<"blog">) => {
               width: "100%",
               marginBottom: "8px",
               fontSize: 28,
+              fontFamily: "neue-haas-unica", // Using Adobe sans-serif for metadata
             }}
           >
             <span>
@@ -82,12 +83,11 @@ export default async (post: CollectionEntry<"blog">) => {
               >
                 "
               </span>
-              <span style={{ overflow: "hidden", fontWeight: "bold" }}>
+              <span style={{ overflow: "hidden", fontWeight: "700" }}>
                 {post.data.author}
               </span>
             </span>
-
-            <span style={{ overflow: "hidden", fontWeight: "bold" }}>
+            <span style={{ overflow: "hidden", fontWeight: "700" }}>
               {SITE.title}
             </span>
           </div>
@@ -98,9 +98,7 @@ export default async (post: CollectionEntry<"blog">) => {
       width: 1200,
       height: 630,
       embedFont: true,
-      fonts: (await loadGoogleFonts(
-        post.data.title + post.data.author + SITE.title + "by"
-      )) as FontOptions[],
+      fonts: (await loadAdobeFonts()) as FontOptions[],
     }
   );
 };

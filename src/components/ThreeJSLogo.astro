@@ -1,0 +1,402 @@
+---
+// ThreeJSLogo.astro
+export interface Props {
+  modelPath?: string;
+  scale?: number;
+  canvasId?: string;
+  canvasClass?: string;
+  orbitRadius?: number;
+  orbitSpeed?: number;
+  cameraHeight?: number;
+  transitionSpeed?: number;
+}
+
+const { 
+  modelPath = "/assets/logo.glb",
+  scale = 0.4,
+  canvasId = "threejs-logo",
+  canvasClass = "threejs-canvas",
+  orbitRadius = 5,
+  orbitSpeed = 0.5,
+  cameraHeight = 2,
+  transitionSpeed = 2.0
+} = Astro.props;
+---
+
+<div class="logo-canvas-container">
+  <canvas 
+    id={canvasId} 
+    class={canvasClass}
+    data-model-path={modelPath}
+    data-scale={scale}
+    data-orbit-radius={orbitRadius}
+    data-orbit-speed={orbitSpeed}
+    data-camera-height={cameraHeight}
+    data-transition-speed={transitionSpeed}
+  ></canvas>
+</div>
+
+<style>
+  .logo-canvas-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+  
+  .threejs-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+  }
+  
+  .threejs-canvas:active {
+    cursor: grabbing;
+  }
+</style>
+
+<script>
+  class ThreeJSLogo {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.scene = null;
+      this.camera = null;
+      this.renderer = null;
+      this.model = null;
+      this.animationId = null;
+      this.isHovered = false;
+      this.isDestroyed = false;
+      this.time = 0;
+      
+      // Get configuration from data attributes
+      this.config = {
+        modelPath: canvas.dataset.modelPath || "/assets/logo.glb",
+        scale: parseFloat(canvas.dataset.scale) || 0.4,
+        orbitRadius: parseFloat(canvas.dataset.orbitRadius) || 5,
+        orbitSpeed: parseFloat(canvas.dataset.orbitSpeed) || 0.5,
+        cameraHeight: parseFloat(canvas.dataset.cameraHeight) || 2,
+        transitionSpeed: parseFloat(canvas.dataset.transitionSpeed) || 2.0
+      };
+      
+      // Transition parameters
+      this.currentTransition = 0; // 0 = idle, 1 = orbiting
+      this.targetTransition = 0;
+      
+      this.init();
+    }
+    
+    async init() {
+      try {
+        await this.loadThreeJS();
+        this.setupScene();
+        this.setupEventListeners();
+        await this.loadModel();
+        this.startAnimation();
+      } catch (error) {
+        console.error('Error initializing ThreeJS Logo:', error);
+      }
+    }
+    
+    async loadThreeJS() {
+      // Check if THREE is already loaded
+      if (window.THREE) return;
+      
+      // Load Three.js
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        if (!document.head.querySelector(`script[src="${script.src}"]`)) {
+          document.head.appendChild(script);
+        } else {
+          resolve();
+        }
+      });
+
+      // Load GLTFLoader
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        if (!document.head.querySelector(`script[src="${script.src}"]`)) {
+          document.head.appendChild(script);
+        } else {
+          resolve();
+        }
+      });
+    }
+    
+    setupScene() {
+      // Scene setup
+      this.scene = new THREE.Scene();
+      this.camera = new THREE.PerspectiveCamera(
+        50, 
+        this.canvas.offsetWidth / this.canvas.offsetHeight, 
+        0.1, 
+        1000
+      );
+      
+      this.renderer = new THREE.WebGLRenderer({ 
+        canvas: this.canvas, 
+        alpha: true, 
+        antialias: true 
+      });
+      
+      this.renderer.setSize(this.canvas.offsetWidth, this.canvas.offsetHeight);
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      this.renderer.setClearColor(0x000000, 0);
+      this.renderer.shadowMap.enabled = true;
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      
+      // Initial camera position
+      this.camera.position.set(4, 2, 4);
+      this.camera.lookAt(0, 0, 0);
+      
+      // Store camera vectors for smooth interpolation
+      this.currentCameraPos = new THREE.Vector3(4, 2, 4);
+      this.targetCameraPos = new THREE.Vector3(4, 2, 4);
+    }
+    
+    setupEventListeners() {
+      // Hover effects
+      this.canvas.addEventListener('mouseenter', () => {
+        this.isHovered = true;
+      });
+      
+      this.canvas.addEventListener('mouseleave', () => {
+        this.isHovered = false;
+      });
+      
+      // Handle resize
+      this.resizeHandler = () => {
+        if (this.isDestroyed) return;
+        
+        const width = this.canvas.offsetWidth;
+        const height = this.canvas.offsetHeight;
+        
+        this.camera.aspect = width / height;
+        this.camera.updateProjectionMatrix();
+        
+        this.renderer.setSize(width, height);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      };
+      
+      window.addEventListener('resize', this.resizeHandler);
+    }
+    
+    async loadModel() {
+      return new Promise((resolve, reject) => {
+        const loader = new THREE.GLTFLoader();
+        loader.load(
+          this.config.modelPath,
+          (gltf) => {
+            if (this.isDestroyed) return;
+            
+            this.model = gltf.scene;
+            
+            // Scale and center the model
+            this.model.scale.setScalar(this.config.scale);
+            this.model.position.set(0, 0, 0);
+            
+            // Calculate bounding box to center model
+            const box = new THREE.Box3().setFromObject(this.model);
+            const center = box.getCenter(new THREE.Vector3());
+            this.model.position.sub(center);
+            
+            // Apply materials
+            this.model.traverse((child) => {
+              if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+                
+                // Slightly reflective black material
+                child.material = new THREE.MeshPhongMaterial({
+                  color: 0x000000,
+                  specular: 0x222222,
+                  shininess: 10,
+                  transparent: false,
+                  opacity: 1.0
+                });
+              }
+            });
+            
+            this.scene.add(this.model);
+            
+            // Add a subtle ground shadow receiver (optional)
+            const shadowGeometry = new THREE.PlaneGeometry(10, 10);
+            const shadowMaterial = new THREE.ShadowMaterial({ 
+              opacity: 0.1 
+            });
+            const shadowMesh = new THREE.Mesh(shadowGeometry, shadowMaterial);
+            shadowMesh.rotation.x = -Math.PI / 2;
+            shadowMesh.position.y = -1;
+            shadowMesh.receiveShadow = true;
+            this.scene.add(shadowMesh);
+            
+            resolve();
+          },
+          (progress) => {
+            console.log('Loading:', Math.round(progress.loaded / progress.total * 100) + '%');
+          },
+          (error) => {
+            console.error('Error loading model:', error);
+            reject(error);
+          }
+        );
+      });
+    }
+    
+    startAnimation() {
+      let lastTime = performance.now();
+      
+      const animate = (currentTime) => {
+        if (this.isDestroyed) return;
+        
+        this.animationId = requestAnimationFrame(animate);
+        
+        // Calculate delta time
+        const deltaTime = (currentTime - lastTime) / 1000;
+        lastTime = currentTime;
+        
+        // Update time
+        this.time += deltaTime;
+        
+        // Update transition state
+        this.targetTransition = this.isHovered ? 1 : 0;
+        const transitionDelta = this.targetTransition - this.currentTransition;
+        this.currentTransition += transitionDelta * deltaTime * this.config.transitionSpeed;
+        
+        // Clamp transition value
+        this.currentTransition = Math.max(0, Math.min(1, this.currentTransition));
+        
+        // Calculate idle position
+        const idleAngle = this.time * 0.1;
+        const idleX = 4 + Math.sin(idleAngle) * 0.5;
+        const idleZ = 4 + Math.cos(idleAngle) * 0.5;
+        const idleY = 2;
+        
+        // Calculate orbit position
+        const orbitAngle = this.time * this.config.orbitSpeed;
+        const orbitX = Math.cos(orbitAngle) * this.config.orbitRadius;
+        const orbitZ = Math.sin(orbitAngle) * this.config.orbitRadius;
+        const orbitY = this.config.cameraHeight + Math.sin(orbitAngle * 2) * 0.5;
+        
+        // Smooth interpolation between idle and orbit positions
+        const t = this.easeInOutCubic(this.currentTransition);
+        const x = idleX + (orbitX - idleX) * 10 * t;
+        const y = idleY + (orbitY - idleY) * 10 *  t;
+        const z = idleZ + (orbitZ - idleZ) * 10 *  t;
+        
+        // Update camera position with smooth interpolation
+        this.targetCameraPos.set(x, y, z);
+        
+        // Smooth camera movement using lerp
+        this.currentCameraPos.lerp(this.targetCameraPos, deltaTime * 5);
+        this.camera.position.copy(this.currentCameraPos);
+        this.camera.lookAt(0, 0, 0);
+        
+        this.renderer.render(this.scene, this.camera);
+      };
+      
+      animate(performance.now());
+    }
+    
+    // Easing function for smooth transitions
+    easeInOutCubic(t) {
+      return t < 0.5 
+        ? 4 * t * t * t 
+        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    }
+    
+    destroy() {
+      this.isDestroyed = true;
+      
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+        this.animationId = null;
+      }
+      
+      if (this.resizeHandler) {
+        window.removeEventListener('resize', this.resizeHandler);
+      }
+      
+      // Dispose of Three.js resources
+      if (this.model) {
+        this.scene.remove(this.model);
+        this.model = null;
+      }
+      
+      if (this.renderer) {
+        this.renderer.dispose();
+        this.renderer = null;
+      }
+      
+      // Dispose of materials and geometries
+      if (this.scene) {
+        this.scene.traverse((object) => {
+          if (object.geometry) {
+            object.geometry.dispose();
+          }
+          if (object.material) {
+            if (Array.isArray(object.material)) {
+              object.material.forEach(material => material.dispose());
+            } else {
+              object.material.dispose();
+            }
+          }
+        });
+        this.scene = null;
+      }
+      
+      this.camera = null;
+    }
+  }
+
+  // Initialize all ThreeJS Logo instances on the page
+  function initThreeJSLogos() {
+    const canvases = document.querySelectorAll('.threejs-canvas');
+    const instances = [];
+    
+    canvases.forEach(canvas => {
+      const instance = new ThreeJSLogo(canvas);
+      instances.push(instance);
+      // Store instance on canvas for cleanup
+      canvas._threeJSInstance = instance;
+    });
+    
+    return instances;
+  }
+  
+  // Cleanup function
+  function cleanupThreeJSLogos() {
+    const canvases = document.querySelectorAll('.threejs-canvas');
+    canvases.forEach(canvas => {
+      if (canvas._threeJSInstance) {
+        canvas._threeJSInstance.destroy();
+        canvas._threeJSInstance = null;
+      }
+    });
+  }
+  
+  // Auto-initialize on DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initThreeJSLogos);
+  } else {
+    // DOMContentLoaded already fired
+    initThreeJSLogos();
+  }
+  
+  // Handle Astro view transitions
+  document.addEventListener('astro:after-swap', () => {
+    cleanupThreeJSLogos();
+    initThreeJSLogos();
+  });
+  
+  // Store functions globally for manual use if needed
+  window.ThreeJSLogo = {
+    init: initThreeJSLogos,
+    cleanup: cleanupThreeJSLogos
+  };
+</script>

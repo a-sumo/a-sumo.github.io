@@ -2,4 +2,4 @@
 layout: ../layouts/AboutLayout.astro
 title: "About"
 ---
-Hi, I'm Armand Sumo, a front-end developer passionate about creating functional and engaging web experiences. I leverage modern frameworks like React and Angular, combined with 3D visualization using Three js, to bring user-centric solutions to life.
+Armand Sumo, Front-end developer working at the intersection of digital interfaces and physical interaction. Building tools that serve genuine human needs.
