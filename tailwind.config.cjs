@@ -59,13 +59,13 @@ module.exports = {
       fontFamily: {
         mono: ["Roboto Mono", "monospace"],
         title: ["Roboto Mono", "monospace"], // For titles
-        body: ["freight-text-pro", "serif"], // For blog posts
+        body: ["Roboto Mono", "sans-serif"], // For blog posts
         sans: ["neue-haas-unica", "sans-serif"], // Alternative sans-serif
       },
       typography: {
         DEFAULT: {
           css: {
-            fontFamily: '"freight-text-pro", serif', // Default typography uses Adobe font
+            fontFamily: '"Roboto Mono", serif',
             pre: {
               color: false,
             },
