@@ -1,16 +1,17 @@
 ---
+function capitalizeBreadcrumb(segment) {
+  if (!segment || typeof segment !== 'string') return '';
+  return segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase();
+}
 // Remove current url path and remove trailing slash if exists
 const currentUrlPath = Astro.url.pathname.replace(/\/+$/, "");
-
 // Get url array from path
 // eg: /tags/tailwindcss => ['tags', 'tailwindcss']
 const breadcrumbList = currentUrlPath.split("/").slice(1);
-
 // if breadcrumb is Home > Posts > 1 <etc>
 // replace Posts with Posts (page number)
 breadcrumbList[0] === "posts" &&
   breadcrumbList.splice(0, 2, `Posts (page ${breadcrumbList[1] || 1})`);
-
 // if breadcrumb is Home > Tags > [tag] > [page] <etc>
 // replace [tag] > [page] with [tag] (page number)
 breadcrumbList[0] === "tags" &&
@@ -18,12 +19,11 @@ breadcrumbList[0] === "tags" &&
   breadcrumbList.splice(
     1,
     3,
-    `${breadcrumbList[1]} ${
+    `${capitalizeBreadcrumb(breadcrumbList[1])} ${
       Number(breadcrumbList[2]) === 1 ? "" : "(page " + breadcrumbList[2] + ")"
     }`
   );
 ---
-
 <nav class="breadcrumb" aria-label="breadcrumb">
   <ul>
     <li>
@@ -35,16 +35,16 @@ breadcrumbList[0] === "tags" &&
         index + 1 === breadcrumbList.length ? (
           <li>
             <span
-              class={`${index > 0 ? "lowercase" : "capitalize"}`}
+              class={`${breadcrumbList[0] === "tags" && index > 0 ? "lowercase" : "capitalize"}`}
               aria-current="page"
             >
               {/* make the last part lowercase in Home > Tags > some-tag */}
-              {decodeURIComponent(breadcrumb)}
+              {breadcrumbList[0] === "tags" && index > 0 ? decodeURIComponent(breadcrumb) : capitalizeBreadcrumb(decodeURIComponent(breadcrumb))}
             </span>
           </li>
         ) : (
           <li>
-            <a href={`/${breadcrumb}/`}>{breadcrumb}</a>
+            <a href={`/${breadcrumb}/`}>{capitalizeBreadcrumb(breadcrumb)}</a>
             <span aria-hidden="true">&raquo;</span>
           </li>
         )
@@ -52,7 +52,6 @@ breadcrumbList[0] === "tags" &&
     }
   </ul>
 </nav>
-
 <style>
   .breadcrumb {
     @apply mx-auto mb-1 mt-8 w-full max-w-3xl px-4;
@@ -61,7 +60,7 @@ breadcrumbList[0] === "tags" &&
     @apply inline;
   }
   .breadcrumb ul li a {
-    @apply capitalize opacity-70;
+    @apply opacity-70;
   }
   .breadcrumb ul li span {
     @apply opacity-70;
@@ -69,4 +68,5 @@ breadcrumbList[0] === "tags" &&
   .breadcrumb ul li:not(:last-child) a {
     @apply hover:opacity-100;
   }
+  
 </style>

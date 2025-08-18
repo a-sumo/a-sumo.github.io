@@ -4,7 +4,7 @@ import Hr from "./Hr.astro";
 import LinkButton from "./LinkButton.astro";
 
 export interface Props {
-  activeNav?: "posts" | "archives" | "tags" | "about" | "search" | "books";
+  activeNav?: "home" | "posts" | "archives" | "tags" | "about" | "search" | "resources";
 }
 
 const { activeNav } = Astro.props;
@@ -38,7 +38,7 @@ const { activeNav } = Astro.props;
             stroke-width="1.5"
             stroke-linecap="round"
             stroke-linejoin="round"
-            class="menu-icon"
+            class ="menu-icon"
           >
             <line x1="7" y1="12" x2="21" y2="12" class="line"></line>
             <line x1="3" y1="6" x2="21" y2="6" class="line"></line>
@@ -49,6 +49,11 @@ const { activeNav } = Astro.props;
         </button>
 
         <ul id="menu-items" class="display-none sm:flex">
+          <li>
+            <a href={`${import.meta.env.BASE_URL}`} class={activeNav === "home" ? "active" : ""}>
+              Home
+            </a>
+          </li>
           <li>
             <a href={`${import.meta.env.BASE_URL}posts/`} class={activeNav === "posts" ? "active" : ""}>
               Posts
@@ -62,26 +67,23 @@ const { activeNav } = Astro.props;
           
           <!-- Resources Dropdown -->
           <li class="dropdown">
-            <button class={`dropdown-toggle ${activeNav === "books" ? "active" : ""}`}>
-              Resources
+            <button class={`dropdown-toggle ${(activeNav === "books" || activeNav === "resources") ? "active" : ""}`}>
+              <span>Resources</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="dropdown-arrow"
-                width="14"
-                height="14"
+                width="12"
+                height="12"
                 viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                fill="currentColor"
+                stroke="none"
               >
-                <path d="m6 9 6 6 6-6"/>
+                <path d="M7 10l5 5 5-5z"/>
               </svg>
             </button>
             <ul class="dropdown-menu">
               <li>
-                <a href={`${import.meta.env.BASE_URL}resources/books/`}>
+                <a href={`${import.meta.env.BASE_URL}resources/Books/`}>
                   Books
                 </a>
               </li>
@@ -164,7 +166,6 @@ const { activeNav } = Astro.props;
       </nav>
     </div>
   </div>
-  <Hr />
 </header>
 
 <style>
@@ -174,13 +175,13 @@ const { activeNav } = Astro.props;
   }
 
   header {
-    @apply relative overflow-hidden;
+    @apply relative overflow-visible;
   }
 
   .nav-container {
-    @apply mx-auto flex max-w-3xl flex-col items-center justify-between sm:flex-row;
+    @apply mx-auto flex max-w-6xl flex-col items-center justify-between sm:flex-row;
     position: relative;
-    z-index: 1;
+    z-index: 1000;
   }
 
   .top-nav-wrap {
@@ -232,9 +233,12 @@ const { activeNav } = Astro.props;
     @apply col-span-2 flex items-center justify-center;
   }
 
+  /* Fixed: Ensure all nav links and buttons get proper styling */
   nav ul li a,
-  nav ul li .dropdown-toggle {
+  nav ul li .dropdown-toggle,
+  nav ul li button {
     @apply w-full px-4 py-3 text-center font-medium hover:text-skin-accent sm:my-0 sm:px-2 sm:py-1;
+    transition: all 0.2s ease;
   }
 
   nav ul li:nth-last-child(2) a {
@@ -246,8 +250,12 @@ const { activeNav } = Astro.props;
     @apply col-span-1;
   }
 
-  nav .active {
-    @apply underline decoration-2 underline-offset-4;
+  /* Fixed: Ensure active state works for all nav elements */
+  nav .active,
+  nav a.active,
+  nav button.active,
+  nav .dropdown-toggle.active {
+    @apply underline decoration-2 underline-offset-4 text-skin-accent;
   }
 
   nav a.active svg {
@@ -270,13 +278,13 @@ const { activeNav } = Astro.props;
     @apply scale-125 hover:rotate-12 sm:scale-100;
   }
 
-  /* Dropdown Styles */
+  /* SIMPLIFIED DROPDOWN STYLES */
   .dropdown {
     @apply relative;
   }
 
   .dropdown-toggle {
-    @apply flex items-center justify-center gap-1 cursor-pointer border-none bg-transparent;
+    @apply inline-flex items-center justify-center gap-1 cursor-pointer border-none bg-transparent;
     transition: color 0.2s ease;
   }
 
@@ -284,14 +292,26 @@ const { activeNav } = Astro.props;
     transition: transform 0.2s ease;
   }
 
-  /* Dropdown menu */
+  /* Clean rectangular dropdown menu */
   .dropdown-menu {
-    @apply absolute left-1/2 top-full mt-1 min-w-[100px] py-1 rounded-md bg-skin-card border border-skin-line shadow-lg;
-    transform: translateX(-50%) translateY(-10px);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    min-width: 140px;
+    background: white;
+    border: 1px solid #000;
+    border-radius: 0;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s ease;
-    z-index: 50;
+    z-index: 9999;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Show dropdown on hover (desktop) */
@@ -299,7 +319,6 @@ const { activeNav } = Astro.props;
     .dropdown:hover .dropdown-menu {
       opacity: 1;
       visibility: visible;
-      transform: translateX(-50%) translateY(0);
     }
     
     .dropdown:hover .dropdown-arrow {
@@ -311,33 +330,108 @@ const { activeNav } = Astro.props;
   .dropdown.open .dropdown-menu {
     opacity: 1;
     visibility: visible;
-    transform: translateX(-50%) translateY(0);
   }
 
   .dropdown.open .dropdown-arrow {
     transform: rotate(180deg);
   }
 
-  /* Dropdown menu items */
+  /* Dropdown menu items with black separators and grey hover */
   .dropdown-menu li {
-    @apply block w-full;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #000;
+    width: 100%;
+    display: block;
+    position: relative; /* For absolute positioning of link */
+  }
+
+  .dropdown-menu li:last-child {
+    border-bottom: none;
   }
 
   .dropdown-menu a {
-    @apply block px-3 py-2 text-sm text-center whitespace-nowrap transition-colors duration-150;
-    @apply hover:bg-skin-fill hover:text-skin-accent rounded;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: inherit;
+    background: white;
+    transition: background-color 0.2s ease;
+    border: none;
+    border-radius: 0;
+    font-weight: normal;
+    text-align: left;
+    box-sizing: border-box;
+    margin: 0;
+    width: auto; /* Let absolute positioning handle the width */
+    height: auto; /* Let absolute positioning handle the height */
+  }
+
+  /* Set minimum height for li to ensure proper sizing */
+  .dropdown-menu li {
+    min-height: 44px; /* Ensure consistent height */
+    cursor: pointer;
+  }
+
+  .dropdown-menu li:hover {
+    background-color: #f5f5f5;
+  }
+
+  .dropdown-menu li:hover a {
+    background-color: #f5f5f5;
+    color: inherit;
+  }
+
+  /* Ensure no gaps or margins that could break hover */
+  .dropdown-menu {
+    padding: 0;
+    margin: 0;
+  }
+
+  .dropdown-menu ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
   }
 
   /* Mobile dropdown adjustments */
   @media (max-width: 640px) {
     .dropdown-menu {
-      @apply static mt-2 shadow-none border-0 bg-transparent;
+      position: static;
+      margin-top: 8px;
       transform: none;
+      box-shadow: none;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
     }
     
     .dropdown-menu a {
-      @apply px-4 py-3 text-base;
+      padding: 12px 16px;
+      text-align: center;
+      background: #f9f9f9;
     }
+
+    .dropdown-menu a:hover {
+      background-color: #e5e5e5;
+    }
+  }
+
+  /* Additional fix for LinkButton active states */
+  .focus-outline.active,
+  :global(.focus-outline.active) {
+    @apply underline decoration-2 underline-offset-4 text-skin-accent;
+  }
+
+  /* Ensure LinkButton spans get active styling */
+  .focus-outline.active span,
+  :global(.focus-outline.active span) {
+    @apply text-skin-accent;
   }
 </style>
 
