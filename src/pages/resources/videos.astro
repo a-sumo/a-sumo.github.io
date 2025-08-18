@@ -1,0 +1,275 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+
+const videos = [
+    {
+    title: "Dharma Inquiry",
+    author: "Daniel Schmachtenberger The Stoa",
+    youtubeId: "Pyy3veuvXVE",
+    comment: ""
+  },
+  {
+    title: "The Millenium Interview",
+    author: "David Bohm Society",
+    youtubeId: "_RmCCuwDMfk",
+    comment: ""
+  },
+    {
+    title: "Dharma Inquiry",
+    author: "Daniel Schmachtenberger The Stoa",
+    youtubeId: "Pyy3veuvXVE",
+    comment: ""
+  },
+    {
+    title: "How Artificial Intelligence Could Harm Future Generations",
+    author: "Zak Stein, Nate Hagens",
+    youtubeId: "Ydv9SmVvpV8",
+    comment: ""
+  },
+    {
+    title: "Get ready for hybrid thinking",
+    author: "Ray Kurzweil, TED",
+    youtubeId: "PVXQUItNEDQ",
+    comment: ""
+  }
+];
+
+// Helper function to extract YouTube ID from various URL formats
+function getYouTubeId(url) {
+  if (!url) return '';
+  
+  // If it's already just an ID
+  if (url.length === 11 && !url.includes('/')) {
+    return url;
+  }
+  
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : url;
+}
+---
+
+<Layout title="Video List - Resources">
+  <Header activeNav="resources" />
+  <Breadcrumbs />
+  <main id="main-content">
+    <section class="py-12 px-4">
+      <div class="mx-auto max-w-6xl">
+        <div class="grid grid-cols-2 lg:grid-cols-2 gap-8">
+          {videos.map((video, index) => (
+            <article class="flex flex-col">
+              <!-- Fixed height title container -->
+              <div class="h-20 mb-4 flex items-center justify-center">
+                <h3 class="text-lg font-medium text-skin-base leading-tight line-clamp-3 text-center px-2">
+                  {video.title} – {video.author}
+                </h3>
+              </div>
+              
+              <!-- YouTube embed container -->
+              <div class="mb-4 relative w-full">
+                <!-- Placeholder for loading state -->
+                <div class={`w-full aspect-video bg-gray-200 border border-skin-border flex items-center justify-center video-placeholder absolute top-0 left-0 z-10 video-placeholder-${index}`}>
+                  <div class="text-center">
+                    <div class="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                    <p class="text-sm text-gray-600">Loading video...</p>
+                  </div>
+                </div>
+                
+                <!-- YouTube iframe -->
+                <iframe
+                  class={`w-full aspect-video border border-skin-border video-iframe opacity-0 transition-opacity duration-300 video-iframe-${index}`}
+                  src={`https://www.youtube.com/embed/${getYouTubeId(video.youtubeId)}?rel=0&modestbranding=1`}
+                  title={`${video.title} by ${video.author}`}
+                  frameborder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowfullscreen
+                  loading="lazy"
+                  data-index={index}
+                ></iframe>
+              </div>
+              
+              {video.comment && (
+                <div class="flex-1">
+                  <p class="text-sm text-skin-base leading-relaxed">
+                    {video.comment}
+                  </p>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  /* Custom CSS for line clamping */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Video loading styles */
+  .video-placeholder {
+    background-color: #f5f5f5;
+    transition: opacity 0.3s ease;
+  }
+
+  .video-iframe {
+    transition: opacity 0.3s ease;
+  }
+
+  .video-iframe.loaded {
+    opacity: 1;
+  }
+
+  .video-placeholder.hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Ensure consistent spacing and responsive aspect ratio */
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+
+  article {
+    min-height: 350px;
+  }
+
+  /* Custom scrollbar for better visual consistency */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+</style>
+
+<script>
+  function handleVideoLoading() {
+    const iframes = document.querySelectorAll('.video-iframe');
+    
+    iframes.forEach((iframe) => {
+      const index = iframe.dataset.index;
+      const placeholder = document.querySelector(`.video-placeholder-${index}`);
+      
+      if (!placeholder) {
+        console.warn('Placeholder not found for video', index);
+        return;
+      }
+
+      // Reset states
+      iframe.classList.remove('loaded');
+      placeholder.classList.remove('hidden');
+      
+      // Function to show video and hide placeholder
+      const showVideo = () => {
+        iframe.classList.add('loaded');
+        placeholder.classList.add('hidden');
+      };
+
+      // Function to show error state
+      const showError = () => {
+        placeholder.innerHTML = `
+          <div class="text-center text-gray-500 p-4">
+            <svg class="w-12 h-12 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            <p class="text-sm">Video not available</p>
+            <button onclick="retryVideoLoading()" class="text-xs text-blue-600 hover:text-blue-800 mt-2 underline">Retry</button>
+          </div>
+        `;
+        placeholder.classList.remove('hidden');
+      };
+
+      // Set up iframe load event
+      const onLoad = () => {
+        showVideo();
+      };
+
+      const onError = () => {
+        showError();
+      };
+
+      iframe.addEventListener('load', onLoad);
+      iframe.addEventListener('error', onError);
+
+      // Timeout fallback for slow connections
+      setTimeout(() => {
+        if (!iframe.classList.contains('loaded')) {
+          console.log('Video loading timeout, showing video anyway for:', iframe.src);
+          showVideo(); // YouTube embeds often work even if load event doesn't fire
+        }
+      }, 5000);
+
+      // For YouTube embeds, we can also try to show after a short delay
+      // since the load event might not always fire reliably
+      setTimeout(showVideo, 2000);
+    });
+  }
+
+  // Handle initial page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', handleVideoLoading);
+  } else {
+    handleVideoLoading();
+  }
+
+  // Handle Astro page transitions
+  document.addEventListener('astro:after-swap', handleVideoLoading);
+
+  // Manual retry function
+  window.retryVideoLoading = function() {
+    console.log('Manually retrying video loading...');
+    handleVideoLoading();
+  };
+
+  // Optional: Add intersection observer for performance
+  function setupLazyVideoLoading() {
+    if ('IntersectionObserver' in window) {
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const iframe = entry.target;
+            if (!iframe.src.includes('youtube.com')) {
+              // Force load the iframe src if not already loaded
+              const originalSrc = iframe.getAttribute('data-src') || iframe.src;
+              iframe.src = originalSrc;
+            }
+            videoObserver.unobserve(iframe);
+          }
+        });
+      }, {
+        rootMargin: '50px'
+      });
+
+      document.querySelectorAll('.video-iframe').forEach(iframe => {
+        videoObserver.observe(iframe);
+      });
+    }
+  }
+
+  // Initialize lazy loading
+  setupLazyVideoLoading();
+</script>

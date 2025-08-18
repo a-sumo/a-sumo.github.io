@@ -95,6 +95,11 @@ const { activeNav } = Astro.props;
                   Books
                 </a>
               </li>
+              <li>
+                <a href={`${import.meta.env.BASE_URL}resources/videos/`}>
+                  Videos
+                </a>
+              </li>
             </ul>
           </li>
 
@@ -443,18 +448,6 @@ const { activeNav } = Astro.props;
     .dropdown-menu a:hover {
       background-color: #e5e5e5;
     }
-  }
-
-  /* Additional fix for LinkButton active states */
-  .focus-outline.active,
-  :global(.focus-outline.active) {
-    @apply underline decoration-2 underline-offset-4 text-skin-accent;
-  }
-
-  /* Ensure LinkButton spans get active styling */
-  .focus-outline.active span,
-  :global(.focus-outline.active span) {
-    @apply text-skin-accent;
   }
 </style>
 
