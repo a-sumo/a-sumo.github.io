@@ -57,15 +57,16 @@ module.exports = {
         }
       },
       fontFamily: {
-        mono: ["Roboto Mono", "monospace"],
-        title: ["Roboto Mono", "monospace"], // For titles
-        body: ["Roboto Mono", "sans-serif"], // For blog posts
-        sans: ["neue-haas-unica", "sans-serif"], // Alternative sans-serif
+        sans: ["Libertinus Sans", "sans-serif"], // Primary sans-serif font
+        mulish: ["Mulish", "sans-serif"], // Mulish font family
+        title: ["Libertinus Sans", "sans-serif"], // For titles
+        body: ["Mulish", "sans-serif"], // For blog posts - using Mulish for better readability
+        mono: ["Roboto Mono", "monospace"], // Keep monospace for code
       },
       typography: {
         DEFAULT: {
           css: {
-            fontFamily: '"Roboto Mono", serif',
+            fontFamily: '"Libertinus Sans", sans-serif',
             pre: {
               color: false,
             },

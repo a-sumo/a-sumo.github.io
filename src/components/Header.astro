@@ -2,6 +2,8 @@
 import { LOGO_IMAGE, SITE } from "@config";
 import Hr from "./Hr.astro";
 import LinkButton from "./LinkButton.astro";
+import { Image } from 'astro:assets';
+import octantImage from './assets/logo-transparent.png';
 
 export interface Props {
   activeNav?: "home" | "posts" | "archives" | "tags" | "about" | "search" | "resources";
@@ -15,9 +17,15 @@ const { activeNav } = Astro.props;
   
   <div class="nav-container">
     <div class="top-nav-wrap" data-astro-prefetch>
-      <!-- Logo -->
+      <!-- Logo with improved loading -->
       <a href="/" class="logo-link" aria-label="Home">
-        <img src="/assets/logo-transparent.png" alt="Site Logo" class="logo-image" />
+        <Image 
+          src="/assets/logo-transparent.png"
+          alt="octantImage" 
+          class="logo-image" 
+          width="128"
+          height="128"
+        />
       </a>
       
       <!-- Navigation -->
@@ -193,7 +201,22 @@ const { activeNav } = Astro.props;
   }
 
   .logo-image {
-    @apply h-24 w-auto;
+    width: 128px;
+    height: 128px;
+    /* Prevent alt text from showing during load */
+    background-color: transparent;
+    /* Reserve space to prevent layout shift */
+    min-width: 128px;
+    min-height: 128px;
+    /* Hide alt text overflow */
+    overflow: hidden;
+    /* Smooth loading transition */
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  /* Optional: Show a subtle loading state */
+  .logo-image:not([src]) {
+    background-color: rgba(0, 0, 0, 0.05);
   }
 
   .hamburger-menu {

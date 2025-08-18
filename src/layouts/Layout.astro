@@ -1,7 +1,7 @@
 ---
+import { ViewTransitions } from "astro:transitions";
 import { LOCALE, SITE } from "@config";
 import "@styles/base.css";
-import { ViewTransitions } from "astro:transitions";
 
 const googleSiteVerification = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION;
 const baseUrl = import.meta.env.BASE_URL;
@@ -95,6 +95,9 @@ const structuredData = {
       )
     }
 
+    <!-- View Transitions API -->
+    <ViewTransitions />
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
@@ -109,15 +112,9 @@ const structuredData = {
     />
 
     <!-- Google Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
-      rel="preload"
-      as="style"
-      onload="this.onload=null; this.rel='stylesheet';"
-      crossorigin
-    />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libertinus+Sans:ital,wght@0,400;0,700;1,400&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
 
     <meta name="theme-color" content="" />
 
@@ -132,9 +129,6 @@ const structuredData = {
         />
       )
     }
-
-    <ViewTransitions />
-
     <script is:inline src="${import.meta.env.BASE_URL}toggle-theme.js" async></script>
   </head>
   <body>
