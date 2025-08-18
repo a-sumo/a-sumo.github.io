@@ -21,7 +21,10 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
-      
+        
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       - name: Install dependencies and build the site
         uses: withastro/action@v3
         with:
