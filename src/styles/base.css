@@ -12,58 +12,91 @@
     --color-card-muted: 205, 205, 205;
     --color-border: 236, 233, 233;
   }
+  
   html[data-theme="dark"] {
     --color-fill: 33, 39, 55;
     --color-text-base: 234, 237, 243;
     --color-accent: 255, 107, 1;
     --color-card: 52, 63, 96;
-    --color-card-muted: 138, 51, 2;
+    --color-card-muted: 138, 51, 0;
     --color-border: 171, 75, 8;
   }
+
+  /* Theme toggle icons */
   #sun-svg,
   html[data-theme="dark"] #moon-svg {
     display: none;
   }
+  
   #moon-svg,
   html[data-theme="dark"] #sun-svg {
     display: block;
   }
+
+  /* Logo theme switching */
+  .logo-light {
+    display: block;
+  }
+  
+  .logo-dark {
+    display: none;
+  }
+  
+  html[data-theme="dark"] .logo-light {
+    display: none;
+  }
+  
+  html[data-theme="dark"] .logo-dark {
+    display: block;
+  }
+
   body {
     @apply flex min-h-[100svh] flex-col bg-skin-fill font-mono text-skin-base selection:bg-skin-accent/70 selection:text-skin-inverted;
   }
+  
   section,
   footer {
     @apply mx-auto max-w-6xl px-4;
   }
+  
   a {
     @apply outline-2 outline-offset-1 outline-skin-fill focus-visible:no-underline focus-visible:outline-dashed;
   }
+  
   svg {
     @apply inline-block h-6 w-6 fill-skin-base group-hover:fill-skin-accent;
   }
+  
   svg.icon-tabler {
     @apply inline-block h-6 w-6 scale-125 fill-transparent stroke-current stroke-2 opacity-90 group-hover:fill-transparent sm:scale-110;
   }
+
   .prose {
     @apply prose-headings:!mb-3 prose-headings:!text-skin-base prose-h3:italic prose-p:!text-skin-base prose-a:!text-skin-base prose-a:!decoration-dashed prose-a:underline-offset-8 hover:prose-a:text-skin-accent prose-blockquote:!border-l-skin-accent/50 prose-blockquote:opacity-80 prose-figcaption:!text-skin-base prose-figcaption:opacity-70 prose-strong:!text-skin-base prose-code:rounded prose-code:bg-skin-card/75 prose-code:p-1 prose-code:before:!content-none prose-code:after:!content-none prose-ol:!text-skin-base prose-ul:overflow-x-clip prose-ul:!text-skin-base prose-li:marker:!text-skin-accent prose-table:text-skin-base prose-th:border prose-th:border-skin-line prose-td:border prose-td:border-skin-line prose-img:!my-2 prose-img:mx-auto prose-img:border-2 prose-img:border-skin-line prose-hr:!border-skin-line;
   }
+  
   .prose a {
     @apply break-words hover:!text-skin-accent;
   }
+  
   .prose thead th:first-child,
   tbody td:first-child,
   tfoot td:first-child {
     padding-left: 0.5714286em;
   }
+  
   .prose h2#table-of-contents {
     @apply mb-2;
   }
+  
   .prose details {
     @apply inline-block cursor-pointer select-none text-skin-base;
   }
+  
   .prose summary {
     @apply focus-outline;
   }
+  
   .prose h2#table-of-contents + p {
     @apply hidden;
   }
@@ -72,23 +105,19 @@
   html {
     overflow-y: scroll;
   }
-
-  /* width */
+  
   ::-webkit-scrollbar {
     @apply w-3;
   }
-
-  /* Track */
+  
   ::-webkit-scrollbar-track {
     @apply bg-skin-fill;
   }
-
-  /* Handle */
+  
   ::-webkit-scrollbar-thumb {
     @apply bg-skin-card;
   }
-
-  /* Handle on hover */
+  
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-skin-card-muted;
   }
@@ -97,16 +126,16 @@
   pre:has(code) {
     @apply border border-skin-line;
   }
+  
   code,
   blockquote {
     word-wrap: break-word;
   }
-
+  
   pre > code {
     white-space: pre;
   }
-
-  /* Apply Dark Theme (if multi-theme specified) */
+  
   html[data-theme="dark"] pre:has(code),
   html[data-theme="dark"] pre:has(code) span {
     color: var(--shiki-dark) !important;
@@ -121,8 +150,147 @@
   .display-none {
     @apply hidden;
   }
+  
   .focus-outline {
     @apply outline-2 outline-offset-1 outline-skin-fill focus-visible:no-underline focus-visible:outline-dashed;
   }
-}
 
+  /* ===== DROPDOWN COMPONENTS ===== */
+  .dropdown {
+    @apply relative;
+  }
+
+  .dropdown-toggle {
+    @apply inline-flex items-center justify-center gap-1 cursor-pointer border-none bg-transparent;
+    @apply w-full px-4 py-3 text-center font-medium hover:text-skin-accent sm:my-0 sm:px-2 sm:py-1;
+    transition: all 0.2s ease;
+  }
+
+  .dropdown-arrow {
+    transition: transform 0.2s ease;
+  }
+
+  /* Base dropdown menu styles */
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+    min-width: 160px;
+    @apply bg-skin-fill border border-skin-line shadow-lg;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 9999;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Show dropdown on hover (desktop) */
+  @media (min-width: 640px) {
+    .dropdown:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .dropdown:hover .dropdown-arrow {
+      transform: rotate(180deg);
+    }
+  }
+
+  /* Show dropdown on click (mobile) */
+  .dropdown.open .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .dropdown.open .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown menu items */
+  .dropdown-menu li {
+    margin: 0;
+    padding: 0;
+    @apply border-b border-skin-line;
+    width: 100%;
+    display: block;
+    position: relative;
+    min-height: 44px;
+    cursor: pointer;
+  }
+
+  .dropdown-menu li:last-child {
+    border-bottom: none;
+  }
+
+  .dropdown-menu li:hover {
+    @apply bg-skin-card;
+  }
+
+  .dropdown-menu a {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    text-decoration: none;
+    @apply text-skin-base bg-skin-fill;
+    transition: all 0.2s ease;
+    border: none;
+    font-weight: normal;
+    text-align: left;
+    box-sizing: border-box;
+    margin: 0;
+  }
+
+  .dropdown-menu li:hover a {
+    @apply bg-skin-card text-skin-base;
+  }
+
+  /* Mobile dropdown adjustments */
+  @media (max-width: 640px) {
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      transform: none;
+      margin-top: 8px;
+      @apply bg-skin-card border-skin-line;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .dropdown.open .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .dropdown-menu a {
+      position: relative;
+      padding: 12px 16px;
+      text-align: center;
+      @apply bg-skin-card;
+      display: block;
+    }
+
+    .dropdown-menu a:hover {
+      @apply bg-skin-card-muted;
+    }
+    
+    .dropdown-menu li {
+      @apply border-b border-skin-line;
+    }
+  }
+}
