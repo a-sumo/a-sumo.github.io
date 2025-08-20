@@ -14,7 +14,7 @@ const books = [
   {
     title: "Operating Manual for Spaceship Earth",
     author: "Richard Buckminster Fuller",
-    image: "/assets/books/Operating-Manual-For-Spaceship-Earth.jpg",
+    image: "/assets/books/Manual-Bucky.jpg",
     comment: ""
   },
   {
@@ -35,6 +35,13 @@ const books = [
     image: "/assets/books/The-Heroic-Heart.jpg",
     comment: ""
   },
+    {
+    title: "Who Is Pulling the Strings?",
+    author: "Ajahn Amaro",
+    image: "/assets/books/Who-Is-Pulling-The-Strings.png",
+    comment: ""
+  },
+  
   {
     title: "The Master and His Emissary",
     author: "Iain McGilchrist",
@@ -107,7 +114,7 @@ const books = [
               </div>
               
               <!-- Image container -->
-              <div class="mb-4 relative max-w-64">
+              <div class="mb-4 relative max-w-72">
                 <!-- Placeholder that shows while loading -->
                 <div class={`bg-gradient-to-br from-gray-100 to-gray-200 border border-skin-border flex items-center justify-center book-placeholder book-placeholder-${index} transition-opacity duration-200 min-h-64`}>
                   <div class="text-gray-400 text-xs text-center px-4">
@@ -237,15 +244,13 @@ const books = [
 
       const showError = () => {
         clearTimeout(timeoutId);
-        placeholder.innerHTML = `
-          <div class="text-gray-400 text-xs text-center p-4">
-            <div class="mb-2">📚</div>
-            <div>Image unavailable</div>
-            <button onclick="window.retryImage(${index})" class="mt-2 text-xs underline hover:no-underline">
-              Retry
-            </button>
-          </div>
-        `;
+        // Gracefully hide the entire image container
+        const container = img.parentElement;
+        container.style.display = 'none';
+        
+        // Or if you prefer to fade it out:
+        // container.style.opacity = '0';
+        // container.style.pointerEvents = 'none';
       };
 
       const attemptLoad = () => {
