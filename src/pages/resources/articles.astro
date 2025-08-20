@@ -1,0 +1,100 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+
+const articles = [
+  {
+    title: "Technology is Not Values Neutral: Ending the Reign of Nihilistic Design",
+    author: "The Consilience Project",
+    description: "\"We fail to take tech seriously when we do not grasp its full impact on humans.\"",
+    url: "https://consilienceproject.org/technology-is-not-values-neutral-ending-the-reign-of-nihilistic-design-2/",
+    date: "2021"
+  },
+];
+---
+
+<Layout title="Articles - Resources">
+  <Header activeNav="resources" />
+  <Breadcrumbs />
+  <main id="main-content">
+    <section class="py-12 px-4">
+      <div class="mx-auto max-w-4xl">
+        <div class="space-y-8">
+          {articles.map((article, index) => (
+            <article class="border-b border-skin-border pb-8 last:border-b-0">
+              <div class="flex flex-col space-y-4">
+                <!-- Title and Author -->
+                <div>
+                  <h2 class="text-2xl sm:text-3xl font-bold text-skin-accent mb-2 leading-tight">
+                    <a 
+                      href={article.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      class="hover:underline transition-all duration-200"
+                    >
+                      {article.title}
+                    </a>
+                  </h2>
+                  <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-skin-base">
+                    <p class="text-lg font-medium">
+                      By {article.author}
+                    </p>
+                    {article.date && (
+                      <p class="text-sm text-skin-muted">
+                        {article.date}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                
+                <!-- Description -->
+                <p class="text-base text-skin-base leading-relaxed max-w-3xl">
+                  {article.description}
+                </p>
+                
+                <!-- Read Link -->
+                <div class="pt-2">
+                  <a 
+                    href={article.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center text-skin-accent hover:text-skin-accent-dark font-medium transition-colors duration-200"
+                  >
+                    Read Article
+                  </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  /* Custom hover effects */
+  article {
+    transition: transform 0.2s ease;
+  }
+  
+  article:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Ensure consistent spacing and typography */
+  h2 a:hover {
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+  
+  /* Focus states for accessibility */
+  a:focus {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+</style>

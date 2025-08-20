@@ -75,7 +75,7 @@ const { activeNav } = Astro.props;
           
           <!-- Resources Dropdown -->
           <li class="dropdown">
-            <button class={`dropdown-toggle ${(activeNav === "books" || activeNav === "resources") ? "active" : ""}`}>
+            <button class={`dropdown-toggle ${(activeNav === "books" || activeNav === "resources" || activeNav === "articles" ) ? "active" : ""}`}>
               <span>Resources</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -98,6 +98,11 @@ const { activeNav } = Astro.props;
               <li>
                 <a href={`${import.meta.env.BASE_URL}resources/videos/`}>
                   Videos
+                </a>
+              </li>
+              <li>
+                <a href={`${import.meta.env.BASE_URL}resources/articles/`}>
+                  Articles
                 </a>
               </li>
             </ul>
@@ -428,27 +433,50 @@ const { activeNav } = Astro.props;
     list-style: none;
   }
 
-  /* Mobile dropdown adjustments */
-  @media (max-width: 640px) {
-    .dropdown-menu {
-      position: static;
-      margin-top: 8px;
-      transform: none;
-      box-shadow: none;
-      border: 1px solid #ccc;
-      background: #f9f9f9;
-    }
+/* Mobile dropdown adjustments - OVERLAY ON TOP */
+@media (max-width: 640px) {
+  .dropdown-menu {
+    /* Keep it positioned absolutely to overlay */
+    position: absolute;
+    top: 100%;
+    left: 0; /* Align to left edge instead of center */
+    right: 0; /* Stretch to full width on mobile */
+    transform: none;
+    margin-top: 8px;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
     
-    .dropdown-menu a {
-      padding: 12px 16px;
-      text-align: center;
-      background: #f9f9f9;
-    }
-
-    .dropdown-menu a:hover {
-      background-color: #e5e5e5;
-    }
+    /* Hide by default */
+    opacity: 0;
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
   }
+  
+  /* Show when open */
+  .dropdown.open .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .dropdown-menu a {
+    position: relative; /* Remove absolute positioning on mobile */
+    padding: 12px 16px;
+    text-align: center;
+    background: #f9f9f9;
+    display: block;
+  }
+
+  .dropdown-menu a:hover {
+    background-color: #e5e5e5;
+  }
+  
+  .dropdown-menu li {
+    border-bottom: 1px solid #ccc; /* Lighter border on mobile */
+  }
+}
 </style>
 
 <script>
