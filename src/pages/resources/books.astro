@@ -29,7 +29,7 @@ const books = [
     image: "/assets/books/How-To-Prove-It.jpg",
     comment: ""
   },
-    {
+  {
     title: "The Heroic Heart - Awakening Unbound Compassion",
     author: "Jetsunna Tenzin Palmo",
     image: "/assets/books/The-Heroic-Heart.jpg",
@@ -72,7 +72,7 @@ const books = [
     comment: ""
   },
   {
-    title: "SYNERGETICS. Explorations in the Geometry of Thinking ",
+    title: "SYNERGETICS. Explorations in the Geometry of Thinking",
     author: "Richard Buckminster Fuller",
     image: "/assets/books/Synergetics.jpg",
     comment: ""
@@ -83,32 +83,53 @@ const books = [
 <Layout title="Reading List - Resources">
   <Header activeNav="resources" />
   <Breadcrumbs />
+  
+  <!-- Critical resource hints for fastest loading -->
+  <link slot="head" rel="preconnect" href={new URL(Astro.url.origin).origin}>
+  <link slot="head" rel="dns-prefetch" href={new URL(Astro.url.origin).origin}>
+  
+  <!-- Preload first 4 images immediately -->
+  {books.slice(0, 4).map(book => (
+    <link slot="head" rel="preload" as="image" href={book.image} />
+  ))}
+
   <main id="main-content">
     <section class="py-12 px-4">
       <div class="mx-auto max-w-4xl">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
           {books.map((book, index) => (
             <article class="flex flex-col items-center text-center">
-              <!-- Fixed height title container with overflow handling -->
+              <!-- Fixed height title container -->
               <div class="h-24 mb-4 flex items-center justify-center w-full">
                 <h3 class="text-lg font-medium text-skin-base leading-tight line-clamp-4 px-2">
                   {book.title} – {book.author}
                 </h3>
               </div>
               
-              <!-- Image container with placeholder and smooth loading -->
-              <div class="mb-4 relative w-64">
-                <!-- Placeholder div to prevent layout shift -->
-                <div class={`w-64 h-80 bg-gray-200 border border-skin-border flex items-center justify-center book-placeholder absolute top-0 left-0 z-10 book-placeholder-${index}`}>
-                  <div class="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+              <!-- Optimized image container -->
+              <div class="mb-4 relative w-64 h-80">
+                <!-- Low-quality placeholder with immediate show -->
+                <div class={`absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 border border-skin-border flex items-center justify-center book-placeholder book-placeholder-${index} transition-opacity duration-200`}>
+                  <div class="text-gray-400 text-xs text-center px-4">
+                    <div class="w-6 h-6 mx-auto mb-2 opacity-40">
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h12V4H6zm2 2h8v2H8V6zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/>
+                      </svg>
+                    </div>
+                    Loading...
+                  </div>
                 </div>
-                <!-- Actual image -->
+                
+                <!-- Optimized image with multiple strategies -->
                 <img 
                   src={book.image} 
                   alt={`Cover of ${book.title}`}
-                  class={`w-64 h-auto border border-skin-border object-cover book-image opacity-0 transition-opacity duration-300 book-image-${index}`}
-                  loading="lazy"
+                  class={`absolute inset-0 w-full h-full border border-skin-border object-cover book-image book-image-${index} opacity-0 transition-opacity duration-300`}
+                  loading={index < 4 ? "eager" : "lazy"}
+                  fetchpriority={index < 2 ? "high" : "auto"}
+                  decoding="async"
                   data-index={index}
+                  sizes="256px"
                 />
               </div>
               
@@ -127,7 +148,6 @@ const books = [
 </Layout>
 
 <style>
-  /* Custom CSS for line clamping if Tailwind's line-clamp doesn't work */
   .line-clamp-4 {
     display: -webkit-box;
     -webkit-line-clamp: 4;
@@ -136,14 +156,14 @@ const books = [
     text-overflow: ellipsis;
   }
 
-  /* Image loading styles */
+  /* Optimized loading states */
   .book-placeholder {
-    background-color: #f5f5f5;
-    transition: opacity 0.3s ease;
+    backdrop-filter: blur(2px);
   }
 
   .book-image {
-    transition: opacity 0.3s ease;
+    image-rendering: crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
   }
 
   .book-image.loaded {
@@ -153,96 +173,176 @@ const books = [
   .book-placeholder.hidden {
     opacity: 0;
     pointer-events: none;
-    z-index: -1;
   }
 
-  /* Ensure consistent spacing */
+  /* Consistent spacing */
   article {
     min-height: 400px;
+  }
+
+  /* Progressive enhancement for connection speed */
+  @media (prefers-reduced-data: reduce) {
+    .book-image {
+      loading: lazy;
+    }
   }
 </style>
 
 <script>
-  function handleImageLoading() {
-    const images = document.querySelectorAll('.book-image');
+  // Aggressive optimization strategies
+  const RETRY_ATTEMPTS = 3;
+  const RETRY_DELAY = 500;
+  const LOAD_TIMEOUT = 3000;
+
+  function preloadNextImages() {
+    // Aggressively preload next batch
+    const images = document.querySelectorAll('.book-image[data-index]');
+    const visibleImages = Array.from(images).filter(img => {
+      const rect = img.getBoundingClientRect();
+      return rect.bottom >= 0 && rect.top <= window.innerHeight + 500;
+    });
     
-    images.forEach((img) => {
-      const index = img.dataset.index;
-      const placeholder = document.querySelector(`.book-placeholder-${index}`);
-      
-      if (!placeholder) {
-        console.warn('Placeholder not found for image', index);
-        return;
-      }
-
-      // Reset states first
-      img.classList.remove('loaded');
-      placeholder.classList.remove('hidden');
-      
-      // Function to show image and hide placeholder
-      const showImage = () => {
-        img.classList.add('loaded');
-        placeholder.classList.add('hidden');
-      };
-
-      // Function to show error state
-      const showError = () => {
-        placeholder.innerHTML = '<div class="text-gray-500 text-sm p-4">Image not available</div>';
-        placeholder.classList.remove('hidden');
-      };
-
-      // If image is already loaded (cached)
-      if (img.complete) {
-        if (img.naturalHeight !== 0) {
-          showImage();
-        } else {
-          showError();
-        }
-      } else {
-        // Set up event listeners for loading
-        const onLoad = () => {
-          showImage();
-          cleanup();
-        };
-
-        const onError = () => {
-          showError();
-          cleanup();
-        };
-
-        const cleanup = () => {
-          img.removeEventListener('load', onLoad);
-          img.removeEventListener('error', onError);
-        };
-
-        img.addEventListener('load', onLoad);
-        img.addEventListener('error', onError);
-
-        // Timeout fallback - if image doesn't load within 10 seconds, show error
-        setTimeout(() => {
-          if (!img.classList.contains('loaded')) {
-            console.warn('Image loading timeout for:', img.src);
-            showError();
-            cleanup();
-          }
-        }, 10000);
+    visibleImages.forEach(img => {
+      if (!img.complete) {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = img.src;
+        document.head.appendChild(link);
       }
     });
   }
 
-  // Handle initial page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', handleImageLoading);
-  } else {
-    handleImageLoading();
+  function handleImageLoading() {
+    const images = document.querySelectorAll('.book-image');
+    
+    images.forEach((img, imgIndex) => {
+      const index = img.dataset.index;
+      const placeholder = document.querySelector(`.book-placeholder-${index}`);
+      
+      if (!placeholder) return;
+
+      let retryCount = 0;
+      let timeoutId;
+
+      const showImage = () => {
+        clearTimeout(timeoutId);
+        img.classList.add('loaded');
+        placeholder.classList.add('hidden');
+      };
+
+      const showError = () => {
+        clearTimeout(timeoutId);
+        placeholder.innerHTML = `
+          <div class="text-gray-400 text-xs text-center p-4">
+            <div class="mb-2">📚</div>
+            <div>Image unavailable</div>
+            <button onclick="window.retryImage(${index})" class="mt-2 text-xs underline hover:no-underline">
+              Retry
+            </button>
+          </div>
+        `;
+      };
+
+      const attemptLoad = () => {
+        clearTimeout(timeoutId);
+        
+        // Create new image to force fresh load
+        const newImg = new Image();
+        newImg.crossOrigin = "anonymous";
+        
+        const onSuccess = () => {
+          img.src = newImg.src;
+          showImage();
+        };
+
+        const onFailed = () => {
+          retryCount++;
+          if (retryCount < RETRY_ATTEMPTS) {
+            setTimeout(attemptLoad, RETRY_DELAY * retryCount);
+          } else {
+            showError();
+          }
+        };
+
+        newImg.onload = onSuccess;
+        newImg.onerror = onFailed;
+        
+        // Timeout fallback
+        timeoutId = setTimeout(onFailed, LOAD_TIMEOUT);
+        
+        newImg.src = img.src;
+      };
+
+      // Check if already loaded
+      if (img.complete && img.naturalHeight !== 0) {
+        showImage();
+      } else {
+        attemptLoad();
+      }
+    });
   }
 
-  // Handle Astro page transitions
-  document.addEventListener('astro:after-swap', handleImageLoading);
-
-  // Optional: Add a manual retry mechanism
-  window.retryImageLoading = function() {
-    console.log('Manually retrying image loading...');
-    handleImageLoading();
+  // Global retry function
+  window.retryImage = function(index) {
+    const img = document.querySelector(`.book-image-${index}`);
+    const placeholder = document.querySelector(`.book-placeholder-${index}`);
+    if (img && placeholder) {
+      img.classList.remove('loaded');
+      placeholder.classList.remove('hidden');
+      placeholder.innerHTML = `
+        <div class="text-gray-400 text-xs text-center px-4">
+          <div class="w-6 h-6 mx-auto mb-2 opacity-40">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h12V4H6zm2 2h8v2H8V6zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/>
+            </svg>
+          </div>
+          Loading...
+        </div>
+      `;
+      handleImageLoading();
+    }
   };
+
+  // Intersection Observer for progressive loading
+  const observerOptions = {
+    root: null,
+    rootMargin: '100px',
+    threshold: 0.1
+  };
+
+  const imageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        preloadNextImages();
+      }
+    });
+  }, observerOptions);
+
+  // Initialize everything
+  function init() {
+    handleImageLoading();
+    
+    // Observe scroll for preloading
+    document.querySelectorAll('article').forEach(article => {
+      imageObserver.observe(article);
+    });
+
+    // Preload on scroll
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(preloadNextImages, 100);
+    }, { passive: true });
+  }
+
+  // Run on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // Re-run on navigation
+  document.addEventListener('astro:after-swap', init);
 </script>
