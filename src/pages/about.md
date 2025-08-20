@@ -2,4 +2,4 @@
 layout: ../layouts/AboutLayout.astro
 title: ""
 ---
-Armand Sumo, software developer with web front-end focus. I build tools that bridge digital and physical interaction. I'm drawn to projects where thoughtful design can make complex things feel simple and closed systems feel open.
+Armand Sumo, front-end developer. I am drawn to creating user experiences where thoughtful design can make complex things feel simple, closed systems feel open and immaterial notions feel tangible.

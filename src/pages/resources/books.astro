@@ -14,7 +14,7 @@ const books = [
   {
     title: "Operating Manual for Spaceship Earth",
     author: "Richard Buckminster Fuller",
-    image: "/assets/books/Operating-Manual-for-Spaceship-Earth.jpg",
+    image: "/assets/books/Operating-Manual-For-Spaceship-Earth.jpg",
     comment: ""
   },
   {
@@ -106,10 +106,10 @@ const books = [
                 </h3>
               </div>
               
-              <!-- Optimized image container -->
-              <div class="mb-4 relative w-64 h-80">
-                <!-- Low-quality placeholder with immediate show -->
-                <div class={`absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 border border-skin-border flex items-center justify-center book-placeholder book-placeholder-${index} transition-opacity duration-200`}>
+              <!-- Image container -->
+              <div class="mb-4 relative max-w-64">
+                <!-- Placeholder that shows while loading -->
+                <div class={`bg-gradient-to-br from-gray-100 to-gray-200 border border-skin-border flex items-center justify-center book-placeholder book-placeholder-${index} transition-opacity duration-200 min-h-64`}>
                   <div class="text-gray-400 text-xs text-center px-4">
                     <div class="w-6 h-6 mx-auto mb-2 opacity-40">
                       <svg viewBox="0 0 24 24" fill="currentColor">
@@ -119,12 +119,12 @@ const books = [
                     Loading...
                   </div>
                 </div>
-                
-                <!-- Optimized image with multiple strategies -->
+  
+                <!-- Image that replaces placeholder -->
                 <img 
                   src={book.image} 
                   alt={`Cover of ${book.title}`}
-                  class={`absolute inset-0 w-full h-full border border-skin-border object-cover book-image book-image-${index} opacity-0 transition-opacity duration-300`}
+                  class={`w-full border border-skin-border object-cover book-image book-image-${index} opacity-0 transition-opacity duration-300 absolute top-0 left-0`}
                   loading={index < 4 ? "eager" : "lazy"}
                   fetchpriority={index < 2 ? "high" : "auto"}
                   decoding="async"
@@ -132,7 +132,7 @@ const books = [
                   sizes="256px"
                 />
               </div>
-              
+                            
               {book.comment && (
                 <p class="text-sm text-skin-base leading-relaxed max-w-64">
                   {book.comment}
@@ -227,8 +227,12 @@ const books = [
 
       const showImage = () => {
         clearTimeout(timeoutId);
+        // Instead of just showing the image, replace the placeholder
+        const container = img.parentElement;
+        container.style.height = 'auto';
+        placeholder.style.display = 'none';
+        img.style.position = 'static';
         img.classList.add('loaded');
-        placeholder.classList.add('hidden');
       };
 
       const showError = () => {
