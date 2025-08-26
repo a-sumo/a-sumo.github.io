@@ -4,8 +4,8 @@ export const SITE: Site = {
   website: "https://a-sumo.github.io/", // replace this with your deployed domain
   author: "Armand Sumo",
   profile: "https://a-sumo.github.io",
-  desc: "Octant: Armand Sumo's Blog about technology, design and social philosophy.",
-  title: "Octant",
+  desc: "Armand Sumo's Blog about technology, design and social philosophy.",
+  title: "Armand Sumo",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 5,
