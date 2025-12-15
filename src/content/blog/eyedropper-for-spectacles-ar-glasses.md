@@ -3,11 +3,11 @@ title: "Eyedropper for Spectacles AR Glasses"
 description: "Building an eyedropper color picker for Snap Spectacles AR glasses using Lens Studio."
 pubDatetime: 2025-12-15T07:00:00Z
 tags: ["augmented reality", "ar", "spectacles", "lens studio", "ui", "eyedropper"]
-ogImage: /assets/color_palette_editor_test.gif
+ogImage: /assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.gif
 draft: false
 ---
 
-<img src="/assets/color_palette_editor_test.gif" width=300  alt="Eyedropper Test" >
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.gif" width=300  alt="Eyedropper Test" >
 
 
 ## 1. Why an Eyedropper?
@@ -34,7 +34,7 @@ My prior 3D development experience involves lots of Three.js, where you'll usual
 For this reason, I've prioritized the use of The Material Graph Editor's Custom Code Nodes.
 
 Below is a screenshot of Procedural Grid's Material Graph and a snippet of shader code.
-<img src="/assets/post1/texture_grid_material_editor.png" width=1000  alt="Texture Grid Material Editor">
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/texture_grid_material_editor.png" width=1000  alt="Texture Grid Material Editor">
 
 The logic for reading and displaying colors is handled by a CropAreaSelector class. I've included some of its core methods below; they showcase ProceduralTextureProvider and [getPixels()](https://developers.snap.com/lens-studio/api/lens-scripting/classes/Built-In.ProceduralTextureProvider.html#getpixels), which are useful for reading and writing pixel data to textures.
 
@@ -64,8 +64,8 @@ Upon observing this, I felt tempted to drop physical interaction in favor of the
 I called a Gemini model to segment palette color blobs and extract pigments from each. Then I actually didn't bother segmenting and simply sent the entire image to a Gemini model and the results were equivalent. 
 
 This would've been unthinkable 5 years ago, but because tech evolves at an exponential pace, 5 years is actually... kind of an eternity.
-<img src="/assets/post1/plein-air-Celeste-Bergin.jpg" width=400  alt="Gemini Call Input">
-<img src="/assets/post1/gemini_call_result.png" width=400  alt="Gemini Call Result">
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/plein-air-Celeste-Bergin.jpg" width=400  alt="Gemini Call Input">
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/gemini_call_result.png" width=400  alt="Gemini Call Result">
 
 
 Now, though the extracted pigments aren't necessarily found in the input image, it provides enough perceptual accuracy for the user to accomplish their goal. After all, the domain we're tackling is traditional painting and not professional color grading. 
