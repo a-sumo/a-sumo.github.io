@@ -40,8 +40,7 @@ The logic for reading and displaying colors is handled by a CropAreaSelector cla
 ## 4. Security Considerations
 
 Note that the getPixels API is [restricted](https://developers.snap.com/lens-studio/features/remote-apis/remote-service-module) when using the Remote Service Module.
-As a result, it might prompt a user authorization screen when launching the lens.
-Hence, I've also implemented a version that sends the image directly to a Multimodal Large Language Model to extract the color pigment. 
+As a result, it might prompt a user authorization screen when launching the lens. 
 
 This initially perplexed me: you can send camera textures to a remote server but you can't read pixel values locally? 
 The rationale, as best I can understand it is that if you can read pixels locally, you could extract sensitive information (Credit Card data, facial recognition, etc.) and exfiltrate it through innocuous-looking API calls without the user's knowledge. By restricting local pixel access when remote services are enabled, Snap ensures that if any image analysis happens, either:
