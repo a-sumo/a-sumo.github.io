@@ -64,8 +64,8 @@ Upon observing this, I felt tempted to drop physical interaction in favor of the
 I called a Gemini model to segment palette color blobs and extract pigments from each. Then I actually didn't bother segmenting and simply sent the entire image to a Gemini model and the results were equivalent. 
 
 This would've been unthinkable 5 years ago, but because tech evolves at an exponential pace, 5 years is actually... kind of an eternity.
-<img src="/assets/eyedropper-for-spectacles-ar-glasses/plein-air-Celeste-Bergin.jpg" width=400  alt="Gemini Call Input">
-<img src="/assets/eyedropper-for-spectacles-ar-glasses/gemini_call_result.png" width=400  alt="Gemini Call Result">
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/plein-air-Celeste-Bergin.jpg" width=300  alt="Gemini Call Input">
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/gemini_call_result.png" width=300  alt="Gemini Call Result">
 
 
 Now, though the extracted pigments aren't necessarily found in the input image, it provides enough perceptual accuracy for the user to accomplish their goal. After all, the domain we're tackling is traditional painting and not professional color grading. 
@@ -74,7 +74,12 @@ In the end, I will make both interaction modes available for the user to choose:
 - one that is deterministic and over which they have complete control.
 - another that is probabilistic and where the user yields a lot of control.
 
-There's another factor to consider: every time the user performs a manual action, they execute "intentional" timesteps that get stored in procedural memory. This engages multiple brain areas and reinforces learning. When querying AI models, users invest effort in formulating intent through natural language, but the embodied component is largely absent. I'd love to hear thoughts on interaction modes that combine the advantages of both approaches.
+### A case for manual interaction
+
+There's another factor to consider: every time the user performs a manual action, they execute "intentional" timesteps that get stored in procedural memory. 
+
+This engages multiple brain areas and reinforces learning. When querying AI models, users invest effort in formulating intent through natural language, but the embodied component is largely absent. 
+I'd love to hear thoughts on interaction modes that combine the advantages of both approaches.
 
 ## 6. Code Snippets and References
 <details>
