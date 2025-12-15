@@ -18,7 +18,7 @@ On desktop, this is handled by the eyedropper, [a tool](https://en.wikipedia.org
 
 ## 2. Implementation
 
-I read data from the user's camera feed. Because this feed is quite large, and I was planning to sample a single pixel from it,  I needed to crop it down. Fortunately, the Spectacles Samples provide a project that implements a cropping functionality that I reused here. 
+The color data is read from the user's camera feed. Because this feed is quite large, and I was planning to sample a single pixel from it, I needed to crop it down. Fortunately, the Spectacles Samples provide a project that implements a cropping functionality that I reused here. 
 
 After the first cropping interaction, an individual pixel might still be too small to be made out by the user. To tackle this issue, I took inspiration from [Figma's eyedropper UI](https://help.figma.com/hc/en-us/articles/27643269375767-Sample-colors-with-the-eyedropper-tool), I implemented a menu containing:
 - a magnified view of a sampled area covered with a grid which represents the pixel samples.
@@ -75,10 +75,13 @@ In the end, I will make both interaction modes available for the user to choose:
 
 ### A case for manual interaction
 
-There's another factor to consider: every time the user performs a manual action, they execute "intentional" timesteps that get stored in procedural memory. 
+There's another factor to consider: every time the user performs a manual action, they execute "intentional" micro-actions that get stored in procedural memory. 
+This engages multiple brain areas and ends up reinforcing learning. 
+However, when querying AI models, users invest most effort in formulating intent through natural language, but the embodied component is largely absent.
+If we could somehow either make LLM's prcedural primitives intelligible to the user and accessible mid-token stream, or if we could encode functional primitives in continuous spatial actions, perhaps we'd get closer to something that combines the advantages of both approaches.
 
-This engages multiple brain areas and reinforces learning. When querying AI models, users invest effort in formulating intent through natural language, but the embodied component is largely absent. 
-I'd love to hear thoughts on interaction modes that combine the advantages of both approaches.
+I'd love to hear thoughts on this subject.
+
 
 ## 6. Code Snippets and References
 <details>
