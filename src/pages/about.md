@@ -7,6 +7,4 @@ title: ""
 
 Software Engineer exploring the intersection of web technologies, 3D graphics, and wearable AR. I'm interested in building interfaces that feel natural and help people engage more fully with the world  around them and within themselves.
 
-Outside of work: sci-fi novels, oil painting, electronic music, and contemplative practice.
-
 Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/armand-sumo/) or by email.
