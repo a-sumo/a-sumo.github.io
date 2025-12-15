@@ -54,13 +54,13 @@ export const SOCIALS: SocialObjects = [
     name: "LinkedIn",
     href: "https://www.linkedin.com/in/armand-sumo/",
     linkTitle: `${SITE.title} on LinkedIn`,
-    active: false,
+    active: true,
   },
   {
     name: "Mail",
     href: "mailto:sumovero@proton.me",
     linkTitle: `Send an email to ${SITE.title}`,
-    active: false,
+    active: true,
   },
   {
     name: "X",
