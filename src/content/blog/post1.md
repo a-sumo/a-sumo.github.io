@@ -1,8 +1,8 @@
 ---
 title: "Eyedropper for Spectacles AR Glasses"
-description: ""
+description: "Eyedropper"
 pubDatetime: 2025-12-15T07:00:00Z
-tags: ["augmented reality", "spectacles", "lens studio", "ui", "eyedropper"]
+tags: ["augmented reality", "ar", "spectacles", "lens studio", "ui", "eyedropper"]
 draft: false
 ---
 
