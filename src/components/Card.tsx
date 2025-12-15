@@ -9,12 +9,15 @@ export interface Props {
 }
 
 export default function Card({ href, frontmatter, secHeading = true }: Props) {
-  const { title, pubDatetime, modDatetime, description } = frontmatter;
+  const { title, pubDatetime, modDatetime, description, ogImage } = frontmatter;
 
   const headerProps = {
     style: { viewTransitionName: slugifyStr(title) },
     className: "text-lg font-medium decoration-dashed hover:underline",
   };
+
+  const thumbnailSrc =
+    typeof ogImage === "string" ? ogImage : ogImage?.src;
 
   return (
     <li className="my-6">
@@ -22,6 +25,13 @@ export default function Card({ href, frontmatter, secHeading = true }: Props) {
         href={href}
         className="inline-block text-lg font-medium text-skin-accent decoration-dashed underline-offset-4 focus-visible:no-underline focus-visible:underline-offset-0"
       >
+        {thumbnailSrc && (
+          <img
+            src={thumbnailSrc}
+            alt={title}
+            className="mb-2 rounded-lg w-full max-w-md object-cover aspect-video"
+          />
+        )}
         {secHeading ? (
           <h2 {...headerProps}>{title}</h2>
         ) : (
