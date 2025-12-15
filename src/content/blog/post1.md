@@ -12,10 +12,11 @@ draft: false
 
 ## 1. Eyedropper
 
-An eyedropper [is](https://en.wikipedia.org/wiki/Color_picker) > a tool that allows a user to read a color at a specific point in an image, or position on a display
+An eyedropper [is](https://en.wikipedia.org/wiki/Color_picker) "a tool that allows a user to read a color at a specific point in an image, or position on a display".
 
-
-I have been wondering how this kind of tool and overall interaction mode might translate from desktop interfaces to augmented reality. 
+For the past two weeks, I've working on an augmented reality traditional painting assistant, a project that fuses my passion for oil painting
+One problem I tackled was getting the exact color pigment from a painters
+I needed a  have been wondering how this kind of tool and overall interaction mode might translate from desktop interfaces to augmented reality. 
 
 So I made an eye dropper in Lens Studio and tested it with the 2024 Spectacles Augmented Reality glasses. 
 First we need something to read colors from. Because we're not operating at the level of the Operating System, but rather within a Lens, we will read from the user's camera feed. 
