@@ -73,15 +73,6 @@ In the end, I will make both interaction modes available for the user to choose:
 - one that is deterministic and over which they have complete control.
 - another that is probabilistic and where the user yields a lot of control.
 
-### A case for manual interaction
-
-There's another factor to consider: every time the user performs a manual action, they execute "intentional" micro-actions that get stored in procedural memory. 
-This engages multiple brain areas and ends up reinforcing learning. 
-However, when querying AI models, users invest most effort in formulating intent through natural language, but the embodied component is largely absent.
-If we could somehow either make LLM's prcedural primitives intelligible to the user and accessible mid-token stream, or if we could encode functional primitives in continuous spatial actions, perhaps we'd get closer to something that combines the advantages of both approaches.
-
-I'd love to hear thoughts on this subject.
-
 
 ## 6. Code Snippets and References
 <details>
