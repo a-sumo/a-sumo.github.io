@@ -18,8 +18,7 @@ On desktop, this is handled by the eyedropper, [a tool](https://en.wikipedia.org
 
 ## 2. Implementation
 
-I read data from the user's camera feed.  
-Because this feed is quite large, and I was planning to sample a single pixel from it,  I needed to crop it down. Fortunately, the Spectacles Samples provide a project that implements a cropping functionality that I reused here. 
+I read data from the user's camera feed. Because this feed is quite large, and I was planning to sample a single pixel from it,  I needed to crop it down. Fortunately, the Spectacles Samples provide a project that implements a cropping functionality that I reused here. 
 
 After the first cropping interaction, an individual pixel might still be too small to be made out by the user. To tackle this issue, I took inspiration from [Figma's eyedropper UI](https://help.figma.com/hc/en-us/articles/27643269375767-Sample-colors-with-the-eyedropper-tool), I implemented a menu containing:
 - a magnified view of a sampled area covered with a grid which represents the pixel samples.
@@ -33,7 +32,7 @@ The recently released Spectacles UI Kit took care of many of the key UI elements
 My prior 3D development experience involves lots of Three.js, where you'll usually write shaders inline with JavaScript or TypeScript code. As a result, when using Lens Studio I find myself leaning towards writing shader code rather than wrangling material graph nodes. 
 For this reason, I've prioritized the use of The Material Graph Editor's Custom Code Nodes.
 
-Below is a screenshot of Procedural Grid's Material Graph and a snippet of shader code.
+Below is a screenshot of the Procedural Grid's Material Graph and a snippet of shader code.
 <img src="/assets/eyedropper-for-spectacles-ar-glasses/texture_grid_material_editor.png" width=1000  alt="Texture Grid Material Editor">
 
 The logic for reading and displaying colors is handled by a CropAreaSelector class. I've included some of its core methods below; they showcase ProceduralTextureProvider and [getPixels()](https://developers.snap.com/lens-studio/api/lens-scripting/classes/Built-In.ProceduralTextureProvider.html#getpixels), which are useful for reading and writing pixel data to textures.
