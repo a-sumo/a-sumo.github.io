@@ -11,11 +11,12 @@ draft: false
 
 ## 1. Eyedropper
 
-> The eyedropper is a tool present in most color pickers and graphics software that allows a user to read a color at a specific point in an image, or position on a display. This enables the color to be transferred to other applications particularly quickly.
+An eyedropper [is](https://en.wikipedia.org/wiki/Color_picker)
+> a tool that allows a user to read a color at a specific point in an image, or position on a display
 
-https://en.wikipedia.org/wiki/Color_picker
 
-I wondered how this kind of tool and overall interaction mode might translate from desktop interfaces to augmented reality. 
+I have been wondering how this kind of tool and overall interaction mode might translate from desktop interfaces to augmented reality. 
+
 So I made an eye dropper in Lens Studio and tested it with the 2024 Spectacles Augmented Reality glasses. 
 First we need something to read colors from. Because we're not operating at the level of the Operating System, but rather within a Lens, we will read from the user's camera feed. 
 Because this feed is quite large, and we're planning to sample a single pixel from it,  we need to crop it down. Fortunately, the Spectacles Samples provide a project that implements a cropping functionality that we'll reuse here. 
