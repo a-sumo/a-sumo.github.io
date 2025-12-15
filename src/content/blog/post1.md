@@ -56,7 +56,7 @@ The rationale, as best I can understand it is that if you can read pixels locall
 When testing the Eyedropper on Spectacles, I noticed that mid-air and fine-grained movements don't really go hand in hand.
 Something I've taken for granted from desktop use is that tactile interaction, where the user applies pressure on a surface, results in a tangent friction force. This friction force stabilizes their hand trajectories, both in position and speed.
 
-It is precisely this trajectory stabilization which enables finer grained movement. 
+It is precisely this trajectory stabilization which enables finer-grained movement. 
 This is not something that can be reproduced through [filtering](https://github.com/casiez/OneEuroFilter), because filtering causes spatial information loss. Friction on the other hand guides movement towards more stable dynamics without causing information loss.
 
 Upon observing this, I felt tempted to drop physical interaction in favor of the most convenient user experience of all: querying a multimodal AI model.
