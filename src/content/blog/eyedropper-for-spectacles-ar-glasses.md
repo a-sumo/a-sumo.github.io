@@ -76,6 +76,9 @@ In the end, I will make both interaction modes available for the user to choose:
 
 
 ## 6. Code Snippets and References
+
+The code for this ongoing project is available on my [fork](https://github.com/a-sumo/Spectacles-Sample/tree/11a3183fc281a9e3720ea87920d9006c8ecb3195/Crop) of Snap's official Spectacles Samples repository. 
+
 <details>
 <summary>Procedural Grid Custom Code Node</summary>
 
@@ -123,9 +126,6 @@ void main()
 </details>
 <details>
 <summary> CropAreaSelector Methods </summary>
-
-
-The code for this ongoing project is available on a [fork](https://github.com/a-sumo/Spectacles-Sample/tree/11a3183fc281a9e3720ea87920d9006c8ecb3195/Crop) of Snap's official Spectacles Samples repository. 
 
 ```ts
 private updateCropArea(localPosition: vec2): void {
