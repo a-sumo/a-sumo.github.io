@@ -8,7 +8,7 @@ const videos = [
   {
     title: "Seeing Spaces",
     author: "Bret Victor",
-    youtubeId: "klTjiXjqHrQ",
+    vimeoId: "97903574",
   },
   {
     title: "Dialogue",
@@ -30,15 +30,23 @@ const videos = [
 // Helper function to extract YouTube ID from various URL formats
 function getYouTubeId(url) {
   if (!url) return '';
-  
+
   // If it's already just an ID
   if (url.length === 11 && !url.includes('/')) {
     return url;
   }
-  
+
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
   const match = url.match(regExp);
   return (match && match[2].length === 11) ? match[2] : url;
+}
+
+// Helper function to get video embed URL based on source
+function getVideoEmbedUrl(video) {
+  if (video.vimeoId) {
+    return `https://player.vimeo.com/video/${video.vimeoId}`;
+  }
+  return `https://www.youtube.com/embed/${getYouTubeId(video.youtubeId)}?rel=0&modestbranding=1`;
 }
 ---
 
@@ -68,10 +76,10 @@ function getYouTubeId(url) {
                   </div>
                 </div>
                 
-                <!-- YouTube iframe -->
+                <!-- Video iframe (YouTube or Vimeo) -->
                 <iframe
                   class={`w-full aspect-video border border-skin-border video-iframe opacity-0 transition-opacity duration-300 video-iframe-${index}`}
-                  src={`https://www.youtube.com/embed/${getYouTubeId(video.youtubeId)}?rel=0&modestbranding=1`}
+                  src={getVideoEmbedUrl(video)}
                   title={`${video.title} by ${video.author}`}
                   frameborder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
