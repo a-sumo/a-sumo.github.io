@@ -124,6 +124,7 @@ void main()
 }
 ```
 </details>
+
 <details>
 <summary> CropAreaSelector Methods </summary>
 
