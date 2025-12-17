@@ -8,23 +8,39 @@ draft: true
 
 
 
-1. Struggling with the baby curse of dimensionality
+1. Mixing colors is hard
 
-Suppose I'm mixing colors on a palette. Each decision I make is going to move the drops of paint across three key dimensions: hue, saturation and value. 
-Managing these three dimensions is no easy task. Why? Because pigments themselves aren't separate in hue, saturation and value.
-Note. 
-In technical terms, mixing two pigments is an operation that involves two 
-Generally, an artist will begin with identifying value masses. Painting can be defined as the process of shaping the attention of a viewer. Value defines salience.
-Generally, adding darker colors will decrease value and lighter colors will decrease values, but doing so will also move you across the hue and saturation dimensions. 
-You can't magically isolate these dimensions. You may guess that this multidimensional navigation, which experienced painters perform seamlessly, is pretty can get quite frustrating for someone new.
-I've personally thrown away a few unfinished paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I needed. Each new pigment introduced more complexity. If I decided to use only a few pigments at the time, then I needed to know identify whether the pigments in 
-They develop an intuition for how specific pigments will interact with one another across these three different dimensions. 
-This is an outstanding skill that I personally would love to master.
-The process of learning it is sacred, and I want in no way to take that away from anyone. However, the frustration that this process may cause and the dropout rate are not necessary.
+When I'm mixing colors on a palette, each decision I make is going to move the drops of paint across three key dimensions: hue, saturation and value. 
+Managing these three dimensions simultaneously is no easy task. Why? Because you can't magically isolate these dimensions.
+
+This multidimensional navigation, which experienced painters perform seamlessly, is pretty challenging can get quite frustrating for someone who's getting into painting.
+
+I've personally thrown away a few unfinished paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I was missing. 
+I can't just amass pigments either because each new pigment adds an extra degree of freedom to the painting process, which means more elements to manage.
+
+If, on the other hand, I only a few pigments at the time, then I need to know which colors are within reach and which ones will require some modification.
+
+All these considerations are what years of practice go into.
+You just can't develop an intuition for how specific pigments for each specific brand will interact with one another across hue saturation and value just by watching video tutorials and reading books. 
+
+You must go through this manual, tedious learning process.
+
+But how tedious does it really need to be? Is frustration necessary for learning, or can there be an assisted effort. 
+
+Can I use computational tools to know in advanced which colors can be reached? How can I know which pigment mix will achieve a certain target color?
+
+This is actually possible, reachable colors can be defined with a color gamut. 
+There are also ways of approximating computationally the target color. 
 
 Hence, I need to find a way to see what's happening in those abstract spaces concretely before I take an action. I need a seeing space.
 
 2. Crafting a seeing space
 
-Our struggle was predicting the color that would result from the interaction of pigments across, hue, saturation and value in real time.
-We could simply build a visualization of each space side by side. 
+If I was predicting the color that would result from the interaction of pigments across, hue, saturation and value in real time.
+How can I do that?
+
+What 
+
+Resources
+
+https://www.wikiwand.com/en/articles/Color_solid
