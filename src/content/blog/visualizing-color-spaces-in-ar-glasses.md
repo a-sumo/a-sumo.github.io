@@ -8,7 +8,7 @@ draft: true
 
 
 
-1. Juggling between hue, saturation and value is hard
+1. Struggling with the baby curse of dimensionality
 
 Suppose I'm mixing colors on a palette. Each decision I make is going to move the drops of paint across three key dimensions: hue, saturation and value. 
 Managing these three dimensions is no easy task. Why? Because pigments themselves aren't separate in hue, saturation and value.
@@ -22,6 +22,9 @@ They develop an intuition for how specific pigments will interact with one anoth
 This is an outstanding skill that I personally would love to master.
 The process of learning it is sacred, and I want in no way to take that away from anyone. However, the frustration that this process may cause and the dropout rate are not necessary.
 
-Hence, I need to find a way to see what's happening in those abstract spaces concretely. I need a seeing tool. 
+Hence, I need to find a way to see what's happening in those abstract spaces concretely before I take an action. I need a seeing space.
 
-1. What are Color Spaces?
+2. Crafting a seeing space
+
+Our struggle was predicting the color that would result from the interaction of pigments across, hue, saturation and value in real time.
+We could simply build a visualization of each space side by side. 
