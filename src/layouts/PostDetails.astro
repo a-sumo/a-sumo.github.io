@@ -177,6 +177,65 @@ const nextPost =
         )
       }
     </div>
+
+    <!-- Feedback Section -->
+    <hr class="my-8 border-dashed" />
+    <div class="flex flex-col gap-3">
+      <button
+        id="like-button"
+        type="button"
+        class="inline-flex h-6 w-fit items-center gap-2 text-skin-base hover:text-skin-accent"
+        data-slug={post.slug}
+        aria-label="Like this post"
+      >
+        <span id="like-icon-wrapper" class="like-icon-wrapper">
+          <svg aria-hidden="true" class="h-[18px] w-[18px] fill-current" viewBox="0 0 24 24" id="like-icon">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </span>
+        <span id="like-count"></span>
+      </button>
+      <a
+        href={`mailto:sumovero@proton.me?subject=Re: ${encodeURIComponent(title)}`}
+        class="inline-flex w-fit items-center gap-2 text-skin-base hover:text-skin-accent"
+      >
+        <svg aria-hidden="true" class="h-[18px] w-[18px] translate-y-[2px] fill-current" viewBox="0 0 24 24">
+          <path d="M20 4H4c-1.103 0-2 .897-2 2v12c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2zm0 2v.511l-8 6.223-8-6.222V6h16zM4 18V9.044l7.386 5.745a.994.994 0 001.228 0L20 9.044 20.002 18H4z"/>
+        </svg>
+        <span>Reply via email</span>
+      </a>
+      <details class="group">
+        <summary class="cursor-pointer list-none">
+          <span class="inline-flex w-fit items-center gap-2 text-skin-base hover:text-skin-accent">
+            <svg aria-hidden="true" class="h-[18px] w-[18px] translate-y-[2px] fill-current" viewBox="0 0 24 24">
+              <path d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14H6.667L4 18V4h16v12z"/>
+            </svg>
+            <span>View comments</span>
+          </span>
+        </summary>
+        <div class="mt-4">
+          <script
+            src="https://giscus.app/client.js"
+            data-repo="a-sumo/a-sumo.github.io"
+            data-repo-id="R_kgDONveDng"
+            data-category="Announcements"
+            data-category-id="DIC_kwDONveDns4Cz9BQ"
+            data-mapping="pathname"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="bottom"
+            data-theme="light"
+            data-lang="en"
+            crossorigin="anonymous"
+            async
+          ></script>
+        </div>
+      </details>
+      <noscript>
+        <p class="text-sm text-skin-base/60">Commenting requires JavaScript.</p>
+      </noscript>
+    </div>
   </main>
   <Footer />
 </Layout>
@@ -187,6 +246,23 @@ const nextPost =
   }
   .post-title {
     @apply text-2xl font-semibold text-skin-accent;
+  }
+
+  /* Like button animation */
+  @keyframes like-pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  .like-icon-wrapper {
+    display: inline-flex;
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  .like-animate {
+    animation: like-pop 0.4s ease-out;
   }
 </style>
 
@@ -310,4 +386,45 @@ const nextPost =
   document.addEventListener("astro:after-swap", () =>
     window.scrollTo({ left: 0, top: 0, behavior: "instant" })
   );
+
+  /** Like button functionality using localStorage */
+  function initLikeButton() {
+    const likeButton = document.getElementById("like-button");
+    const likeIcon = document.getElementById("like-icon");
+    const likeIconWrapper = document.getElementById("like-icon-wrapper");
+    const likeCount = document.getElementById("like-count");
+    if (!likeButton || !likeIcon || !likeIconWrapper || !likeCount) return;
+
+    const slug = likeButton.getAttribute("data-slug");
+    const storageKey = `liked-${slug}`;
+
+    // Get initial state
+    let isLiked = localStorage.getItem(storageKey) === "true";
+
+    function updateUI(liked, animate = false) {
+      if (liked) {
+        likeIcon.style.fill = "rgb(239, 68, 68)";
+        likeCount.textContent = "1";
+      } else {
+        likeIcon.style.fill = "currentColor";
+        likeCount.textContent = "";
+      }
+
+      // Trigger animation
+      if (animate) {
+        likeIconWrapper.classList.remove("like-animate");
+        void likeIconWrapper.offsetWidth; // Force reflow
+        likeIconWrapper.classList.add("like-animate");
+      }
+    }
+
+    updateUI(isLiked);
+
+    likeButton.addEventListener("click", () => {
+      isLiked = !isLiked;
+      localStorage.setItem(storageKey, isLiked.toString());
+      updateUI(isLiked, true);
+    });
+  }
+  initLikeButton();
 </script>
