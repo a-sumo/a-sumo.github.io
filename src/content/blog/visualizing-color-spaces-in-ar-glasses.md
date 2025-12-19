@@ -8,39 +8,48 @@ draft: true
 
 
 
-1. Mixing colors is hard
+1. Mixing colors is difficult
 
-When I'm mixing colors on a palette, each decision I make is going to move the drops of paint across three key dimensions: hue, saturation and value. 
-Managing these three dimensions simultaneously is no easy task. Why? Because you can't magically isolate these dimensions.
+When I'm mixing colors on a palette, each decision I make moves paint across three key dimensions: hue, saturation and value. If I add white to green, I increase the value while decreasing the saturation and shifting the hue. 
 
-This multidimensional navigation, which experienced painters perform seamlessly, is pretty challenging can get quite frustrating for someone who's getting into painting.
+This multidimensional navigation, which experienced painters manage seamlessly, is very challenging can get quite frustrating for someone lesser experienced.
 
 I've personally thrown away a few unfinished paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I was missing. 
 I can't just amass pigments either because each new pigment adds an extra degree of freedom to the painting process, which means more elements to manage.
 
-If, on the other hand, I only a few pigments at the time, then I need to know which colors are within reach and which ones will require some modification.
+If, on the other hand, I restrict my palette to just a few pigments at the time, then I need to know which colors are within reach. Can I achieve a highly saturated purple? If I can't, then what's the closest I can get to it while achieving the desired impression?
 
 All these considerations are what years of practice go into.
-You just can't develop an intuition for how specific pigments for each specific brand will interact with one another across hue saturation and value just by watching video tutorials and reading books. 
+You just can't develop an intuition for how specific pigments for each specific brand will interact with one another across hue saturation and value just by watching video tutorials and reading books. You must paint, again and again, ideally with some guidance, but knowing that the process will be tedious.
 
-You must go through this manual, tedious learning process.
+But how tedious does it really need to be? Is frustration necessary for learning, or can skillful effort be sufficient?
 
-But how tedious does it really need to be? Is frustration necessary for learning, or can there be an assisted effort. 
+What can I do to know or at least in advance which colors can be achieved with the pigments I have available? 
+Can I view in real-time how my actions move the paint across the color dimensions? 
 
-Can I use computational tools to know in advanced which colors can be reached? How can I know which pigment mix will achieve a certain target color?
+2. Seeing tools
 
-This is actually possible, reachable colors can be defined with a color gamut. 
-There are also ways of approximating computationally the target color. 
-
-Hence, I need to find a way to see what's happening in those abstract spaces concretely before I take an action. I need a seeing space.
-
-2. Crafting a seeing space
-
+This problem is precisely what seeing tools are meant to tackle. 
+Imagine having the super power to see into the chemical compositions of color pigments and their interaction with light and being able to 
 If I was predicting the color that would result from the interaction of pigments across, hue, saturation and value in real time.
 How can I do that?
 
-What 
+3. Implementation
 
-Resources
+The dimensions of hue, value and chromaticity(saturation) can either be visualized individually or in combination. 
+Because real life color pigment manipulation alters the paint across all trhee dimension, to represent each separately or in combinations of two would result in three different disparate variables. 
+
+Ideally what we would want is a viewing navigation tool. 
+
+We can begin with a simple example, an RGB color cube. The space has points on its inside so using a solid mesh isn't viable. The alternative is particles and volumes.
+The drawback of volumes is the performance of their computation. 
+The generally used approach is raycasting. This involves casting rays from the camera onto a bounding cube and stepping through the cube to sample values.
+
+Graph showing
+Encoder Material:
+writes the position and color into a render texture
+Decoder VFX:
+Spawns particles, and samples the rendertexture to set the particles position and color. 
+
 
 https://www.wikiwand.com/en/articles/Color_solid

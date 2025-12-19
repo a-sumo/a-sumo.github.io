@@ -4,57 +4,45 @@ import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
 
-const books = [
-  { title: "The Keys", author: "DJ Khaled", image: "/assets/books/The-Keys.jpg", hoverImage: "/assets/books/dj-khaled-jetski.gif", comment: "" },
-  { title: "Development In Progress", author: "The Consilience Project", image: "/assets/books/Development-In-Progress.png", comment: "" },
-  { title: "Operating Manual for Spaceship Earth", author: "R. Buckminster Fuller", image: "/assets/books/Operating-Manual-for-Spaceship-Earth.jpg", comment: "" },
-  { title: "How To Prove It", author: "Daniel J. Velleman", image: "/assets/books/How-To-Prove-It.jpg", comment: "" },
-  { title: "Introduction To The Theory Of Computation", author: "Michael Sipser", image: "/assets/books/Introduction-To-The-Theory-Of-Computation.jpg", comment: "" },
-  { title: "Picturing Quantum Processes", author: "Bob Coecke and Aleks Kissinger", image: "/assets/books/Picturing-Quantum-Processes.jpg", comment: "" },
-  { title: "Lectures On Art", author: "John Ruskin", image: "/assets/books/Lectures-On-Art.jpg", comment: "" },
-  { title: "The Master And His Emissary", author: "Iain McGilchrist", image: "/assets/books/The-Master-And-His-Emissary.jpg", comment: "" },
-  { title: "Wholeness And The Implicate Order", author: "David Bohm", image: "/assets/books/Wholeness-And-The-Implicate-Order.jpg", comment: "" },
-  { title: "Tao Te Ching", author: "Lao Tzu", image: "/assets/books/Tao-Te-Ching.jpg", comment: "" },
-  { title: "The Heroic Heart", author: "Jetsunma Tenzin Palmo", image: "/assets/books/The-Heroic-Heart.jpg", comment: "" },
-  { title: "The Art Of Communicating", author: "Thich Nhat Hanh", image: "/assets/books/The-Art-Of-Communicating.jpg", comment: "" },
-  { title: "The Sound Of Silence", author: "Ajahn Sumedho", image: "/assets/books/The-Sound-Of-Silence.jpg", comment: "" },
-]
+const music = [
+  // { title: "Album Title", artist: "Artist Name", image: "/assets/music/Album-Title.jpg", comment: "" },
+];
 ---
 
-<Layout title="Reading List - Resources">
+<Layout title="Music List - Resources">
   <Header activeNav="resources" />
   <Breadcrumbs />
-  
+
   <!-- Critical resource hints for fastest loading -->
   <link slot="head" rel="preconnect" href={new URL(Astro.url.origin).origin}>
   <link slot="head" rel="dns-prefetch" href={new URL(Astro.url.origin).origin}>
-  
+
   <!-- Preload first 4 images immediately -->
-  {books.slice(0, 4).map(book => (
-    <link slot="head" rel="preload" as="image" href={book.image} />
+  {music.slice(0, 4).map(album => (
+    <link slot="head" rel="preload" as="image" href={album.image} />
   ))}
 
   <main id="main-content">
     <section class="py-12 px-4">
       <div class="mx-auto max-w-4xl">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          {books.map((book, index) => (
+          {music.map((album, index) => (
             <article class="flex flex-col items-center text-center">
               <!-- Fixed height title container -->
               <div class="h-24 mb-4 flex items-center justify-center w-full">
                 <h3 class="text-lg font-medium text-skin-base leading-tight line-clamp-4 px-2">
-                  {book.title}{book.author ? ` – ${book.author}` : ""}
+                  {album.title}{album.artist ? ` – ${album.artist}` : ""}
                 </h3>
               </div>
-              
+
               <!-- Image container -->
-              <div class={`mb-4 relative max-w-72 ${book.hoverImage ? 'has-hover-image' : ''}`}>
+              <div class="mb-4 relative max-w-72">
                 <!-- Placeholder that shows while loading -->
-                <div class={`bg-gradient-to-br from-gray-100 to-gray-200 border border-skin-border flex items-center justify-center book-placeholder book-placeholder-${index} transition-opacity duration-200 min-h-64`}>
+                <div class={`bg-gradient-to-br from-gray-100 to-gray-200 border border-skin-border flex items-center justify-center album-placeholder album-placeholder-${index} transition-opacity duration-200 min-h-64`}>
                   <div class="text-gray-400 text-xs text-center px-4">
                     <div class="w-6 h-6 mx-auto mb-2 opacity-40">
                       <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h12V4H6zm2 2h8v2H8V6zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/>
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
                       </svg>
                     </div>
                     Loading...
@@ -63,29 +51,20 @@ const books = [
 
                 <!-- Image that replaces placeholder -->
                 <img
-                  src={book.image}
-                  alt={`Cover of ${book.title}`}
-                  class={`w-full border border-skin-border object-cover book-image book-image-${index} opacity-0 transition-opacity duration-300 absolute top-0 left-0 ${book.hoverImage ? 'book-default-image' : ''}`}
+                  src={album.image}
+                  alt={`Cover of ${album.title}`}
+                  class={`w-full border border-skin-border object-cover album-image album-image-${index} opacity-0 transition-opacity duration-300 absolute top-0 left-0`}
                   loading={index < 4 ? "eager" : "lazy"}
                   fetchpriority={index < 2 ? "high" : "auto"}
                   decoding="async"
                   data-index={index}
                   sizes="256px"
                 />
-
-                <!-- Hover image (GIF) -->
-                {book.hoverImage && (
-                  <img
-                    src={book.hoverImage}
-                    alt={`${book.title} hover`}
-                    class="w-full border border-skin-border object-cover book-hover-image absolute top-0 left-0 opacity-0 transition-opacity duration-300"
-                  />
-                )}
               </div>
-                            
-              {book.comment && (
+
+              {album.comment && (
                 <p class="text-sm text-skin-base leading-relaxed max-w-64">
-                  {book.comment}
+                  {album.comment}
                 </p>
               )}
             </article>
@@ -107,34 +86,20 @@ const books = [
   }
 
   /* Optimized loading states */
-  .book-placeholder {
+  .album-placeholder {
     backdrop-filter: blur(2px);
   }
 
-  .book-image {
+  .album-image {
     image-rendering: crisp-edges;
     image-rendering: -webkit-optimize-contrast;
   }
 
-  .book-image.loaded {
+  .album-image.loaded {
     opacity: 1;
   }
 
-  /* Hover image effect */
-  .has-hover-image .book-hover-image {
-    opacity: 0;
-    z-index: 10;
-  }
-
-  .has-hover-image:hover .book-default-image.loaded {
-    opacity: 0;
-  }
-
-  .has-hover-image:hover .book-hover-image {
-    opacity: 1;
-  }
-
-  .book-placeholder.hidden {
+  .album-placeholder.hidden {
     opacity: 0;
     pointer-events: none;
   }
@@ -146,7 +111,7 @@ const books = [
 
   /* Progressive enhancement for connection speed */
   @media (prefers-reduced-data: reduce) {
-    .book-image {
+    .album-image {
       loading: lazy;
     }
   }
@@ -160,12 +125,12 @@ const books = [
 
   function preloadNextImages() {
     // Aggressively preload next batch
-    const images = document.querySelectorAll('.book-image[data-index]');
+    const images = document.querySelectorAll('.album-image[data-index]');
     const visibleImages = Array.from(images).filter(img => {
       const rect = img.getBoundingClientRect();
       return rect.bottom >= 0 && rect.top <= window.innerHeight + 500;
     });
-    
+
     visibleImages.forEach(img => {
       if (!img.complete) {
         const link = document.createElement('link');
@@ -178,12 +143,12 @@ const books = [
   }
 
   function handleImageLoading() {
-    const images = document.querySelectorAll('.book-image');
-    
+    const images = document.querySelectorAll('.album-image');
+
     images.forEach((img, imgIndex) => {
       const index = img.dataset.index;
-      const placeholder = document.querySelector(`.book-placeholder-${index}`);
-      
+      const placeholder = document.querySelector(`.album-placeholder-${index}`);
+
       if (!placeholder) return;
 
       let retryCount = 0;
@@ -204,19 +169,15 @@ const books = [
         // Gracefully hide the entire image container
         const container = img.parentElement;
         container.style.display = 'none';
-        
-        // Or if you prefer to fade it out:
-        // container.style.opacity = '0';
-        // container.style.pointerEvents = 'none';
       };
 
       const attemptLoad = () => {
         clearTimeout(timeoutId);
-        
+
         // Create new image to force fresh load
         const newImg = new Image();
         newImg.crossOrigin = "anonymous";
-        
+
         const onSuccess = () => {
           img.src = newImg.src;
           showImage();
@@ -233,10 +194,10 @@ const books = [
 
         newImg.onload = onSuccess;
         newImg.onerror = onFailed;
-        
+
         // Timeout fallback
         timeoutId = setTimeout(onFailed, LOAD_TIMEOUT);
-        
+
         newImg.src = img.src;
       };
 
@@ -251,8 +212,8 @@ const books = [
 
   // Global retry function
   window.retryImage = function(index) {
-    const img = document.querySelector(`.book-image-${index}`);
-    const placeholder = document.querySelector(`.book-placeholder-${index}`);
+    const img = document.querySelector(`.album-image-${index}`);
+    const placeholder = document.querySelector(`.album-placeholder-${index}`);
     if (img && placeholder) {
       img.classList.remove('loaded');
       placeholder.classList.remove('hidden');
@@ -260,7 +221,7 @@ const books = [
         <div class="text-gray-400 text-xs text-center px-4">
           <div class="w-6 h-6 mx-auto mb-2 opacity-40">
             <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M6 2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h12V4H6zm2 2h8v2H8V6zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/>
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
             </svg>
           </div>
           Loading...
@@ -288,7 +249,7 @@ const books = [
   // Initialize everything
   function init() {
     handleImageLoading();
-    
+
     // Observe scroll for preloading
     document.querySelectorAll('article').forEach(article => {
       imageObserver.observe(article);
