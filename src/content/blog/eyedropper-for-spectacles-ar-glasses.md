@@ -77,7 +77,9 @@ In the end, I will make both interaction modes available for the user to choose:
 
 ## 6. Code Snippets and References
 
-The code for this ongoing project is available on my [fork](https://github.com/a-sumo/Spectacles-Sample/tree/11a3183fc281a9e3720ea87920d9006c8ecb3195/Crop) of Snap's official Spectacles Samples repository. 
+I've created a sample project demonstrating the Eyedropper feature:
+
+<a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/eyedropper-for-spectacles-ar-glasses/ghost-eyedropper%202.png" width="80" alt="Eyedropper Sample Project"><span>a-sumo/specs-samples</span></a>
 
 <details>
 <summary>Procedural Grid Custom Code Node</summary>

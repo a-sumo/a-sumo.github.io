@@ -5,7 +5,16 @@ import Footer from "@components/Footer.astro";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
 
 const artwork = [
-  // { title: "Artwork Title", video: "/assets/artwork/video-name.mp4", comment: "" },
+  { title: "Flume - The Difference", video: "/assets/artwork/Flume-The-Difference.mp4", comment: "2020 - Made with SideFX Houdini" },
+  { title: "Flume - Heater", video: "/assets/artwork/Flume-Heater.mp4", comment: "2021 - Made with SideFX Houdini" },
+  { title: "Flume - DHLC", video: "/assets/artwork/Flume-DHLC.mp4", comment: "2021 - Made with SideFX Houdini" },
+  { title: "Getter - Bad Acid", video: "/assets/artwork/Getter-Bad-Acid.mp4", comment: "2021 - Made with SideFX Houdini" },
+];
+
+const experiments = [
+  { title: "Flume - 3 Eras Teaser", video: "/assets/artwork/Flume-3-Eras-Teaser.mp4" },
+  { title: "Flume - Chalk", video: "/assets/artwork/Flume-Chalk-test.mp4" },
+  { title: "Flume - I Can't Tell", video: "/assets/artwork/Flume-I-Cant-Tell.mp4" },
 ];
 ---
 
@@ -27,11 +36,11 @@ const artwork = [
               </div>
 
               <!-- Video container -->
-              <div class="mb-4 relative max-w-72 w-full">
+              <div class="mb-4 relative w-full">
                 <video
                   src={item.video}
-                  class="w-full border border-skin-border object-cover artwork-video"
-                  autoplay
+                  class="w-full border border-skin-border artwork-video"
+                  controls
                   loop
                   muted
                   playsinline
@@ -49,6 +58,28 @@ const artwork = [
             </article>
           ))}
         </div>
+
+        <!-- Experiments Section -->
+        <details class="mt-12">
+          <summary class="cursor-pointer text-lg font-medium text-skin-base hover:text-skin-accent">
+            Experiments
+          </summary>
+          <p class="mt-4 text-sm text-skin-base/70">
+            A collection of smaller explorations and tests. Hope these spark some ideas.
+          </p>
+          <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
+            {experiments.map((item) => (
+              <article class="flex flex-col items-center text-center">
+                <div class="h-20 mb-4 flex items-center justify-center w-full">
+                  <h3 class="text-lg font-medium text-skin-base leading-tight px-2">{item.title}</h3>
+                </div>
+                <div class="mb-4 relative w-full">
+                  <video src={item.video} class="w-full border border-skin-border artwork-video" controls loop muted playsinline preload="metadata"></video>
+                </div>
+              </article>
+            ))}
+          </div>
+        </details>
       </div>
     </section>
   </main>
@@ -65,8 +96,9 @@ const artwork = [
   }
 
   .artwork-video {
-    aspect-ratio: 1 / 1;
     background-color: #000;
+    max-width: 100%;
+    height: auto;
   }
 
   article {
