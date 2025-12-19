@@ -6,7 +6,7 @@ import { Image } from 'astro:assets';
 // Import both light and dark logos
 
 export interface Props {
-  activeNav?: "home" | "posts" | "archives" | "tags" | "about" | "search" | "resources";
+  activeNav?: "home" | "posts" | "archives" | "tags" | "about" | "search" | "resources" | "artwork";
 }
 
 const { activeNav } = Astro.props;
@@ -81,7 +81,12 @@ const { activeNav } = Astro.props;
               About
             </a>
           </li>
-          
+          <li>
+            <a href={`${import.meta.env.BASE_URL}resources/artwork/`} class={activeNav === "artwork" ? "active" : ""}>
+              Artwork
+            </a>
+          </li>
+
           <!-- Resources Dropdown -->
           <li class="dropdown">
             <button class={`dropdown-toggle ${(activeNav === "books" || activeNav === "resources" || activeNav === "articles" ) ? "active" : ""}`}>

@@ -1,0 +1,108 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+
+const artwork = [
+  // { title: "Artwork Title", video: "/assets/artwork/video-name.mp4", comment: "" },
+];
+---
+
+<Layout title="Artwork - Resources">
+  <Header activeNav="artwork" />
+  <Breadcrumbs />
+
+  <main id="main-content">
+    <section class="py-12 px-4">
+      <div class="mx-auto max-w-4xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          {artwork.map((item, index) => (
+            <article class="flex flex-col items-center text-center">
+              <!-- Fixed height title container -->
+              <div class="h-20 mb-4 flex items-center justify-center w-full">
+                <h3 class="text-lg font-medium text-skin-base leading-tight line-clamp-3 px-2">
+                  {item.title}
+                </h3>
+              </div>
+
+              <!-- Video container -->
+              <div class="mb-4 relative max-w-72 w-full">
+                <video
+                  src={item.video}
+                  class="w-full border border-skin-border object-cover artwork-video"
+                  autoplay
+                  loop
+                  muted
+                  playsinline
+                  preload={index < 4 ? "auto" : "metadata"}
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+
+              {item.comment && (
+                <p class="text-sm text-skin-base leading-relaxed max-w-64">
+                  {item.comment}
+                </p>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .artwork-video {
+    aspect-ratio: 1 / 1;
+    background-color: #000;
+  }
+
+  article {
+    min-height: 350px;
+  }
+</style>
+
+<script>
+  function initVideos() {
+    const videos = document.querySelectorAll('.artwork-video');
+
+    // Intersection Observer for lazy video loading
+    const videoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const video = entry.target;
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, {
+      rootMargin: '50px',
+      threshold: 0.1
+    });
+
+    videos.forEach(video => {
+      videoObserver.observe(video);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVideos);
+  } else {
+    initVideos();
+  }
+
+  document.addEventListener('astro:after-swap', initVideos);
+</script>
