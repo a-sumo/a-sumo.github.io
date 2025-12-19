@@ -45,11 +45,17 @@ We can begin with a simple example, an RGB color cube. The space has points on i
 The drawback of volumes is the performance of their computation. 
 The generally used approach is raycasting. This involves casting rays from the camera onto a bounding cube and stepping through the cube to sample values.
 
+
 Graph showing
 Encoder Material:
 writes the position and color into a render texture
 Decoder VFX:
 Spawns particles, and samples the rendertexture to set the particles position and color. 
 
+4 approaches:
+- solid mesh
+- volumes
+- particles
+- lines
 
 https://www.wikiwand.com/en/articles/Color_solid
