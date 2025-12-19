@@ -152,4 +152,10 @@ export const SOCIALS: SocialObjects = [
     linkTitle: `${SITE.title} on Mastodon`,
     active: false,
   },
+  {
+    name: "SoundCloud",
+    href: "https://soundcloud.com/scurvilinear",
+    linkTitle: `${SITE.title} on SoundCloud`,
+    active: false,
+  },
 ];

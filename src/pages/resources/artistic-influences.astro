@@ -1,0 +1,192 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+
+const influences = [
+  // Videos - use youtubeId or vimeoId
+  { type: "video", title: "Les Twins at Fusion Concept 2022", author: "Les Twins - Laurent & Larry Bourgeois,France", youtubeId: "v1tjOWDX28A", comment: "" },
+  { type: "video", title: "MT POP, Judge Show, Show Me The Pop 2021", author: "Mt Pop", youtubeId: "oW__mUXsDZU", comment: "" },
+  { type: "video", title: "MT POP, Judge Show, Blaze Fest 2024", author: "Mt Pop - Nguyen Vu Minh Tuan, Vietnam", youtubeId: "tp3mk7S3LDg", comment: "" },
+  // { type: "video", title: "Video Title", author: "Author Name", vimeoId: "123456", comment: "" },
+
+  // Artists/Channels - use url for external links
+  // { type: "artist", name: "Artist Name", url: "https://example.com", description: "Brief description" },
+];
+
+// Helper function to extract YouTube ID from various URL formats
+function getYouTubeId(url) {
+  if (!url) return '';
+  if (url.length === 11 && !url.includes('/')) {
+    return url;
+  }
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : url;
+}
+
+function getVideoEmbedUrl(item) {
+  if (item.vimeoId) {
+    return `https://player.vimeo.com/video/${item.vimeoId}`;
+  }
+  return `https://www.youtube.com/embed/${getYouTubeId(item.youtubeId)}?rel=0&modestbranding=1`;
+}
+
+const videos = influences.filter(i => i.type === "video");
+const artists = influences.filter(i => i.type === "artist");
+---
+
+<Layout title="Artistic Influences - Resources">
+  <Header activeNav="art" />
+  <Breadcrumbs />
+  <main id="main-content">
+    <section class="py-12 px-4">
+      <div class="mx-auto max-w-6xl">
+
+        {artists.length > 0 && (
+          <div class="mb-12">
+            <h2 class="text-2xl font-semibold text-skin-base mb-6 text-center">Artists & Creators</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {artists.map((artist) => (
+                <a
+                  href={artist.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="block p-6 border border-skin-border rounded-lg hover:bg-skin-card-muted transition-colors"
+                >
+                  <h3 class="text-lg font-medium text-skin-base mb-2">{artist.name}</h3>
+                  {artist.description && (
+                    <p class="text-sm text-skin-base opacity-80">{artist.description}</p>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {videos.length > 0 && (
+          <div>
+            <h2 class="text-2xl font-semibold text-skin-base mb-6 text-center">Inspiring Videos</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {videos.map((video, index) => (
+                <article class="flex flex-col">
+                  <div class="h-20 mb-4 flex items-center justify-center">
+                    <h3 class="text-lg font-medium text-skin-base leading-tight line-clamp-3 text-center px-2">
+                      {video.title} – {video.author}
+                    </h3>
+                  </div>
+
+                  <div class="mb-4 relative w-full">
+                    <div class={`w-full aspect-video bg-gray-200 border border-skin-border flex items-center justify-center video-placeholder absolute top-0 left-0 z-10 video-placeholder-${index}`}>
+                      <div class="text-center">
+                        <div class="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                        <p class="text-sm text-gray-600">Loading video...</p>
+                      </div>
+                    </div>
+
+                    <iframe
+                      class={`w-full aspect-video border border-skin-border video-iframe opacity-0 transition-opacity duration-300 video-iframe-${index}`}
+                      src={getVideoEmbedUrl(video)}
+                      title={`${video.title} by ${video.author}`}
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen
+                      loading="lazy"
+                      data-index={index}
+                    ></iframe>
+                  </div>
+
+                  {video.comment && (
+                    <div class="flex-1">
+                      <p class="text-sm text-skin-base leading-relaxed">
+                        {video.comment}
+                      </p>
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {influences.length === 0 && (
+          <div class="text-center py-12">
+            <p class="text-skin-base opacity-60">Coming soon...</p>
+          </div>
+        )}
+
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .video-placeholder {
+    background-color: #f5f5f5;
+    transition: opacity 0.3s ease;
+  }
+
+  .video-iframe {
+    transition: opacity 0.3s ease;
+  }
+
+  .video-iframe.loaded {
+    opacity: 1;
+  }
+
+  .video-placeholder.hidden {
+    opacity: 0;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+  }
+
+  article {
+    min-height: 350px;
+  }
+</style>
+
+<script>
+  function handleVideoLoading() {
+    const iframes = document.querySelectorAll('.video-iframe');
+
+    iframes.forEach((iframe) => {
+      const index = iframe.dataset.index;
+      const placeholder = document.querySelector(`.video-placeholder-${index}`);
+
+      if (!placeholder) return;
+
+      iframe.classList.remove('loaded');
+      placeholder.classList.remove('hidden');
+
+      const showVideo = () => {
+        iframe.classList.add('loaded');
+        placeholder.classList.add('hidden');
+      };
+
+      iframe.addEventListener('load', showVideo);
+      setTimeout(showVideo, 2000);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', handleVideoLoading);
+  } else {
+    handleVideoLoading();
+  }
+
+  document.addEventListener('astro:after-swap', handleVideoLoading);
+</script>

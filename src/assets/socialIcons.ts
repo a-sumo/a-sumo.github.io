@@ -206,6 +206,18 @@ const socialIcons = {
   q-43 -8 -67 -30q-29 -25 -35 -72q-2 -14 -2 -29l25 6q31 6 65 10q48 7 93 9q42 2 92 -2q32 -2 88 -9t107 -30q49 -23 81.5 -54.5t38.5 -63.5q9 -45 13 -109q4 -46 5 -97v-41q0 -56 -14 -103q-11 -40 -32 -73q-16 -26 -38 -47q-15 -15 -32 -25q-12 -8 -14 -8
   q-46 -22 -127 -33q-74 -10 -166 -11h-3zM367 267q73 0 109 56l24 39l24 -39q36 -56 109 -56q63 0 101 43t38 117v239h-95v-232q0 -74 -61 -74q-69 0 -69 88v127h-94v-127q0 -88 -69 -88q-61 0 -61 74v232h-95v-239q0 -74 38 -117t101 -43z" />
   </svg>`,
+  SoundCloud: `<svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M17 11h1c1.38 0 2.5 1.12 2.5 2.5s-1.12 2.5 -2.5 2.5h-7v-5c0 -1.38 1.12 -2.5 2.5 -2.5c1 0 1.85 .59 2.25 1.44c.37 -.27 .82 -.44 1.31 -.44c.82 0 1.55 .45 1.94 1.13"></path>
+      <path d="M3 16v-2"></path>
+      <path d="M5 16v-4"></path>
+      <path d="M7 16v-3"></path>
+    </svg>`,
 };
 
 export default socialIcons;
