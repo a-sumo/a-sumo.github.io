@@ -7,8 +7,11 @@ ogImage: /assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.
 draft: false
 ---
 
+<div style="text-align: center;">
 <img src="/assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.gif" width=300  alt="Eyedropper Test" >
 
+<a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/eyedropper-for-spectacles-ar-glasses/ghost-eyedropper%202.png" width="80" alt="Eyedropper Sample Project"><span>a-sumo/specs-samples</span></a>
+</div>
 
 ## 1. Why an Eyedropper?
 
@@ -76,10 +79,6 @@ In the end, I will make both interaction modes available for the user to choose:
 
 
 ## 6. Code Snippets and References
-
-I've created a sample project demonstrating the Eyedropper feature:
-
-<a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/eyedropper-for-spectacles-ar-glasses/ghost-eyedropper%202.png" width="80" alt="Eyedropper Sample Project"><span>a-sumo/specs-samples</span></a>
 
 <details>
 <summary>Procedural Grid Custom Code Node</summary>
