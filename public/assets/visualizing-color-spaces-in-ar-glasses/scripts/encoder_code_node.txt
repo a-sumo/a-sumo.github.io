@@ -1,0 +1,75 @@
+input_float texSize;
+input_float rgbRes;
+
+output_vec4 labPos;
+output_vec4 rgbCol;
+
+void main()
+{
+    vec2 uv = system.getScreenUVCoord();
+    
+    float col = floor(uv.x * texSize);
+    float row = floor(uv.y * texSize);
+    float pixelIndex = row * texSize + col;
+    
+    float totalPoints = rgbRes * rgbRes * rgbRes;
+    
+    // Decode pixel index to RGB indices
+    float temp = pixelIndex;
+    float bi = mod(temp, rgbRes);
+    temp = floor(temp / rgbRes);
+    float gi = mod(temp, rgbRes);
+    float ri = floor(temp / rgbRes);
+    
+    // Normalize RGB to 0-1
+    float denom = rgbRes - 1.0;
+    float r = ri / denom;
+    float g = gi / denom;
+    float b = bi / denom;
+    
+    // ========== RGB to LAB conversion ==========
+    
+    // sRGB to linear RGB
+    float lr = r > 0.04045 ? pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+    float lg = g > 0.04045 ? pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+    float lb = b > 0.04045 ? pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+    
+    // Linear RGB to XYZ (D65)
+    float x = lr * 0.4124564 + lg * 0.3575761 + lb * 0.1804375;
+    float y = lr * 0.2126729 + lg * 0.7151522 + lb * 0.0721750;
+    float z = lr * 0.0193339 + lg * 0.1191920 + lb * 0.9503041;
+    
+    // Normalize for D65 white point
+    x = x / 0.95047;
+    y = y / 1.0;
+    z = z / 1.08883;
+    
+    // XYZ to LAB (f function)
+    float delta = 6.0 / 29.0;
+    float delta3 = delta * delta * delta;
+    
+    float fx = x > delta3 ? pow(x, 1.0 / 3.0) : (x / (3.0 * delta * delta)) + (4.0 / 29.0);
+    float fy = y > delta3 ? pow(y, 1.0 / 3.0) : (y / (3.0 * delta * delta)) + (4.0 / 29.0);
+    float fz = z > delta3 ? pow(z, 1.0 / 3.0) : (z / (3.0 * delta * delta)) + (4.0 / 29.0);
+    
+    float L = 116.0 * fy - 16.0;
+    float labA = 500.0 * (fx - fy);
+    float labB = 200.0 * (fy - fz);
+    
+    // ========== Normalize LAB to 0-1 ==========
+    float normL = L / 100.0;
+    float normA = (labA + 128.0) / 255.0;
+    float normB = (labB + 128.0) / 255.0;
+    
+    normL = clamp(normL, 0.0, 1.0);
+    normA = clamp(normA, 0.0, 1.0);
+    normB = clamp(normB, 0.0, 1.0);
+    
+    float valid = pixelIndex < totalPoints ? 1.0 : 0.0;
+    
+    // LAB position: a*→X, L*→Y, b*→Z
+    labPos = vec4(normA * valid, normL * valid, normB * valid, valid);
+    
+    // RGB color
+    rgbCol = vec4(r * valid, g * valid, b * valid, valid);
+}

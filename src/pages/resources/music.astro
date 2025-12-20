@@ -3,73 +3,88 @@ import Layout from "@layouts/Layout.astro";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
+import { Soundcloud } from "soundcloud.ts";
 
-const music = [
-  // { title: "Album Title", artist: "Artist Name", image: "/assets/music/Album-Title.jpg", comment: "" },
+// List your favorite SoundCloud artists by username
+// Find the username from the artist's SoundCloud URL: soundcloud.com/USERNAME
+const favoriteArtists = [
+  "lvndquist",
+  "limbowmusic",
+  "carlzeer",
+  "vistuh",
+  "fonssmusic",
+  "nvr-me",
+  "claws2",
+  "filoomusic",
 ];
+
+// Fetch artist data from SoundCloud
+let artists: Array<{
+  username: string;
+  avatar_url: string;
+  permalink_url: string;
+  followers_count: number;
+}> = [];
+
+try {
+  const soundcloud = new Soundcloud();
+
+  const artistPromises = favoriteArtists.map(async (artist) => {
+    try {
+      const user = await soundcloud.users.get(artist);
+      return {
+        username: user.username,
+        avatar_url: user.avatar_url.replace('-large', '-t500x500'),
+        permalink_url: user.permalink_url,
+        followers_count: user.followers_count,
+      };
+    } catch (e) {
+      console.error(`Failed to fetch artist: ${artist}`, e);
+      return null;
+    }
+  });
+
+  const results = await Promise.all(artistPromises);
+  artists = results.filter((a): a is NonNullable<typeof a> => a !== null);
+} catch (e) {
+  console.error("Failed to initialize SoundCloud client:", e);
+}
 ---
 
-<Layout title="Music List - Resources">
-  <Header activeNav="resources" />
+<Layout title="Music - Art">
+  <Header activeNav="art" />
   <Breadcrumbs />
-
-  <!-- Critical resource hints for fastest loading -->
-  <link slot="head" rel="preconnect" href={new URL(Astro.url.origin).origin}>
-  <link slot="head" rel="dns-prefetch" href={new URL(Astro.url.origin).origin}>
-
-  <!-- Preload first 4 images immediately -->
-  {music.slice(0, 4).map(album => (
-    <link slot="head" rel="preload" as="image" href={album.image} />
-  ))}
-
   <main id="main-content">
     <section class="py-12 px-4">
       <div class="mx-auto max-w-4xl">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
-          {music.map((album, index) => (
-            <article class="flex flex-col items-center text-center">
-              <!-- Fixed height title container -->
-              <div class="h-24 mb-4 flex items-center justify-center w-full">
-                <h3 class="text-lg font-medium text-skin-base leading-tight line-clamp-4 px-2">
-                  {album.title}{album.artist ? ` – ${album.artist}` : ""}
-                </h3>
-              </div>
+        <h1 class="text-3xl font-bold text-skin-base mb-2 text-center">Music</h1>
+        <p class="text-skin-base opacity-70 text-center mb-12">Artists I'm listening to right now</p>
 
-              <!-- Image container -->
-              <div class="mb-4 relative max-w-72">
-                <!-- Placeholder that shows while loading -->
-                <div class={`bg-gradient-to-br from-gray-100 to-gray-200 border border-skin-border flex items-center justify-center album-placeholder album-placeholder-${index} transition-opacity duration-200 min-h-64`}>
-                  <div class="text-gray-400 text-xs text-center px-4">
-                    <div class="w-6 h-6 mx-auto mb-2 opacity-40">
-                      <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                      </svg>
-                    </div>
-                    Loading...
-                  </div>
-                </div>
-
-                <!-- Image that replaces placeholder -->
+        {artists.length > 0 ? (
+          <div class="artists-huddle">
+            {artists.map((artist, index) => (
+              <a
+                href={artist.permalink_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="artist-circle"
+                style={`--index: ${index}; --total: ${artists.length};`}
+                title={artist.username}
+              >
                 <img
-                  src={album.image}
-                  alt={`Cover of ${album.title}`}
-                  class={`w-full border border-skin-border object-cover album-image album-image-${index} opacity-0 transition-opacity duration-300 absolute top-0 left-0`}
-                  loading={index < 4 ? "eager" : "lazy"}
-                  fetchpriority={index < 2 ? "high" : "auto"}
-                  decoding="async"
-                  data-index={index}
-                  sizes="256px"
+                  src={artist.avatar_url}
+                  alt={artist.username}
+                  loading="lazy"
                 />
-              </div>
-
-              {album.comment && (
-                <p class="text-sm text-skin-base leading-relaxed max-w-64">
-                  {album.comment}
-                </p>
-              )}
-            </article>
-          ))}
-        </div>
+                <span class="artist-name">{artist.username}</span>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <div class="text-center py-12">
+            <p class="text-skin-base opacity-60">Loading artists...</p>
+          </div>
+        )}
       </div>
     </section>
   </main>
@@ -77,199 +92,105 @@ const music = [
 </Layout>
 
 <style>
-  .line-clamp-4 {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
+  .artists-huddle {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    padding: 2rem;
+    position: relative;
+  }
+
+  .artist-circle {
+    --size: 120px;
+    --hover-size: 140px;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    margin: -15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 3px solid var(--color-card);
+    z-index: calc(10 - var(--index));
+  }
+
+  .artist-circle:hover {
+    width: var(--hover-size);
+    height: var(--hover-size);
+    z-index: 100;
+    transform: translateY(-10px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .artist-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .artist-circle:hover img {
+    transform: scale(1.1);
+  }
+
+  .artist-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 1.5rem 0.5rem 0.5rem;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
-  /* Optimized loading states */
-  .album-placeholder {
-    backdrop-filter: blur(2px);
-  }
-
-  .album-image {
-    image-rendering: crisp-edges;
-    image-rendering: -webkit-optimize-contrast;
-  }
-
-  .album-image.loaded {
+  .artist-circle:hover .artist-name {
     opacity: 1;
   }
 
-  .album-placeholder.hidden {
-    opacity: 0;
-    pointer-events: none;
+  @media (max-width: 640px) {
+    .artist-circle {
+      --size: 90px;
+      --hover-size: 110px;
+      margin: -10px;
+    }
+
+    .artist-name {
+      font-size: 0.6rem;
+    }
   }
 
-  /* Consistent spacing */
-  article {
-    min-height: 400px;
+  @media (min-width: 768px) {
+    .artist-circle {
+      --size: 140px;
+      --hover-size: 160px;
+      margin: -20px;
+    }
   }
 
-  /* Progressive enhancement for connection speed */
-  @media (prefers-reduced-data: reduce) {
-    .album-image {
-      loading: lazy;
+  .artist-circle {
+    animation: pop-in 0.4s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+    animation-delay: calc(var(--index) * 0.1s);
+  }
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
     }
   }
 </style>
-
-<script>
-  // Aggressive optimization strategies
-  const RETRY_ATTEMPTS = 3;
-  const RETRY_DELAY = 500;
-  const LOAD_TIMEOUT = 3000;
-
-  function preloadNextImages() {
-    // Aggressively preload next batch
-    const images = document.querySelectorAll('.album-image[data-index]');
-    const visibleImages = Array.from(images).filter(img => {
-      const rect = img.getBoundingClientRect();
-      return rect.bottom >= 0 && rect.top <= window.innerHeight + 500;
-    });
-
-    visibleImages.forEach(img => {
-      if (!img.complete) {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'image';
-        link.href = img.src;
-        document.head.appendChild(link);
-      }
-    });
-  }
-
-  function handleImageLoading() {
-    const images = document.querySelectorAll('.album-image');
-
-    images.forEach((img, imgIndex) => {
-      const index = img.dataset.index;
-      const placeholder = document.querySelector(`.album-placeholder-${index}`);
-
-      if (!placeholder) return;
-
-      let retryCount = 0;
-      let timeoutId;
-
-      const showImage = () => {
-        clearTimeout(timeoutId);
-        // Instead of just showing the image, replace the placeholder
-        const container = img.parentElement;
-        container.style.height = 'auto';
-        placeholder.style.display = 'none';
-        img.style.position = 'static';
-        img.classList.add('loaded');
-      };
-
-      const showError = () => {
-        clearTimeout(timeoutId);
-        // Gracefully hide the entire image container
-        const container = img.parentElement;
-        container.style.display = 'none';
-      };
-
-      const attemptLoad = () => {
-        clearTimeout(timeoutId);
-
-        // Create new image to force fresh load
-        const newImg = new Image();
-        newImg.crossOrigin = "anonymous";
-
-        const onSuccess = () => {
-          img.src = newImg.src;
-          showImage();
-        };
-
-        const onFailed = () => {
-          retryCount++;
-          if (retryCount < RETRY_ATTEMPTS) {
-            setTimeout(attemptLoad, RETRY_DELAY * retryCount);
-          } else {
-            showError();
-          }
-        };
-
-        newImg.onload = onSuccess;
-        newImg.onerror = onFailed;
-
-        // Timeout fallback
-        timeoutId = setTimeout(onFailed, LOAD_TIMEOUT);
-
-        newImg.src = img.src;
-      };
-
-      // Check if already loaded
-      if (img.complete && img.naturalHeight !== 0) {
-        showImage();
-      } else {
-        attemptLoad();
-      }
-    });
-  }
-
-  // Global retry function
-  window.retryImage = function(index) {
-    const img = document.querySelector(`.album-image-${index}`);
-    const placeholder = document.querySelector(`.album-placeholder-${index}`);
-    if (img && placeholder) {
-      img.classList.remove('loaded');
-      placeholder.classList.remove('hidden');
-      placeholder.innerHTML = `
-        <div class="text-gray-400 text-xs text-center px-4">
-          <div class="w-6 h-6 mx-auto mb-2 opacity-40">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-            </svg>
-          </div>
-          Loading...
-        </div>
-      `;
-      handleImageLoading();
-    }
-  };
-
-  // Intersection Observer for progressive loading
-  const observerOptions = {
-    root: null,
-    rootMargin: '100px',
-    threshold: 0.1
-  };
-
-  const imageObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        preloadNextImages();
-      }
-    });
-  }, observerOptions);
-
-  // Initialize everything
-  function init() {
-    handleImageLoading();
-
-    // Observe scroll for preloading
-    document.querySelectorAll('article').forEach(article => {
-      imageObserver.observe(article);
-    });
-
-    // Preload on scroll
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(preloadNextImages, 100);
-    }, { passive: true });
-  }
-
-  // Run on load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  // Re-run on navigation
-  document.addEventListener('astro:after-swap', init);
-</script>

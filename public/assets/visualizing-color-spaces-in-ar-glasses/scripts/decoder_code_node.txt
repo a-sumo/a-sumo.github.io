@@ -1,0 +1,71 @@
+input_texture_2d posMap;
+input_texture_2d colorMap;
+input_float texSize;
+input_vec3 pos;
+input_vec3 rot;
+input_vec3 scale;
+
+output_vec3 particlePosition;
+output_vec4 particleColor;
+output_float KillParticle;
+
+void main()
+{
+    float ratio = system.getParticleIndexRatio();
+    float totalPixels = texSize * texSize;
+    float idx = floor(ratio * (totalPixels - 1.0) + 0.5);
+
+    float row = floor(idx / texSize);
+    float col = mod(idx, texSize);
+
+    float u = (col + 0.5) / texSize;
+    float v = (row + 0.5) / texSize;
+
+    // Sample textures from encoder (labPos and rgbCol)
+    vec4 posSample = posMap.sample(vec2(u, v));
+    vec4 colSample = colorMap.sample(vec2(u, v));
+
+    // LAB position from encoder: a*→X, L*→Y, b*→Z (normalized 0-1)
+    // Center around origin
+    vec3 localPos = (vec3(posSample.r, posSample.g, posSample.b) - 0.5);
+
+    // Apply scale
+    vec3 scaledPos = localPos * scale;
+
+    // Convert degrees to radians
+    vec3 rotRad = rot * 0.01745329251; // pi / 180
+
+    float cx = cos(rotRad.x); float sx = sin(rotRad.x);
+    float cy = cos(rotRad.y); float sy = sin(rotRad.y);
+    float cz = cos(rotRad.z); float sz = sin(rotRad.z);
+
+    // Rotate around Y first
+    vec3 ry = vec3(
+        scaledPos.x * cy + scaledPos.z * sy,
+        scaledPos.y,
+        -scaledPos.x * sy + scaledPos.z * cy
+    );
+
+    // Rotate around X
+    vec3 rx = vec3(
+        ry.x,
+        ry.y * cx - ry.z * sx,
+        ry.y * sx + ry.z * cx
+    );
+
+    // Rotate around Z
+    vec3 rotatedPos = vec3(
+        rx.x * cz - rx.y * sz,
+        rx.x * sz + rx.y * cz,
+        rx.z
+    );
+
+    // Apply translation
+    particlePosition = rotatedPos + pos;
+
+    // RGB color from encoder
+    particleColor = vec4(colSample.r, colSample.g, colSample.b, 1.0);
+
+    // Kill if invalid (alpha channel from encoder)
+    KillParticle = posSample.a < 0.5 ? 1.0 : 0.0;
+}
