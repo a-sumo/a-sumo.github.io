@@ -22,36 +22,69 @@ interface PortConfig {
 function NodeIcon({ icon, label, isExpanded, onClick, ports }: NodeIconProps & { ports?: PortConfig }) {
   return (
     <div className="node-wrapper relative flex items-center">
-      {/* Input ports - aligned with dotted lines */}
+      {/* Input ports */}
       {ports?.inputs && (
-        <div className="input-ports absolute -left-[3px] flex flex-col z-10" style={{ gap: '4px' }}>
-          <div className="w-[6px] h-[6px] rounded-full bg-[#07eaff]" title="positionRenderTarget" />
-          <div className="w-[6px] h-[6px] rounded-full bg-[#ff89e6]" title="colorRenderTarget" />
+        <div className="input-ports absolute -left-[4px] flex flex-col z-10" style={{ gap: '8px' }}>
+          <div className="w-[8px] h-[8px] rounded-full bg-[#07eaff]" title="positionRenderTarget" />
+          <div className="w-[8px] h-[8px] rounded-full bg-[#ff89e6]" title="colorRenderTarget" />
         </div>
       )}
 
       <button
         onClick={onClick}
-        className={`workflow-node flex flex-col items-center rounded-lg p-2 transition-all duration-200 hover:bg-skin-card/50 ${
-          isExpanded ? "bg-skin-card/50" : ""
-        }`}
+        className="workflow-node flex flex-col items-center justify-center p-4 transition-all duration-200 cursor-pointer rounded-lg border-2 w-[120px] h-[130px] md:w-[140px] md:h-[150px]"
+        style={{
+          background: '#000',
+          borderColor: isExpanded ? '#8CA9FF' : '#000',
+        }}
+        onMouseEnter={(e) => { if (!isExpanded) e.currentTarget.style.borderColor = '#8CA9FF'; }}
+        onMouseLeave={(e) => { if (!isExpanded) e.currentTarget.style.borderColor = '#000'; }}
         aria-expanded={isExpanded}
       >
         <img
           src={`${ASSETS_PATH}/icons/${icon}.png`}
           alt={label}
-          className="h-12 w-12 md:h-16 md:w-16"
+          className="h-14 w-14 md:h-16 md:w-16"
+          style={{ border: 'none' }}
         />
-        <span className="mt-1 text-xs md:text-sm font-medium">{label}</span>
+        <span className="mt-2 text-[11px] md:text-xs font-medium text-center leading-tight text-white">{label}</span>
+        <span className="text-[9px] mt-1 text-gray-400">click</span>
       </button>
 
-      {/* Output ports - aligned with dotted lines */}
+      {/* Output ports */}
       {ports?.outputs && (
-        <div className="output-ports absolute -right-[3px] flex flex-col z-10" style={{ gap: '4px' }}>
-          <div className="w-[6px] h-[6px] rounded-full bg-[#07eaff]" title="positionRenderTarget" />
-          <div className="w-[6px] h-[6px] rounded-full bg-[#ff89e6]" title="colorRenderTarget" />
+        <div className="output-ports absolute -right-[4px] flex flex-col z-10" style={{ gap: '8px' }}>
+          <div className="w-[8px] h-[8px] rounded-full bg-[#07eaff]" title="positionRenderTarget" />
+          <div className="w-[8px] h-[8px] rounded-full bg-[#ff89e6]" title="colorRenderTarget" />
         </div>
       )}
+    </div>
+  );
+}
+
+function Connector() {
+  return (
+    <div className="connector flex flex-col items-center justify-center mx-4 md:mx-6" style={{ gap: '8px' }}>
+      {/* Cyan line - position */}
+      <svg width="60" height="8" viewBox="0 0 60 8">
+        <line
+          x1="0" y1="4" x2="60" y2="4"
+          stroke="#07eaff"
+          strokeWidth="2"
+          strokeDasharray="6 4"
+          className="animate-dash"
+        />
+      </svg>
+      {/* Pink line - color */}
+      <svg width="60" height="8" viewBox="0 0 60 8">
+        <line
+          x1="0" y1="4" x2="60" y2="4"
+          stroke="#ff89e6"
+          strokeWidth="2"
+          strokeDasharray="6 4"
+          className="animate-dash-delayed"
+        />
+      </svg>
     </div>
   );
 }
@@ -128,8 +161,8 @@ export default function WorkflowDiagram() {
 
   return (
     <div className="workflow-diagram my-8">
-      {/* Level 1: Icons */}
-      <div className="level-1 flex items-center justify-center gap-0">
+      {/* Level 1: Icons with Connectors */}
+      <div className="level-1 flex items-center justify-center">
         <NodeIcon
           icon="Material"
           label="Encoder Material"
@@ -137,6 +170,7 @@ export default function WorkflowDiagram() {
           onClick={() => toggleNode("material")}
           ports={{ outputs: true }}
         />
+        <Connector />
         <NodeIcon
           icon="Script"
           label="Encoder Script"
@@ -144,6 +178,7 @@ export default function WorkflowDiagram() {
           onClick={() => toggleNode("script")}
           ports={{ inputs: true, outputs: true }}
         />
+        <Connector />
         <NodeIcon
           icon="VFX"
           label="Decoder VFX"
@@ -164,11 +199,13 @@ export default function WorkflowDiagram() {
           <div className="flex flex-col items-center animate-slideDown">
             <button
               onClick={() => toggleDetail("material")}
-              className={`screenshot-btn overflow-hidden rounded-lg border-2 transition-all duration-200 hover:border-skin-accent ${
-                expandedDetail === "material"
-                  ? "border-skin-accent"
-                  : "border-skin-line"
-              }`}
+              className="screenshot-btn rounded-lg border-2 transition-all duration-200"
+              style={{
+                borderColor: expandedDetail === "material" ? '#8CA9FF' : '#000',
+                padding: '12px',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = '#8CA9FF'}
+              onMouseLeave={(e) => { if (expandedDetail !== "material") e.currentTarget.style.borderColor = '#000'; }}
               aria-expanded={expandedDetail === "material"}
               aria-label="Toggle Material encoder code"
             >
@@ -187,7 +224,7 @@ export default function WorkflowDiagram() {
         {/* Script Code */}
         {expandedNode === "script" && (
           <div className="animate-slideDown">
-            <div className="mx-auto max-w-3xl rounded-lg border border-skin-line bg-skin-card p-4">
+            <div className="mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-4">
               <h4 className="mb-3 text-base font-semibold">
                 Encoder Script (TypeScript)
               </h4>
@@ -201,11 +238,13 @@ export default function WorkflowDiagram() {
           <div className="flex flex-col items-center animate-slideDown">
             <button
               onClick={() => toggleDetail("vfx")}
-              className={`screenshot-btn overflow-hidden rounded-lg border-2 transition-all duration-200 hover:border-skin-accent ${
-                expandedDetail === "vfx"
-                  ? "border-skin-accent"
-                  : "border-skin-line"
-              }`}
+              className="screenshot-btn rounded-lg border-2 transition-all duration-200"
+              style={{
+                borderColor: expandedDetail === "vfx" ? '#8CA9FF' : '#000',
+                padding: '12px',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = '#8CA9FF'}
+              onMouseLeave={(e) => { if (expandedDetail !== "vfx") e.currentTarget.style.borderColor = '#000'; }}
               aria-expanded={expandedDetail === "vfx"}
               aria-label="Toggle VFX decoder code"
             >
@@ -229,7 +268,7 @@ export default function WorkflowDiagram() {
         }`}
       >
         {expandedDetail === "material" && (
-          <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border border-skin-line bg-skin-card p-4">
+          <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-4">
             <h4 className="mb-3 text-base font-semibold">
               Encoder Code Node (GLSL)
             </h4>
@@ -241,7 +280,7 @@ export default function WorkflowDiagram() {
         )}
 
         {expandedDetail === "vfx" && (
-          <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border border-skin-line bg-skin-card p-4">
+          <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-4">
             <h4 className="mb-3 text-base font-semibold">
               Decoder Code Node (GLSL)
             </h4>
@@ -278,17 +317,21 @@ export default function WorkflowDiagram() {
         .screenshot-btn {
           cursor: pointer;
           background: none;
-          padding: 0;
         }
         .screenshot-btn:focus {
           outline: 2px solid var(--color-accent);
           outline-offset: 2px;
         }
-        .animated-dash-cyan {
-          animation: dashSlide 0.5s linear infinite;
+        .animate-dash {
+          animation: dashFlow 1s linear infinite;
         }
-        .animated-dash-pink {
-          animation: dashSlide 0.6s linear infinite;
+        .animate-dash-delayed {
+          animation: dashFlow 1s linear infinite;
+          animation-delay: 0.2s;
+        }
+        @keyframes dashFlow {
+          from { stroke-dashoffset: 20; }
+          to { stroke-dashoffset: 0; }
         }
       `}</style>
     </div>
