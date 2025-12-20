@@ -175,7 +175,7 @@ export default function WorkflowDiagram() {
               <img
                 src={`${ASSETS_PATH}/captures/material_encoder.png`}
                 alt="Material Encoder"
-                className="max-w-[320px] md:max-w-[480px]"
+                className="max-w-[520px] md:max-w-[680px]"
               />
             </button>
             <span className="mt-2 text-xs text-skin-base/60">
@@ -212,7 +212,7 @@ export default function WorkflowDiagram() {
               <img
                 src={`${ASSETS_PATH}/captures/vfx_decoder.png`}
                 alt="VFX Decoder"
-                className="max-w-[320px] md:max-w-[480px]"
+                className="max-w-[520px] md:max-w-[680px]"
               />
             </button>
             <span className="mt-2 text-xs text-skin-base/60">
