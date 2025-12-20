@@ -110,6 +110,11 @@ const experiments = [
   function initVideos() {
     const videos = document.querySelectorAll('.artwork-video');
 
+    // Force reload video sources after View Transitions
+    videos.forEach(video => {
+      video.load();
+    });
+
     // Intersection Observer for lazy video loading
     const videoObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -130,11 +135,6 @@ const experiments = [
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initVideos);
-  } else {
-    initVideos();
-  }
-
-  document.addEventListener('astro:after-swap', initVideos);
+  // Handle both initial page load and Astro View Transitions
+  document.addEventListener('astro:page-load', initVideos);
 </script>

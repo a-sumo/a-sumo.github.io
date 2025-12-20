@@ -217,15 +217,9 @@ function getVideoEmbedUrl(video) {
     });
   }
 
-  // Handle initial page load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', handleVideoLoading);
-  } else {
-    handleVideoLoading();
-  }
-
-  // Handle Astro page transitions
-  document.addEventListener('astro:after-swap', handleVideoLoading);
+  // Handle both initial page load and Astro View Transitions
+  // astro:page-load fires on initial load AND after every navigation
+  document.addEventListener('astro:page-load', handleVideoLoading);
 
   // Manual retry function
   window.retryVideoLoading = function() {
@@ -258,6 +252,6 @@ function getVideoEmbedUrl(video) {
     }
   }
 
-  // Initialize lazy loading
-  setupLazyVideoLoading();
+  // Initialize lazy loading on page load and after navigation
+  document.addEventListener('astro:page-load', setupLazyVideoLoading);
 </script>
