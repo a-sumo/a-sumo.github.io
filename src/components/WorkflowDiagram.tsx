@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Highlight, themes } from "prism-react-renderer";
 
 const ASSETS_PATH = "/assets/visualizing-color-spaces-in-ar-glasses";
 
@@ -32,13 +33,26 @@ function NodeIcon({ icon, label, isExpanded, onClick, ports }: NodeIconProps & {
 
       <button
         onClick={onClick}
-        className="workflow-node flex flex-col items-center justify-center p-4 transition-all duration-200 cursor-pointer rounded-lg border-2 w-[120px] h-[130px] md:w-[140px] md:h-[150px]"
+        className="workflow-node flex flex-col items-center justify-center p-4 transition-all duration-200 cursor-pointer rounded-lg border w-[120px] h-[130px] md:w-[140px] md:h-[150px]"
         style={{
-          background: '#000',
-          borderColor: isExpanded ? '#8CA9FF' : '#000',
+          background: 'linear-gradient(160deg, #252525 0%, #1c1c1c 40%, #141414 100%)',
+          borderColor: isExpanded ? '#8CA9FF' : '#2a2a2a',
+          boxShadow: isExpanded
+            ? '0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px rgba(140,169,255,0.1)'
+            : '0 6px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)',
         }}
-        onMouseEnter={(e) => { if (!isExpanded) e.currentTarget.style.borderColor = '#8CA9FF'; }}
-        onMouseLeave={(e) => { if (!isExpanded) e.currentTarget.style.borderColor = '#000'; }}
+        onMouseEnter={(e) => {
+          if (!isExpanded) {
+            e.currentTarget.style.borderColor = '#8CA9FF';
+            e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isExpanded) {
+            e.currentTarget.style.borderColor = '#2a2a2a';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)';
+          }
+        }}
         aria-expanded={isExpanded}
       >
         <img
@@ -64,27 +78,9 @@ function NodeIcon({ icon, label, isExpanded, onClick, ports }: NodeIconProps & {
 
 function Connector() {
   return (
-    <div className="connector flex flex-col items-center justify-center mx-4 md:mx-6" style={{ gap: '8px' }}>
-      {/* Cyan line - position */}
-      <svg width="60" height="8" viewBox="0 0 60 8">
-        <line
-          x1="0" y1="4" x2="60" y2="4"
-          stroke="#07eaff"
-          strokeWidth="2"
-          strokeDasharray="6 4"
-          className="animate-dash"
-        />
-      </svg>
-      {/* Pink line - color */}
-      <svg width="60" height="8" viewBox="0 0 60 8">
-        <line
-          x1="0" y1="4" x2="60" y2="4"
-          stroke="#ff89e6"
-          strokeWidth="2"
-          strokeDasharray="6 4"
-          className="animate-dash-delayed"
-        />
-      </svg>
+    <div className="flex flex-col justify-center -mx-[4px]" style={{ gap: '15px' }}>
+      <div className="h-[2px] w-10 bg-[#07eaff]" />
+      <div className="h-[2px] w-10 bg-[#ff89e6]" />
     </div>
   );
 }
@@ -94,7 +90,7 @@ interface CodeBlockProps {
   language: string;
 }
 
-function CodeBlock({ code }: CodeBlockProps) {
+function CodeBlock({ code, language }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
@@ -103,18 +99,41 @@ function CodeBlock({ code }: CodeBlockProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Map language names to prism language keys
+  const langMap: Record<string, string> = {
+    glsl: "c",
+    typescript: "typescript",
+    ts: "typescript",
+    javascript: "javascript",
+    js: "javascript",
+  };
+  const prismLang = langMap[language] || language;
+
   return (
     <div className="code-block relative">
       <button
         onClick={copyToClipboard}
-        className="absolute right-2 top-2 z-10 rounded bg-skin-fill px-2 py-1 text-xs opacity-70 transition-opacity hover:opacity-100"
+        className="absolute right-2 top-2 z-10 rounded bg-[#1a1a1a] px-2 py-1 text-xs opacity-70 transition-opacity hover:opacity-100 text-gray-300"
         aria-label="Copy code"
       >
         {copied ? "Copied!" : "Copy"}
       </button>
-      <pre className="max-h-[400px] overflow-auto rounded-lg bg-skin-fill p-4 text-xs leading-relaxed md:text-sm">
-        <code>{code}</code>
-      </pre>
+      <Highlight theme={themes.vsDark} code={code.trim()} language={prismLang}>
+        {({ style, tokens, getLineProps, getTokenProps }) => (
+          <pre
+            className="max-h-[400px] overflow-auto rounded-lg p-4 text-xs leading-relaxed md:text-sm"
+            style={{ ...style, margin: 0 }}
+          >
+            {tokens.map((line, i) => (
+              <div key={i} {...getLineProps({ line })}>
+                {line.map((token, key) => (
+                  <span key={key} {...getTokenProps({ token })} />
+                ))}
+              </div>
+            ))}
+          </pre>
+        )}
+      </Highlight>
     </div>
   );
 }
@@ -324,10 +343,6 @@ export default function WorkflowDiagram() {
         }
         .animate-dash {
           animation: dashFlow 1s linear infinite;
-        }
-        .animate-dash-delayed {
-          animation: dashFlow 1s linear infinite;
-          animation-delay: 0.2s;
         }
         @keyframes dashFlow {
           from { stroke-dashoffset: 20; }
