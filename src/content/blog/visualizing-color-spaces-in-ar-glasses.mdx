@@ -2,13 +2,27 @@
 title: "Visualizing Color Spaces in Augmented Reality with Spectacles"
 description: ""
 pubDatetime: 2025-12-22T09:00:00Z
-tags: ["augmented reality", "ar", "spectacles", "lens studio", "ui", "color space","vfx editor"]
+tags:
+  [
+    "augmented reality",
+    "ar",
+    "spectacles",
+    "lens studio",
+    "ui",
+    "color space",
+    "vfx editor",
+  ]
 ogImage: /assets/visualizing-color-spaces-in-ar-glasses/rec.gif
+icon: /assets/visualizing-color-spaces-in-ar-glasses/ghost_color_space.png
 draft: true
 ---
 
 import WorkflowDiagram from "@components/WorkflowDiagram";
 import WorkflowDiagramSimple from "@components/WorkflowDiagramSimple";
+
+<div style="text-align: center;">
+<a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/visualizing-color-spaces-in-ar-glasses/ghost_color_space.png" width="80" alt="Color Space Sample Project" /><span>a-sumo/specs-samples</span></a>
+</div>
 
 1. Mixing colors is difficult
 
@@ -54,6 +68,7 @@ The workflow involves three main components working together:
 The encoder material writes position and color data into render textures. The script orchestrates the pipeline, creating render targets and connecting the material output to the VFX input. Finally, the VFX decoder spawns particles, sampling the render textures to set each particle's position and color.
 
 4 approaches:
+
 - solid mesh
 - volumes
 - particles
@@ -62,37 +77,34 @@ The encoder material writes position and color data into render textures. The sc
 ### Full Color Space
 
 <WorkflowDiagramSimple
-  client:load
-  scriptLabel="Script"
-  materialLabel="Material"
-  materialCapture="full_color_space.png"
-  scriptCodeFile="rgb_cube_generator_script.txt"
-  materialCodeFile="full_space_mat.txt"
+	client:load
+	scriptLabel="Script"
+	materialLabel="Material"
+	materialCapture="full_color_space.png"
+	scriptCodeFile="rgb_cube_generator_script.txt"
+	materialCodeFile="full_space_mat.txt"
 />
 
 ### Pigment Mixing Gamut
 
 <WorkflowDiagramSimple
-  client:load
-  scriptLabel="Script"
-  materialLabel="Material"
-  materialCapture="full_color_space.png"
-  scriptCodeFile="pigment_mix_gamut_script.txt"
-  materialCodeFile="pigment_gamut_mat.txt"
+	client:load
+	scriptLabel="Script"
+	materialLabel="Material"
+	materialCapture="full_color_space.png"
+	scriptCodeFile="pigment_mix_gamut_script.txt"
+	materialCodeFile="pigment_gamut_mat.txt"
 />
 
 ### Pigment Projection
 
 <WorkflowDiagramSimple
-  client:load
-  scriptLabel="Script"
-  materialLabel="Material"
-  materialCapture="projector.png"
-  scriptCodeFile="pigment_projector_script.txt"
-  materialCodeFile="projector_mat.txt"
+	client:load
+	scriptLabel="Script"
+	materialLabel="Material"
+	materialCapture="projector.png"
+	scriptCodeFile="pigment_projector_script.txt"
+	materialCodeFile="projector_mat.txt"
 />
 
-
-<video controls autoPlay loop muted playsInline style={{ width: '100%', borderRadius: '8px' }}>
-  <source src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.mp4" type="video/mp4" />
-</video>
+<img src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.gif" alt="Color space transforms" style={{ width: "100%", borderRadius: "8px" }} />
