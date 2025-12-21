@@ -18,6 +18,7 @@ const blog = defineCollection({
         })
         .or(z.string())
         .optional(),
+      icon: z.string().optional(),
       description: z.string(),
       canonicalURL: z.string().optional(),
       editPost: z

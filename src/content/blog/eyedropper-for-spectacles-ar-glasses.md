@@ -4,13 +4,14 @@ description: "Building an eyedropper color picker for Snap Spectacles AR glasses
 pubDatetime: 2025-12-15T07:00:00Z
 tags: ["augmented reality", "ar", "spectacles", "lens studio", "ui", "eyedropper"]
 ogImage: /assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.gif
+icon: /assets/eyedropper-for-spectacles-ar-glasses/ghost-eyedropper.png
 draft: false
 ---
 
 <div style="text-align: center;">
 <img src="/assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.gif" width=300  alt="Eyedropper Test" >
 
-<a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/eyedropper-for-spectacles-ar-glasses/ghost-eyedropper%202.png" width="80" alt="Eyedropper Sample Project"><span>a-sumo/specs-samples</span></a>
+<a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/eyedropper-for-spectacles-ar-glasses/ghost-eyedropper.png" width="80" alt="Eyedropper Sample Project"><span>a-sumo/specs-samples</span></a>
 </div>
 
 ## 1. Why an Eyedropper?

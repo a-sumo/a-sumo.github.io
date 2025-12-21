@@ -41,22 +41,20 @@ function NodeIcon({ icon, label, isExpanded, onClick, ports }: NodeIconProps & {
         onClick={onClick}
         className="workflow-node flex flex-col items-center justify-center p-4 transition-all duration-200 cursor-pointer rounded-lg border w-[120px] h-[130px] md:w-[140px] md:h-[150px]"
         style={{
-          background: 'linear-gradient(160deg, #252525 0%, #1c1c1c 40%, #141414 100%)',
-          borderColor: isExpanded ? '#8CA9FF' : '#2a2a2a',
-          boxShadow: isExpanded
-            ? '0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06), 0 0 0 1px rgba(140,169,255,0.1)'
-            : '0 6px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)',
+          background: '#fafafa',
+          borderColor: isExpanded ? '#8CA9FF' : '#e0e0e0',
+          boxShadow: isExpanded ? '0 2px 8px rgba(0,0,0,0.08)' : '0 1px 3px rgba(0,0,0,0.05)',
         }}
         onMouseEnter={(e) => {
           if (!isExpanded) {
             e.currentTarget.style.borderColor = '#8CA9FF';
-            e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)';
+            e.currentTarget.style.background = '#f5f5f5';
           }
         }}
         onMouseLeave={(e) => {
           if (!isExpanded) {
-            e.currentTarget.style.borderColor = '#2a2a2a';
-            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)';
+            e.currentTarget.style.borderColor = '#e0e0e0';
+            e.currentTarget.style.background = '#fafafa';
           }
         }}
         aria-expanded={isExpanded}
@@ -67,7 +65,7 @@ function NodeIcon({ icon, label, isExpanded, onClick, ports }: NodeIconProps & {
           className="h-14 w-14 md:h-16 md:w-16"
           style={{ border: 'none' }}
         />
-        <span className="mt-2 text-[11px] md:text-xs font-medium text-center leading-tight text-white">{label}</span>
+        <span className="mt-2 text-[11px] md:text-xs font-medium text-center leading-tight text-gray-700">{label}</span>
         <span className="text-[9px] mt-1 text-gray-400">click</span>
       </button>
 

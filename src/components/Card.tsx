@@ -9,7 +9,7 @@ export interface Props {
 }
 
 export default function Card({ href, frontmatter, secHeading = true }: Props) {
-  const { title, pubDatetime, modDatetime, description, ogImage } = frontmatter;
+  const { title, pubDatetime, modDatetime, description, ogImage, icon } = frontmatter;
 
   const headerProps = {
     style: { viewTransitionName: slugifyStr(title) },
@@ -18,6 +18,20 @@ export default function Card({ href, frontmatter, secHeading = true }: Props) {
 
   const thumbnailSrc =
     typeof ogImage === "string" ? ogImage : ogImage?.src;
+
+  const titleContent = (
+    <span className="inline-flex items-center gap-2">
+      {icon && (
+        <img
+          src={icon}
+          alt=""
+          className="h-6 w-6 inline-block"
+          style={{ border: 'none', margin: 0 }}
+        />
+      )}
+      {title}
+    </span>
+  );
 
   return (
     <li className="my-6">
@@ -33,9 +47,9 @@ export default function Card({ href, frontmatter, secHeading = true }: Props) {
           />
         )}
         {secHeading ? (
-          <h2 {...headerProps}>{title}</h2>
+          <h2 {...headerProps}>{titleContent}</h2>
         ) : (
-          <h3 {...headerProps}>{title}</h3>
+          <h3 {...headerProps}>{titleContent}</h3>
         )}
       </a>
       <Datetime pubDatetime={pubDatetime} modDatetime={modDatetime} />
