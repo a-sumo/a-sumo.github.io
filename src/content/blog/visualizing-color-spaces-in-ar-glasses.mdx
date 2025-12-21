@@ -1,0 +1,98 @@
+---
+title: "Visualizing Color Spaces in Augmented Reality with Spectacles"
+description: ""
+pubDatetime: 2025-12-22T09:00:00Z
+tags: ["augmented reality", "ar", "spectacles", "lens studio", "ui", "color space","vfx editor"]
+ogImage: /assets/visualizing-color-spaces-in-ar-glasses/rec.gif
+draft: true
+---
+
+import WorkflowDiagram from "@components/WorkflowDiagram";
+import WorkflowDiagramSimple from "@components/WorkflowDiagramSimple";
+
+1. Mixing colors is difficult
+
+When I'm mixing colors on a palette, each decision I make moves paint across three key dimensions: hue, saturation and value. If I add white to green, I increase the value while decreasing the saturation and shifting the hue.
+
+This multidimensional navigation, which experienced painters manage seamlessly, is very challenging can get quite frustrating for someone lesser experienced.
+
+I've personally thrown away a few unfinished paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I was missing.
+I couldn't just amass pigments either because each new pigment adds an extra degree of freedom to the painting process, which meant more elements to manage.
+
+If, on the other hand, I restrict my palette to just a few pigments at the time, then I need to know which colors are within reach. Can I achieve a highly saturated purple? If I can't, then what's the closest I can get to it while achieving the desired impression?
+
+All these considerations are what years of practice go into.
+You just can't develop an intuition for how specific pigments for each specific brand will interact with one another across hue saturation and value just by watching video tutorials and reading books. You must paint, again and again, ideally with some guidance, but knowing that the process will be tedious.
+
+But how tedious does it really need to be? Is frustration necessary for learning, or can skillful effort be sufficient?
+
+What can I do to know or at least in advance which colors can be achieved with the pigments I have available?
+Can I view in real-time how my actions move the paint across the color dimensions?
+
+2. Seeing tools
+
+This problem is precisely what seeing tools are meant to tackle.
+Imagine having the super power to see into the chemical compositions of color pigments and their interaction with light and being able to
+If I was predicting the color that would result from the interaction of pigments across, hue, saturation and value in real time.
+How can I do that?
+
+3. Implementation
+
+The dimensions of hue, value and chromaticity(saturation) can either be visualized individually or in combination.
+Because real life color pigment manipulation alters the paint across all trhee dimension, to represent each separately or in combinations of two would result in three different disparate variables.
+
+Ideally what we would want is a viewing navigation tool.
+
+We can begin with a simple example, an RGB color cube. The space has points on its inside so using a solid mesh isn't viable. The alternative is particles and volumes.
+The drawback of volumes is the performance of their computation.
+The generally used approach is raycasting. This involves casting rays from the camera onto a bounding cube and stepping through the cube to sample values.
+
+The workflow involves three main components working together:
+
+<WorkflowDiagram client:load />
+
+The encoder material writes position and color data into render textures. The script orchestrates the pipeline, creating render targets and connecting the material output to the VFX input. Finally, the VFX decoder spawns particles, sampling the render textures to set each particle's position and color.
+
+4 approaches:
+- solid mesh
+- volumes
+- particles
+- lines
+
+### Full Color Space
+
+<WorkflowDiagramSimple
+  client:load
+  scriptLabel="Script"
+  materialLabel="Material"
+  materialCapture="full_color_space.png"
+  scriptCodeFile="rgb_cube_generator_script.txt"
+  materialCodeFile="full_space_mat.txt"
+/>
+
+### Pigment Mixing Gamut
+
+<WorkflowDiagramSimple
+  client:load
+  scriptLabel="Script"
+  materialLabel="Material"
+  materialCapture="full_color_space.png"
+  scriptCodeFile="pigment_mix_gamut_script.txt"
+  materialCodeFile="pigment_gamut_mat.txt"
+/>
+
+### Pigment Projection
+
+<WorkflowDiagramSimple
+  client:load
+  scriptLabel="Script"
+  materialLabel="Material"
+  materialCapture="projector.png"
+  scriptCodeFile="pigment_projector_script.txt"
+  materialCodeFile="projector_mat.txt"
+/>
+
+
+<video controls autoPlay loop muted playsInline style={{ width: '100%', borderRadius: '8px' }}>
+  <source src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.mp4" type="video/mp4" />
+</video>
