@@ -24,15 +24,33 @@ import WorkflowDiagramSimple from "@components/WorkflowDiagramSimple";
 <a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/visualizing-color-spaces-in-ar-glasses/ghost_color_space.png" width="80" alt="Color Space Sample Project" /><span>a-sumo/specs-samples</span></a>
 </div>
 
-1. Mixing colors is difficult
+1. The challenge of color mixing
 
-When I'm mixing colors on a palette, each decision I make moves paint across three key dimensions: hue, saturation and value. If I add white to green, I increase the value while decreasing the saturation and shifting the hue.
+When mixing pigments on a palette, each decision moves the color across three dimensions: hue, saturation and value. 
+These three dimensions are independent, or in techincal terms, orthogonal. In theory, you can change one while keeping others constant.
 
-This multidimensional navigation, which experienced painters manage seamlessly, is very challenging can get quite frustrating for someone lesser experienced.
+<img src="/assets/visualizing-color-spaces-in-ar-glasses/figma_hsl_color_picker.png" alt="Figma Color Picker" style={{ width: "200px" }} />
 
-I've personally thrown away a few unfinished paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I was missing.
-I couldn't just amass pigments either because each new pigment adds an extra degree of freedom to the painting process, which meant more elements to manage.
+Per example in order to de-saturate the green color of a tree as it vanishes in the horizon, you'll generally want to add a colder color to it, such as blue.
+But by adding blue, you also shift the hue towards... blue! So in practice, the dimensions aren't so independent after all.
+It turns out that mixing color pigments involves a kind of multidimensional navigation which experienced painters perform seamlessly. 
+This is a particularly crucial process that has an impact on the confidence of your brushtrokes and the fluidity of your artwork.
+In fact, the problems you can solve ahead of laying your brush on the canvas, the more enjoyable the process for you, the painter and the more free-flowing your painting will *feel* to the viewer.
 
+you have too few pigments, you have little expressiveness and it may be unclear whether or not a certain color in you reference is achievable and if it isn't, what's the closest you can get to it.
+
+However, the more pigments you have, the more degrees of freedom, hence the more complexity. This complexity grows combinatorially: not only do you have more possible mixtures to consider, but many different mixtures can yield the same color!
+This makes makes it harder to reason about which path to take. 
+I've been personally driven insane when attempting to do this with acrylics, where I had to factor in the fast drying time and the desaturation post drying, 
+how much my retardant would increase my color mixing runway, depending on which . I mean, this stuff can literally drive you insane. 
+Wanna try? Here: I give you a color and you need to find out which mix achieves it. "Bonne chance, Franco"!
+
+I've speak from experience, having thrown away a few unfinished paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I was missing.
+So I watched youtube tutorials, and after a quick reddit search landed on "1,500 Color Mixing Recipes for Oil, Acrylic & Watercolor by William F. Powell"
+It's a very comprehensive book, but as I read it and try my hands at a few combinations, 
+I kept wondering: "why does this process have to be so boring and tedious"
+<img src="/assets/visualizing-color-spaces-in-ar-glasses/color_mixing_recipes.png" alt="1500 Color Mixing Recipes" style={{ width: "200px" }} />
+I wanted something interactive, 
 If, on the other hand, I restrict my palette to just a few pigments at the time, then I need to know which colors are within reach. Can I achieve a highly saturated purple? If I can't, then what's the closest I can get to it while achieving the desired impression?
 
 All these considerations are what years of practice go into.
@@ -108,3 +126,5 @@ The encoder material writes position and color data into render textures. The sc
 />
 
 <img src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.gif" alt="Color space transforms" style={{ width: "100%", borderRadius: "8px" }} />
+
+## Up next: AI-augmented Image Processing Pipeline on Spectacles AR glasses
