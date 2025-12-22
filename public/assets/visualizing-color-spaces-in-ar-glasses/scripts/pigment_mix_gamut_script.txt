@@ -1,11 +1,11 @@
 /**
- * PigmentMixGamutGenerator.ts
+ * PigmentGamutMeshGenerator.ts
  *
  * Generates an RGB cube visualization showing only achievable colors via pigment mixing.
  * Uses small cubes at each achievable sample point.
  */
 @component
-export class PigmentMixGamutGenerator extends BaseScriptComponent {
+export class PigmentGamutMeshGenerator extends BaseScriptComponent {
 
   // ============ GEOMETRY SETTINGS ============
 
@@ -111,6 +111,7 @@ export class PigmentMixGamutGenerator extends BaseScriptComponent {
   private static readonly COLOR_SPACE_NAMES = [
     "RGB", "CIELAB", "CIEXYZ", "Oklab", "CIELUV"
   ];
+  private static readonly COLOR_SPACE_COUNT = 5;
   private readonly D65 = { X: 0.95047, Y: 1.0, Z: 1.08883 };
 
   private meshBuilder!: MeshBuilder;
@@ -206,7 +207,7 @@ export class PigmentMixGamutGenerator extends BaseScriptComponent {
   private buildGamutLUT(): void {
     this.gamutLUT = [];
     const steps = this._gamutSampleSteps;
-    const n = PigmentMixGamutGenerator.NUM_PIGMENTS;
+    const n = PigmentGamutMeshGenerator.NUM_PIGMENTS;
 
     // Pure pigments
     for (let i = 0; i < n; i++) {
@@ -248,7 +249,7 @@ export class PigmentMixGamutGenerator extends BaseScriptComponent {
       }
     }
 
-    print(`PigmentMixGamut: Built LUT with ${this.gamutLUT.length} achievable colors`);
+    print(`PigmentGamutMeshGenerator: Built LUT with ${this.gamutLUT.length} achievable colors`);
   }
 
   private isColorAchievable(r: number, g: number, b: number): boolean {
@@ -348,14 +349,14 @@ export class PigmentMixGamutGenerator extends BaseScriptComponent {
 
   private updateColorSpaceText(): void {
     if (this.colorSpaceText) {
-      const name = PigmentMixGamutGenerator.COLOR_SPACE_NAMES[this._colorSpaceTo] || "Unknown";
+      const name = PigmentGamutMeshGenerator.COLOR_SPACE_NAMES[this._colorSpaceTo] || "Unknown";
       this.colorSpaceText.text = name;
     }
   }
 
   /** Get current color space name */
   public getColorSpaceName(): string {
-    return PigmentMixGamutGenerator.COLOR_SPACE_NAMES[this._colorSpaceTo] || "Unknown";
+    return PigmentGamutMeshGenerator.COLOR_SPACE_NAMES[this._colorSpaceTo] || "Unknown";
   }
 
   // ============================================
@@ -383,7 +384,7 @@ export class PigmentMixGamutGenerator extends BaseScriptComponent {
       }
     }
 
-    print(`PigmentMixGamut: ${this.sampleData.length} achievable samples`);
+    print(`PigmentGamutMeshGenerator: ${this.sampleData.length} achievable samples`);
   }
 
   private generateMesh(): void {
@@ -465,8 +466,6 @@ export class PigmentMixGamutGenerator extends BaseScriptComponent {
   // PUBLIC API (use as event callbacks)
   // ============================================
 
-  private static readonly COLOR_SPACE_COUNT = 6;
-
   public refresh(): void {
     this.initializePigments();
     this.buildGamutLUT();
@@ -477,7 +476,7 @@ export class PigmentMixGamutGenerator extends BaseScriptComponent {
 
   /** Cycle to next color space */
   public nextColorSpace(): void {
-    const next = (this._colorSpaceTo + 1) % PigmentMixGamutGenerator.COLOR_SPACE_COUNT;
+    const next = (this._colorSpaceTo + 1) % PigmentGamutMeshGenerator.COLOR_SPACE_COUNT;
     this._colorSpaceFrom = next;
     this._colorSpaceTo = next;
     this._blend = 1.0;
@@ -486,7 +485,7 @@ export class PigmentMixGamutGenerator extends BaseScriptComponent {
 
   /** Cycle to previous color space */
   public prevColorSpace(): void {
-    const prev = (this._colorSpaceTo - 1 + PigmentMixGamutGenerator.COLOR_SPACE_COUNT) % PigmentMixGamutGenerator.COLOR_SPACE_COUNT;
+    const prev = (this._colorSpaceTo - 1 + PigmentGamutMeshGenerator.COLOR_SPACE_COUNT) % PigmentGamutMeshGenerator.COLOR_SPACE_COUNT;
     this._colorSpaceFrom = prev;
     this._colorSpaceTo = prev;
     this._blend = 1.0;
