@@ -101,32 +101,56 @@ This is also an intuitive choice for painters who are generally familiar with [M
 Next we need to figure out the representation mode for this space. 
 We can choose between 4 main approaches: Solid Objects, VFX particles, Volumes, Procedural Meshes (points and lines).
 
-1. Solid Objects
+1. Solids
 
 Because we care about the domain's surface as much as the interior, this approach is not particularly useful. 
 
-2. Volumes: this is generally done via volume raycasting.
+2. Volumes
+
+These are generally rendered via a technique known as is is generally done via volume raymarching. Maxime Heckel has written a gorgeous article on the subject if you're interested: (Real time cloudscapes with volumetric raymarching)https://blog.maximeheckel.com/posts/real-time-cloudscapes-with-volumetric-raymarching/'s article on the 
 
 It's particularly useful to single out a subdomain of 3D volumetric data such as bones, who are more dense than surrounding flesh. 
 But in the case of color spaces, each sample of the space has equal importance. It would be improper to integrate samples of density values over a ray path into a screen-projected value, as is done in raycasting.
-Additionally, the raycasting loop is expensive to compute. It only runs smoothly (no performance throttling) on 2024 Spectacles if we use low resolution volume grid. This produces a poor visual output, especially when compared to other techniques.
+Additionally, the raycasting loop is expensive to compute. It only runs smoothly (no performance throttling) on 2024 Spectacles if we use low resolution volume grid.  Note that that because we're running on AR glasses, we need to render out one image for each eye, at 1.5x the frameratefor viewing comfort. 
+Reducing resoltion produces a poor visual output, especially when compared to other techniques. It's also a technique that I've found hard to debug.
+
 
 2. VFX particles
 
-Lens Studio's VFX Editor is a a fun tool to use. The challenge with it is to encode the position of every element of the color space, so that it can be read by the vfx editor and used to set particle positions.
-One of the challenges I faced with this approach was figuring out a good encoding strategy and dealing with the lack of support of floating point textures in Lens Studio 5.15.
+Lens Studio's VFX Editor is a a fun tool to use. The challenge with it is to encode the position of every element of the color space so that it can be read by the vfx editor and used to modify particle attributes.
+One of the challenges I faced with this approach was figuring out a good encoding strategy. Particularly, I stumbled with the the lack of support of floating point textures in Lens Studio 5.15.
+Fortunately, the tutorial [Spawn Particles on Mesh][(https://developers.snap.com/lens-studio/features/graphics/mesh-data-texture#spawn-particles-on-mesh), helped with this. 
+I also had to deal with a quirk that results in the integer index of particles in the VFX Editor being an even number. As a result I had to spawn twice the amount of particles as those displayed.
+This was quite painful to debug but eventually, after some tinkering I settled on a suitable workflow.
 
-After some tinkering, the workflow I settled for is the onebelow.
+The encoder material writes position and color data into render textures. The script orchestrates the pipeline, creating render targets and connecting the material output to the VFX input. 
+Finally, the VFX decoder spawns particles, sampling the render textures to set each particle's position and color.
+
 <WorkflowDiagram client:load />
 
-- 4. CPU-generated Meshes (Lines and Cubes)
-     The space has points on its inside so using a solid mesh isn't viable. The alternative is particles and volumes.
-     The drawback of volumes is the performance of their computation.
-     The generally used approach is raycasting. This involves casting rays from the camera onto a bounding cube and stepping through the cube to sample values.
+Now, as happy as I was of having overcome those technical hurdles, the performance just wasn't there. Adding 3 such VFX to my scene would visibly reduce framerate.
+On Spectacles, this results in a very bad user experience. Your real world hands move just fine but the virtual objects(all of them) are jittery.
+I managed to improve performance a bit by using billboard quads, instead of meshes, but still nowhere near satisfactory.
+
+I started questioning the whole 3D color space visualization approach until it occured to me that the color spaces had interesting **regularities**.
+In fact, each element in Color Space A has a unique mapped element in Color Space B, a property known as bijectivity. 
+This means that if we render out, say grid lines for an RGB cube, we can simply deform them to get the resulting curves in the destination space.
+I've ~~coded~~ queried an [manim](https://github.com/3b1b/manim) visualization to serve as an example:
+<img
+	src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.gif"
+	alt="Color space transforms"
+	style={{ width: "100%", borderRadius: "8px" }}
+/>
+This brings us to the fourth technque.
+
+- 4. Procedural Meshes
+
+In Lens Studio, we can [create meshes procedurally](https://developers.snap.com/lens-studio/lens-studio-workflow/scene-set-up/3d/procedural-mesh). 
+With the MeshBuilder API, we can specify their vertex positions and actually store any arbitrary attribute.
+Then, inside a material, we can alter the position of their vertices. 
 
 The workflow involves three main components working together:
 
-The encoder material writes position and color data into render textures. The script orchestrates the pipeline, creating render targets and connecting the material output to the VFX input. Finally, the VFX decoder spawns particles, sampling the render textures to set each particle's position and color.
 
 ### Full Color Space
 
@@ -161,10 +185,5 @@ The encoder material writes position and color data into render textures. The sc
 	materialCodeFile="projector_mat.txt"
 />
 
-<img
-	src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.gif"
-	alt="Color space transforms"
-	style={{ width: "100%", borderRadius: "8px" }}
-/>
 
 ## Up next: AI-augmented Image Processing Pipeline on Spectacles AR glasses
