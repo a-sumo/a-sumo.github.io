@@ -24,69 +24,109 @@ import CollapsibleVideo from "@components/CollapsibleVideo";
 import HoverReveal from "@components/HoverReveal";
 
 <div style="text-align: center;">
-<a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/visualizing-color-spaces-in-ar-glasses/ghost_color_space.png" width="80" alt="Color Space Sample Project" /><span>a-sumo/specs-samples</span></a>
+	<a
+		href="https://github.com/a-sumo/specs-samples/"
+		style="display: inline-flex; align-items: center; gap: 10px;"
+	>
+		<img
+			src="/assets/visualizing-color-spaces-in-ar-glasses/ghost_color_space.png"
+			width="80"
+			alt="Color Space Sample Project"
+		/>
+		<span>a-sumo/specs-samples</span>
+	</a>
 </div>
 
 1. The challenge of color mixing
 
-When mixing pigments on a palette, each decision moves the color across three dimensions: hue, saturation and value. 
+When mixing pigments on a palette, each decision moves the color across three dimensions: hue, saturation and value.
 These three dimensions are independent, or in techincal terms, orthogonal. In theory, you can change one while keeping others constant.
 
 Per example in order to de-saturate the green color of a tree as it vanishes in the horizon, you'll generally want to add a colder color to it, such as blue.
 But by adding blue, you also shift the hue towards... blue! So in practice, the dimensions aren't so independent after all.
-It turns out that mixing color pigments involves a kind of multidimensional navigation which experienced painters perform seamlessly. 
+It turns out that mixing color pigments involves a kind of multidimensional navigation which experienced painters perform seamlessly.
 This is a particularly crucial process that has an impact on the confidence of your brushtrokes and the fluidity of your artwork.
-In fact, the problems you can solve ahead of laying your brush on the canvas, the more enjoyable the process for you, the painter and the more free-flowing your painting will *feel* to the viewer.
+In fact, the problems you can solve ahead of laying your brush on the canvas, the more enjoyable the process for you, the painter and the more free-flowing your painting will _feel_ to the viewer.
 
 you have too few pigments, you have little expressiveness and it may be unclear whether or not a certain color in you reference is achievable and if it isn't, what's the closest you can get to it.
 
 However, the more pigments you have, the more degrees of freedom, hence the more complexity. This complexity grows combinatorially: not only do you have more possible mixtures to consider, but many different mixtures can yield the same color!
-This makes makes it harder to reason about which path to take. 
-I've been personally driven insane when attempting to do this with acrylics. Not only do you have to mix the right proportions, but you also have to factor in the fast drying time, the desaturation that occurs after drying, and how much retardant medium to add—which itself varies depending on how long ago you laid your paint drops on the palette. This stuff can literally drive you insane. 
+This makes makes it harder to reason about which path to take.
+I've been personally driven insane when attempting to do this with acrylics. Not only do you have to mix the right proportions, but you also have to factor in the fast drying time, the desaturation that occurs after drying, and how much retardant medium to add—which itself varies depending on how long ago you laid your paint drops on the palette. This stuff can literally drive you insane.
 
 Wanna try? Here: I give you a color and you need to find out which mix achieves it. <CollapsibleVideo client:load src="/assets/visualizing-color-spaces-in-ar-glasses/videos/bonne_chance_franco-succession.mp4" preText='"' trigger="Bonne chance, Franco" postText='!"' description="Succession, Season 3 Episode 5" />
 
 <ColorMixingChallenge client:load targetColor="#8B4513" />
 
-<CollapsibleVideo client:load src="/assets/visualizing-color-spaces-in-ar-glasses/videos/excellent_wonderful_news.mp4" preText='How was it? "' trigger="Wonderful" postText='," huh?' description="Succession, Season 3 Episode 5" />
+<CollapsibleVideo
+	client:load
+	src="/assets/visualizing-color-spaces-in-ar-glasses/videos/excellent_wonderful_news.mp4"
+	preText='How was it? "'
+	trigger="Wonderful"
+	postText='," huh?'
+	description="Succession, Season 3 Episode 5"
+/>
 
-I speak from experience, having thrown away a few unfinished paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I was missing.
-So I watched youtube tutorials, and a quick Reddit search landed me on <HoverReveal client:load trigger="1,500 Color Mixing Recipes for Oil, Acrylic & Watercolor" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/color_mixing_recipes.png" imageAlt="1500 Color Mixing Recipes" imageWidth="200px" /> by William F. Powell.
+I speak from experience. I have completely reset a few paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I was missing.
+So I watched YouTube tutorials, and a quick Reddit search landed me on <HoverReveal client:load trigger="1,500 Color Mixing Recipes for Oil, Acrylic & Watercolor" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/color_mixing_recipes.png" imageAlt="1500 Color Mixing Recipes" imageWidth="200px" /> by William F. Powell.
 It's a comprehensive book, but as I read it and tried my hand at a few combinations, I kept thinking: "Why does this process have to be so laborious and just not fun?"
-Scroll through the pages, find the recipe, copy, mix, compare, repeat...  I felt like someone in the 17th century reaching for a log table every time they needed to multiply.
+Scroll through the pages, find the recipe, copy, mix, compare, repeat... I felt like someone in the 17th century reaching for a log table every time they needed to multiply.
 
 All these considerations are what years of practice go into.
 You just can't develop an intuition for how specific pigments for each specific brand will interact with one another across hue saturation and value just by watching video tutorials and reading books. You must paint, again and again, ideally with some guidance, but knowing that the process will be tedious.
 
-But how tedious does it really need to be? Is frustration necessary for learning, or can skillful effort be sufficient?
+But how tedious does it really _need_ to be? Is frustration necessary for learning, or can skillful effort be sufficient?
 
-**What can I do to know in advance which colors can be achieved with the pigments I have available?
+**How can I know in advance which colors can be achieved with the pigments I have available?
 Can I view, in real-time, how my actions on the color palette move the paint across the color dimensions?**
 
-2. Seeing tools
+3. Building Color Spaces
 
-This problem is precisely what seeing tools are meant to tackle.
-Imagine having the super power to compute pigments interactions and having that
-If I was predicting the color that would result from the interaction of pigments across, hue, saturation and value in real time.
-How can I do that?
+When we combine an axis for each color dimension, we get a color space.
+There are wide variety of those, but the ones we care about when painting are those that are somewhat perceptually accurate.
+We particularly care about the transitions between colors as those will inform our choices.
 
-3. Implementation
+We want a tool that integrates smoothly into the flow of painting and allows us to keep our hands free, as painting can get quite messy.
+Fortunately, I got a pair of [Spectacles AR glasses](https://www.spectacles.com/).
 
-When we combine an axis for each color, we get a color space. 
-There are wide variety of color spaces, but the ones we care about 
+The next thing we need to figure out is which content to display and how to display it.
+Concretely, we want some way of knowing where a specific color in our palette sits in the color space, so that when we change it its mixture, we can review it again
+and see what resulted.
+We also want to know which colors are accessible based on the paint drops available. The name for that is a color gamut.
+Finally, we'd like to see how a specific target color maps into this gamut. In other words, what's the closest I can get to the reference color based on the pigments at my disposal.
 
-Ideally what we would want is a viewing navigation tool.
+RGB is the obvious starting point, but it's a poor fit for this problem. It's perceptually inaccurate. [CIELAB](https://en.wikipedia.org/wiki/CIELAB_color_space), for instance, is better suited: it's designed so that equal distances in the space correspond to equal perceived color differences. 
+This is also an intuitive choice for painters who are generally familiar with [Munsell Color System](https://en.wikipedia.org/wiki/Munsell_color_system). CIELAB works the same way: lightness on the vertical axis, hue as rotation, and saturation as distance from center.
 
-We can begin with a simple example, an RGB color cube. The space has points on its inside so using a solid mesh isn't viable. The alternative is particles and volumes.
-The drawback of volumes is the performance of their computation.
-The generally used approach is raycasting. This involves casting rays from the camera onto a bounding cube and stepping through the cube to sample values.
+Next we need to figure out the representation mode for this space. 
+We can choose between 4 main approaches: Solid Objects, VFX particles, Volumes, Procedural Meshes (points and lines).
+
+1. Solid Objects
+
+Because we care about the domain's surface as much as the interior, this approach is not particularly useful. 
+
+2. Volumes: this is generally done via volume raycasting.
+
+It's particularly useful to single out a subdomain of 3D volumetric data such as bones, who are more dense than surrounding flesh. 
+But in the case of color spaces, each sample of the space has equal importance. It would be improper to integrate samples of density values over a ray path into a screen-projected value, as is done in raycasting.
+Additionally, the raycasting loop is expensive to compute. It only runs smoothly (no performance throttling) on 2024 Spectacles if we use low resolution volume grid. This produces a poor visual output, especially when compared to other techniques.
+
+2. VFX particles
+
+Lens Studio's VFX Editor is a a fun tool to use. The challenge with it is to encode the position of every element of the color space, so that it can be read by the vfx editor and used to set particle positions.
+One of the challenges I faced with this approach was figuring out a good encoding strategy and dealing with the lack of support of floating point textures in Lens Studio 5.15.
+
+After some tinkering, the workflow I settled for is the onebelow.
+<WorkflowDiagram client:load />
+
+- 4. CPU-generated Meshes (Lines and Cubes)
+     The space has points on its inside so using a solid mesh isn't viable. The alternative is particles and volumes.
+     The drawback of volumes is the performance of their computation.
+     The generally used approach is raycasting. This involves casting rays from the camera onto a bounding cube and stepping through the cube to sample values.
 
 The workflow involves three main components working together:
 
-<WorkflowDiagram client:load />
-
 The encoder material writes position and color data into render textures. The script orchestrates the pipeline, creating render targets and connecting the material output to the VFX input. Finally, the VFX decoder spawns particles, sampling the render textures to set each particle's position and color.
-
 
 ### Full Color Space
 
@@ -121,6 +161,10 @@ The encoder material writes position and color data into render textures. The sc
 	materialCodeFile="projector_mat.txt"
 />
 
-<img src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.gif" alt="Color space transforms" style={{ width: "100%", borderRadius: "8px" }} />
+<img
+	src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.gif"
+	alt="Color space transforms"
+	style={{ width: "100%", borderRadius: "8px" }}
+/>
 
 ## Up next: AI-augmented Image Processing Pipeline on Spectacles AR glasses
