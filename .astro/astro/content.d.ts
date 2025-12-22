@@ -152,13 +152,13 @@ declare module 'astro:content' {
 
 	type ContentEntryMap = {
 		"blog": {
-"eyedropper-for-spectacles-ar-glasses.md": {
-	id: "eyedropper-for-spectacles-ar-glasses.md";
+"eyedropper-for-spectacles-ar-glasses.mdx": {
+	id: "eyedropper-for-spectacles-ar-glasses.mdx";
   slug: "eyedropper-for-spectacles-ar-glasses";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
-} & { render(): Render[".md"] };
+} & { render(): Render[".mdx"] };
 "visualizing-color-spaces-in-ar-glasses.mdx": {
 	id: "visualizing-color-spaces-in-ar-glasses.mdx";
   slug: "visualizing-color-spaces-in-ar-glasses";

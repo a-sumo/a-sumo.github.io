@@ -8,19 +8,23 @@ icon: /assets/eyedropper-for-spectacles-ar-glasses/ghost-eyedropper.png
 draft: false
 ---
 
-<div style="text-align: center;">
-<img src="/assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.gif" width=300  alt="Eyedropper Test" >
+import Chapter from "@components/Chapter";
 
-<a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/eyedropper-for-spectacles-ar-glasses/ghost-eyedropper.png" width="80" alt="Eyedropper Sample Project"><span>a-sumo/specs-samples</span></a>
+<div style="text-align: center;">
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.gif" width="300" alt="Eyedropper Test" />
+
+<a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/eyedropper-for-spectacles-ar-glasses/ghost-eyedropper.png" width="80" alt="Eyedropper Sample Project" /><span>a-sumo/specs-samples</span></a>
 </div>
 
-## 1. Why an Eyedropper?
+<Chapter client:load number={1} title="Why an Eyedropper?">
 
-For the past two weeks, I've been working on an augmented reality assistant for traditional painting; a project that fuses my passions for oil painting and XR. 
+For the past two weeks, I've been working on an augmented reality assistant for traditional painting; a project that fuses my passions for oil painting and XR.
 At some point, I needed a way to sample exact colors from my physical palette and bring them into the AR glasses.
 On desktop, this is handled by the eyedropper, [a tool](https://en.wikipedia.org/wiki/Color_picker) that lets you read a color at a specific point on screen. I wanted to see how this interaction might translate to AR, so I built one in Lens Studio for the 2024 Spectacles.
 
-## 2. Implementation
+</Chapter>
+
+<Chapter client:load number={2} title="Implementation">
 
 The color data is read from the user's camera feed. Because this feed is quite large, and I was planning to sample a single pixel from it, I needed to crop it down. Fortunately, the Spectacles Samples provide a project that implements a cropping functionality that I reused here. 
 
@@ -30,18 +34,22 @@ After the first cropping interaction, an individual pixel might still be too sma
 
 Both update in real-time, as the user hovers on the crop area's surface.
 
-## 3. UI and Materials
+</Chapter>
+
+<Chapter client:load number={3} title="UI and Materials">
 
 The recently released Spectacles UI Kit took care of many of the key UI elements. This allowed me to focus my attention on bespoke materials for rectangle corners and grids.
 My prior 3D development experience involves lots of Three.js, where you'll usually write shaders inline with JavaScript or TypeScript code. As a result, when using Lens Studio I find myself leaning towards writing shader code rather than wrangling material graph nodes. 
 For this reason, I've prioritized the use of The Material Graph Editor's Custom Code Nodes.
 
 Below is a screenshot of the Procedural Grid's Material Graph and a snippet of shader code.
-<img src="/assets/eyedropper-for-spectacles-ar-glasses/texture_grid_material_editor.png" width=1000  alt="Texture Grid Material Editor">
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/texture_grid_material_editor.png" width="1000" alt="Texture Grid Material Editor" />
 
 The logic for reading and displaying colors is handled by a CropAreaSelector class. I've included some of its core methods below; they showcase ProceduralTextureProvider and [getPixels()](https://developers.snap.com/lens-studio/api/lens-scripting/classes/Built-In.ProceduralTextureProvider.html#getpixels), which are useful for reading and writing pixel data to textures.
 
-## 4. Security Considerations
+</Chapter>
+
+<Chapter client:load number={4} title="Security Considerations">
 
 Note that the getPixels API is [restricted](https://developers.snap.com/lens-studio/features/remote-apis/remote-service-module) when using the Remote Service Module.
 As a result, it might prompt a user authorization screen when launching the lens. 
@@ -51,14 +59,14 @@ The rationale, as best I can understand it is that if you can read pixels locall
 - it stays entirely on-device (no remote module), or
 - the user is explicitly warned that data is leaving the device (remote module triggers authorization prompt)
 
+</Chapter>
 
-
-## 5. Comfort and ease of use
+<Chapter client:load number={5} title="Comfort and Ease of Use">
 
 When testing the Eyedropper on Spectacles, I noticed that mid-air and fine-grained movements don't really go hand in hand.
 Something I've taken for granted from desktop use is that tactile interaction, where the user applies pressure on a surface, results in a tangent friction force. This friction force stabilizes their hand trajectories, both in position and speed.
 
-<img src="/assets/eyedropper-for-spectacles-ar-glasses/tactile_interaction_forces.png" width=300  alt="Tactile Interaction Forces">
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/tactile_interaction_forces.png" width="300" alt="Tactile Interaction Forces" />
 
 It is precisely this trajectory stabilization which enables finer-grained movement. 
 This is not something that can be reproduced through [filtering](https://github.com/casiez/OneEuroFilter), because filtering causes spatial information loss. Friction on the other hand guides movement towards more stable dynamics without causing information loss.
@@ -68,8 +76,8 @@ Upon observing this, I felt tempted to drop physical interaction in favor of the
 I called a Gemini model to segment palette color blobs and extract pigments from each. Then I actually didn't bother segmenting and simply sent the entire image to a Gemini model and the results were equivalent. 
 
 This would've been unthinkable 5 years ago, but because tech evolves at an exponential pace, 5 years is actually... kind of an eternity.
-<img src="/assets/eyedropper-for-spectacles-ar-glasses/plein-air-Celeste-Bergin.jpg" width=300  alt="Gemini Call Input">
-<img src="/assets/eyedropper-for-spectacles-ar-glasses/gemini_call_result.png" width=300  alt="Gemini Call Result">
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/plein-air-Celeste-Bergin.jpg" width="300" alt="Gemini Call Input" />
+<img src="/assets/eyedropper-for-spectacles-ar-glasses/gemini_call_result.png" width="300" alt="Gemini Call Result" />
 
 
 Now, though the extracted pigments aren't necessarily found in the input image, it provides enough perceptual accuracy for the user to accomplish their goal. After all, the domain we're tackling is traditional painting and not professional color grading. 
@@ -78,8 +86,9 @@ In the end, I will make both interaction modes available for the user to choose:
 - one that is deterministic and over which they have complete control.
 - another that is probabilistic and where the user yields a lot of control.
 
+</Chapter>
 
-## 6. Code Snippets and References
+<Chapter client:load number={6} title="Code Snippets and References">
 
 <details>
 <summary>Procedural Grid Custom Code Node</summary>
@@ -203,5 +212,7 @@ private updateSelectedColor(croppedPixels: Uint8Array, gridSize: number, halfGri
 }
 ```
 </details>
+
+</Chapter>
 
 ## Up next: Computing and Visualizing Color Spaces in Augmented Reality
