@@ -19,6 +19,9 @@ draft: true
 
 import WorkflowDiagram from "@components/WorkflowDiagram";
 import WorkflowDiagramSimple from "@components/WorkflowDiagramSimple";
+import ColorMixingChallenge from "@components/ColorMixingChallenge";
+import CollapsibleVideo from "@components/CollapsibleVideo";
+import HoverReveal from "@components/HoverReveal";
 
 <div style="text-align: center;">
 <a href="https://github.com/a-sumo/specs-samples/" style="display: inline-flex; align-items: center; gap: 10px;"><img src="/assets/visualizing-color-spaces-in-ar-glasses/ghost_color_space.png" width="80" alt="Color Space Sample Project" /><span>a-sumo/specs-samples</span></a>
@@ -28,8 +31,6 @@ import WorkflowDiagramSimple from "@components/WorkflowDiagramSimple";
 
 When mixing pigments on a palette, each decision moves the color across three dimensions: hue, saturation and value. 
 These three dimensions are independent, or in techincal terms, orthogonal. In theory, you can change one while keeping others constant.
-
-<img src="/assets/visualizing-color-spaces-in-ar-glasses/figma_hsl_color_picker.png" alt="Figma Color Picker" style={{ width: "200px" }} />
 
 Per example in order to de-saturate the green color of a tree as it vanishes in the horizon, you'll generally want to add a colder color to it, such as blue.
 But by adding blue, you also shift the hue towards... blue! So in practice, the dimensions aren't so independent after all.
@@ -41,37 +42,38 @@ you have too few pigments, you have little expressiveness and it may be unclear 
 
 However, the more pigments you have, the more degrees of freedom, hence the more complexity. This complexity grows combinatorially: not only do you have more possible mixtures to consider, but many different mixtures can yield the same color!
 This makes makes it harder to reason about which path to take. 
-I've been personally driven insane when attempting to do this with acrylics, where I had to factor in the fast drying time and the desaturation post drying, 
-how much my retardant would increase my color mixing runway, depending on which . I mean, this stuff can literally drive you insane. 
-Wanna try? Here: I give you a color and you need to find out which mix achieves it. "Bonne chance, Franco"!
+I've been personally driven insane when attempting to do this with acrylics. Not only do you have to mix the right proportions, but you also have to factor in the fast drying time, the desaturation that occurs after drying, and how much retardant medium to add—which itself varies depending on how long ago you laid your paint drops on the palette. This stuff can literally drive you insane. 
 
-I've speak from experience, having thrown away a few unfinished paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I was missing.
-So I watched youtube tutorials, and after a quick reddit search landed on "1,500 Color Mixing Recipes for Oil, Acrylic & Watercolor by William F. Powell"
-It's a very comprehensive book, but as I read it and try my hands at a few combinations, 
-I kept wondering: "why does this process have to be so boring and tedious"
-<img src="/assets/visualizing-color-spaces-in-ar-glasses/color_mixing_recipes.png" alt="1500 Color Mixing Recipes" style={{ width: "200px" }} />
-I wanted something interactive, 
-If, on the other hand, I restrict my palette to just a few pigments at the time, then I need to know which colors are within reach. Can I achieve a highly saturated purple? If I can't, then what's the closest I can get to it while achieving the desired impression?
+Wanna try? Here: I give you a color and you need to find out which mix achieves it. <CollapsibleVideo client:load src="/assets/visualizing-color-spaces-in-ar-glasses/videos/bonne_chance_franco-succession.mp4" preText='"' trigger="Bonne chance, Franco" postText='!"' description="Succession, Season 3 Episode 5" />
+
+<ColorMixingChallenge client:load targetColor="#8B4513" />
+
+<CollapsibleVideo client:load src="/assets/visualizing-color-spaces-in-ar-glasses/videos/excellent_wonderful_news.mp4" preText='How was it? "' trigger="Wonderful" postText='," huh?' description="Succession, Season 3 Episode 5" />
+
+I speak from experience, having thrown away a few unfinished paintings because I couldn't get the colors I wanted, no matter how hard I tried. I also had no way of knowing which pigments I was missing.
+So I watched youtube tutorials, and a quick Reddit search landed me on <HoverReveal client:load trigger="1,500 Color Mixing Recipes for Oil, Acrylic & Watercolor" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/color_mixing_recipes.png" imageAlt="1500 Color Mixing Recipes" imageWidth="200px" /> by William F. Powell.
+It's a comprehensive book, but as I read it and tried my hand at a few combinations, I kept thinking: "Why does this process have to be so laborious and just not fun?"
+Scroll through the pages, find the recipe, copy, mix, compare, repeat...  I felt like someone in the 17th century reaching for a log table every time they needed to multiply.
 
 All these considerations are what years of practice go into.
 You just can't develop an intuition for how specific pigments for each specific brand will interact with one another across hue saturation and value just by watching video tutorials and reading books. You must paint, again and again, ideally with some guidance, but knowing that the process will be tedious.
 
 But how tedious does it really need to be? Is frustration necessary for learning, or can skillful effort be sufficient?
 
-What can I do to know or at least in advance which colors can be achieved with the pigments I have available?
-Can I view in real-time how my actions move the paint across the color dimensions?
+**What can I do to know in advance which colors can be achieved with the pigments I have available?
+Can I view, in real-time, how my actions on the color palette move the paint across the color dimensions?**
 
 2. Seeing tools
 
 This problem is precisely what seeing tools are meant to tackle.
-Imagine having the super power to see into the chemical compositions of color pigments and their interaction with light and being able to
+Imagine having the super power to compute pigments interactions and having that
 If I was predicting the color that would result from the interaction of pigments across, hue, saturation and value in real time.
 How can I do that?
 
 3. Implementation
 
-The dimensions of hue, value and chromaticity(saturation) can either be visualized individually or in combination.
-Because real life color pigment manipulation alters the paint across all trhee dimension, to represent each separately or in combinations of two would result in three different disparate variables.
+When we combine an axis for each color, we get a color space. 
+There are wide variety of color spaces, but the ones we care about 
 
 Ideally what we would want is a viewing navigation tool.
 
@@ -85,12 +87,6 @@ The workflow involves three main components working together:
 
 The encoder material writes position and color data into render textures. The script orchestrates the pipeline, creating render targets and connecting the material output to the VFX input. Finally, the VFX decoder spawns particles, sampling the render textures to set each particle's position and color.
 
-4 approaches:
-
-- solid mesh
-- volumes
-- particles
-- lines
 
 ### Full Color Space
 
