@@ -295,9 +295,10 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
   const mixedLab = rgbToLab(mixedRgb[0], mixedRgb[1], mixedRgb[2]);
   const de = deltaE(targetLab, mixedLab);
 
-  const accuracy = Math.max(0, 100 - de * 2);
-  const isClose = de < 10;
-  const isPerfect = de < 3;
+  // DeltaE scale: 0-1 imperceptible, 1-2 close observation, 2-10 noticeable, 10-50 similar
+  const accuracy = Math.max(0, 100 - de);
+  const isClose = de < 15;
+  const isPerfect = de < 5;
 
   const startTimer = () => {
     if (!hasStarted) {
@@ -305,6 +306,14 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
       setIsTimerRunning(true);
       setLastSubmission(null);
     }
+  };
+
+  const randomizeTarget = () => {
+    setTarget(randomColor());
+    setElapsedTime(0);
+    setHasStarted(false);
+    setIsTimerRunning(false);
+    setLastSubmission(null);
   };
 
   const submitScore = () => {
@@ -401,13 +410,13 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
 
   return (
     <div style={{
-      background: "rgb(255, 248, 222)",
-      border: "1px solid rgb(170, 196, 245)",
+      background: "rgb(35, 35, 40)",
+      border: "2px solid rgb(60, 60, 70)",
       borderRadius: "12px",
       padding: isCollapsed ? "16px 24px" : "24px",
       margin: "24px 0",
       fontFamily: titleFont,
-      color: "rgb(40, 39, 40)",
+      color: "rgb(240, 240, 240)",
     }}>
       {/* Header */}
       <div style={{
@@ -424,18 +433,20 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
             display: "flex",
             alignItems: "center",
             gap: "8px",
-            fontSize: "13px",
+            fontSize: "14px",
             fontWeight: 700,
-            color: "rgb(60, 60, 60)",
+            color: "rgb(255, 200, 100)",
             background: "none",
             border: "none",
             cursor: "pointer",
             padding: 0,
             fontFamily: titleFont,
+            textTransform: "uppercase",
+            letterSpacing: "1px",
           }}
         >
           <span style={{
-            color: "rgb(140, 169, 255)",
+            color: "rgb(255, 200, 100)",
             fontSize: "10px",
             transition: "transform 0.2s ease",
             display: "inline-block",
@@ -450,11 +461,11 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
               background: hasStarted ? "rgb(100, 140, 255)" : "rgb(200, 200, 200)",
               color: "white",
               borderRadius: "6px",
-              padding: "6px 10px",
-              fontSize: "11px",
+              padding: "8px 12px",
+              fontSize: "14px",
               fontWeight: 700,
               fontVariantNumeric: "tabular-nums",
-              minWidth: "70px",
+              minWidth: "80px",
               textAlign: "center",
               fontFamily: "monospace",
             }}>
@@ -467,8 +478,8 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                 color: showStats ? "white" : "rgb(60, 60, 60)",
                 border: "1px solid rgb(180, 180, 180)",
                 borderRadius: "6px",
-                padding: "6px 10px",
-                fontSize: "11px",
+                padding: "8px 12px",
+                fontSize: "14px",
                 fontWeight: 600,
                 cursor: "pointer",
                 fontFamily: titleFont,
@@ -491,56 +502,65 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
         marginBottom: "20px",
         justifyContent: "center",
       }}>
-        {(["story", "challenge", "god"] as Difficulty[]).map((d) => (
-          <button
-            key={d}
-            onClick={() => handleDifficultyChange(d)}
-            style={{
-              background: difficulty === d ? "rgb(80, 120, 220)" : "white",
-              color: difficulty === d ? "white" : "rgb(50, 50, 50)",
-              border: `2px solid ${difficulty === d ? "rgb(80, 120, 220)" : "rgb(180, 180, 180)"}`,
-              borderRadius: "6px",
-              padding: "8px 12px",
-              fontSize: "11px",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-              textAlign: "center",
-              fontFamily: titleFont,
-            }}
-          >
-            <div style={{ fontWeight: 700 }}>{DIFFICULTY_CONFIG[d].name}</div>
-            <div style={{ fontSize: "9px", opacity: 0.7, marginTop: "2px", fontWeight: 500 }}>
-              {DIFFICULTY_CONFIG[d].pigments.length} pigments
-            </div>
-          </button>
-        ))}
+        {(["story", "challenge", "god"] as Difficulty[]).map((d) => {
+          const borderColors = {
+            story: "rgb(72, 187, 120)",      // green
+            challenge: "rgb(236, 201, 75)",  // yellow
+            god: "rgb(180, 50, 50)",         // deep red
+          };
+          const isSelected = difficulty === d;
+          return (
+            <button
+              key={d}
+              onClick={() => handleDifficultyChange(d)}
+              style={{
+                background: isSelected ? "rgb(55, 55, 60)" : "rgb(45, 45, 50)",
+                color: isSelected ? "rgb(255, 255, 255)" : "rgb(150, 150, 150)",
+                border: isSelected ? `2px solid ${borderColors[d]}` : "2px solid rgb(60, 60, 65)",
+                borderRadius: "6px",
+                padding: "10px 14px",
+                fontSize: "13px",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+                textAlign: "center",
+                fontFamily: titleFont,
+                textTransform: "uppercase",
+              }}
+            >
+              <div style={{ fontWeight: 700 }}>{DIFFICULTY_CONFIG[d].name}</div>
+              <div style={{ fontSize: "11px", opacity: 0.7, marginTop: "2px", fontWeight: 500, textTransform: "none" }}>
+                {DIFFICULTY_CONFIG[d].pigments.length} pigments
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       {/* Stats Panel - Compact */}
       {showStats && (
         <div style={{
-          background: "white",
+          background: "rgb(45, 45, 50)",
           borderRadius: "8px",
           padding: "12px",
           marginBottom: "16px",
-          border: "1px solid rgb(220, 220, 220)",
-          fontSize: "11px",
+          border: "1px solid rgb(70, 70, 80)",
+          fontSize: "13px",
         }}>
           <div style={{ display: "flex", gap: "16px", alignItems: "center", flexWrap: "wrap" }}>
-            <span style={{ color: "rgb(100, 100, 100)" }}>
-              Attempts: <strong style={{ color: "rgb(80, 120, 220)" }}>{stats.totalAttempts}</strong>
+            <span style={{ color: "rgb(180, 180, 180)" }}>
+              Attempts: <strong style={{ color: "rgb(255, 200, 100)" }}>{stats.totalAttempts}</strong>
             </span>
             {(["story", "challenge", "god"] as Difficulty[]).map((d) => {
               const best = stats.bestScores[d];
               return (
-                <span key={d} style={{ color: "rgb(100, 100, 100)" }}>
+                <span key={d} style={{ color: "rgb(180, 180, 180)" }}>
                   {d === "story" ? "Grace" : d === "challenge" ? "Balance" : "No Mercy"}:{" "}
                   {best ? (
-                    <strong style={{ color: "rgb(80, 120, 220)" }}>
+                    <strong style={{ color: "rgb(255, 200, 100)" }}>
                       {best.accuracy.toFixed(0)}% / {formatTime(best.time)}
                     </strong>
                   ) : (
-                    <span style={{ color: "rgb(180, 180, 180)" }}>—</span>
+                    <span style={{ color: "rgb(100, 100, 100)" }}>—</span>
                   )}
                 </span>
               );
@@ -558,19 +578,19 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
       }}>
         {/* Target Color */}
         <div>
-          <div style={{ fontSize: "12px", color: "rgb(100, 100, 100)", marginBottom: "8px", fontWeight: 500, height: "28px", display: "flex", alignItems: "center" }}>
+          <div style={{ fontSize: "14px", color: "rgb(180, 180, 180)", marginBottom: "8px", fontWeight: 500, height: "32px", display: "flex", alignItems: "center" }}>
             Target Color
           </div>
           <div style={{
             width: "100%",
-            height: "70px",
+            height: "80px",
             borderRadius: "8px",
             background: target,
             border: "1px solid rgba(0,0,0,0.1)",
             boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
           }} />
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginTop: "6px" }}>
-            <span style={{ fontSize: "11px", color: "rgb(120, 120, 120)" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginTop: "8px" }}>
+            <span style={{ fontSize: "13px", color: "rgb(150, 150, 150)" }}>
               {target.toUpperCase()}
             </span>
             <button
@@ -580,33 +600,33 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                 setTimeout(() => {
                   btn.style.transform = "scale(1)";
                 }, 150);
-                setTarget(randomColor());
+                randomizeTarget();
               }}
               style={{
-                background: "white",
-                border: "1px solid rgb(220, 220, 220)",
-                borderRadius: "4px",
+                background: "rgb(50, 50, 55)",
+                border: "1px solid rgb(80, 80, 90)",
+                borderRadius: "8px",
                 cursor: "pointer",
-                padding: "2px",
-                width: "20px",
-                height: "20px",
+                padding: "8px",
+                width: "42px",
+                height: "42px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 transition: "transform 0.15s ease",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgb(245, 245, 245)";
+                e.currentTarget.style.background = "rgb(60, 60, 65)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "white";
+                e.currentTarget.style.background = "rgb(50, 50, 55)";
               }}
-              title="Randomize target color"
+              title="Randomize target color (resets timer)"
             >
               <img
                 src="/assets/visualizing-color-spaces-in-ar-glasses/icons/random_item_mk.png"
                 alt="Randomize"
-                style={{ width: "14px", height: "14px", objectFit: "contain" }}
+                style={{ width: "20px", height: "20px", objectFit: "contain" }}
               />
             </button>
           </div>
@@ -614,19 +634,19 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
 
         {/* Your Mix */}
         <div>
-          <div style={{ fontSize: "12px", color: "rgb(100, 100, 100)", marginBottom: "8px", fontWeight: 500, height: "28px", display: "flex", alignItems: "center" }}>
+          <div style={{ fontSize: "14px", color: "rgb(180, 180, 180)", marginBottom: "8px", fontWeight: 500, height: "32px", display: "flex", alignItems: "center" }}>
             Your Mix
           </div>
           <div style={{
             width: "100%",
-            height: "70px",
+            height: "80px",
             borderRadius: "8px",
             background: mixedHex,
-            border: `2px solid ${isPerfect ? "rgb(72, 187, 120)" : isClose ? "rgb(236, 201, 75)" : "rgba(0,0,0,0.1)"}`,
-            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            border: `2px solid ${isPerfect ? "rgb(72, 187, 120)" : isClose ? "rgb(236, 201, 75)" : "rgba(255,255,255,0.2)"}`,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
             transition: "border-color 0.3s ease",
           }} />
-          <div style={{ fontSize: "11px", color: "rgb(120, 120, 120)", marginTop: "6px", textAlign: "center" }}>
+          <div style={{ fontSize: "13px", color: "rgb(150, 150, 150)", marginTop: "8px", textAlign: "center" }}>
             {mixedHex.toUpperCase()}
           </div>
         </div>
@@ -634,7 +654,7 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
 
       {/* Palette Slots */}
       <div style={{ marginBottom: "20px" }}>
-        <div style={{ fontSize: "12px", color: "rgb(100, 100, 100)", marginBottom: "12px", fontWeight: 500 }}>
+        <div style={{ fontSize: "14px", color: "rgb(180, 180, 180)", marginBottom: "12px", fontWeight: 500 }}>
           Palette Slots
         </div>
         <div style={{
@@ -644,10 +664,10 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
         }}>
           {palette.map((slot, index) => (
             <div key={index} style={{
-              background: "white",
+              background: "rgb(45, 45, 50)",
               borderRadius: "8px",
               padding: "10px 12px",
-              border: "1px solid rgb(220, 220, 220)",
+              border: "1px solid rgb(70, 70, 80)",
               display: "flex",
               alignItems: "center",
               gap: "12px",
@@ -669,12 +689,12 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                 style={{
                   flex: 1,
                   minWidth: 0,
-                  padding: "6px 8px",
-                  fontSize: "11px",
-                  border: "1px solid rgb(220, 220, 220)",
+                  padding: "8px 10px",
+                  fontSize: "13px",
+                  border: "1px solid rgb(70, 70, 80)",
                   borderRadius: "4px",
-                  background: "white",
-                  color: slot.pigment ? "rgb(40, 39, 40)" : "rgb(150, 150, 150)",
+                  background: "rgb(55, 55, 60)",
+                  color: slot.pigment ? "rgb(240, 240, 240)" : "rgb(120, 120, 120)",
                   cursor: "pointer",
                 }}
               >
@@ -691,7 +711,7 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
               </select>
 
               {/* Concentration slider */}
-              <div style={{ width: "80px", flexShrink: 0 }}>
+              <div style={{ width: "90px", flexShrink: 0 }}>
                 <input
                   type="range"
                   min="0"
@@ -700,16 +720,16 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                   onChange={(e) => handleConcentrationChange(index, parseInt(e.target.value))}
                   style={{
                     width: "100%",
-                    height: "4px",
+                    height: "5px",
                     borderRadius: "2px",
-                    background: `linear-gradient(to right, rgb(140, 169, 255) ${slot.concentration}%, rgb(220, 220, 220) ${slot.concentration}%)`,
+                    background: `linear-gradient(to right, rgb(255, 180, 50) ${slot.concentration}%, rgb(70, 70, 80) ${slot.concentration}%)`,
                     appearance: "none",
                     cursor: "pointer",
                   }}
                 />
                 <div style={{
-                  fontSize: "9px",
-                  color: "rgb(120, 120, 120)",
+                  fontSize: "11px",
+                  color: "rgb(150, 150, 150)",
                   textAlign: "center",
                   marginTop: "2px",
                 }}>
@@ -721,7 +741,7 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
               <button
                 onClick={() => resetSlot(index)}
                 style={{
-                  fontSize: "9px",
+                  fontSize: "12px",
                   color: "rgb(180, 180, 180)",
                   background: "none",
                   border: "none",
@@ -742,36 +762,36 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
 
       {/* Score */}
       <div style={{
-        background: "white",
+        background: "rgb(45, 45, 50)",
         borderRadius: "8px",
         padding: "16px",
-        border: "1px solid rgb(220, 220, 220)",
+        border: "1px solid rgb(70, 70, 80)",
         textAlign: "center",
       }}>
         {lastSubmission ? (
           <>
             <div style={{
-              fontSize: "13px",
+              fontSize: "15px",
               fontWeight: 600,
-              color: lastSubmission.isNewBest ? "rgb(72, 187, 120)" : "rgb(140, 169, 255)",
+              color: lastSubmission.isNewBest ? "rgb(72, 187, 120)" : "rgb(255, 200, 100)",
               marginBottom: "8px",
             }}>
               {lastSubmission.isNewBest ? "New Personal Best!" : "Score Submitted!"}
             </div>
-            <div style={{ fontSize: "12px", marginBottom: "12px" }}>
-              <span style={{ color: "rgb(120, 120, 120)" }}>
+            <div style={{ fontSize: "14px", marginBottom: "12px" }}>
+              <span style={{ color: "rgb(180, 180, 180)" }}>
                 {lastSubmission.accuracy.toFixed(0)}% in {formatTime(lastSubmission.time)}
               </span>
             </div>
             <button
               onClick={startNewRound}
               style={{
-                background: "rgb(80, 120, 220)",
-                color: "white",
+                background: "rgb(255, 180, 50)",
+                color: "rgb(30, 30, 30)",
                 border: "2px solid transparent",
                 borderRadius: "6px",
-                padding: "10px 20px",
-                fontSize: "12px",
+                padding: "12px 24px",
+                fontSize: "14px",
                 fontWeight: 700,
                 cursor: "pointer",
                 fontFamily: titleFont,
@@ -783,28 +803,28 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
         ) : (
           <>
             <div style={{
-              fontSize: "13px",
+              fontSize: "15px",
               fontWeight: 600,
-              color: isPerfect ? "rgb(72, 187, 120)" : isClose ? "rgb(180, 140, 20)" : "rgb(100, 100, 100)",
+              color: isPerfect ? "rgb(72, 187, 120)" : isClose ? "rgb(255, 200, 100)" : "rgb(150, 150, 150)",
               marginBottom: "8px",
             }}>
               {isPerfect ? "Perfect Match!" : isClose ? "Very Close!" : "Keep Mixing..."}
             </div>
-            <div style={{ fontSize: "12px", marginBottom: "12px" }}>
-              <span style={{ color: "rgb(120, 120, 120)" }}>Accuracy: </span>
-              <span style={{ color: "rgb(140, 169, 255)", fontWeight: 600 }}>{accuracy.toFixed(0)}%</span>
+            <div style={{ fontSize: "14px", marginBottom: "12px" }}>
+              <span style={{ color: "rgb(150, 150, 150)" }}>Accuracy: </span>
+              <span style={{ color: "rgb(255, 200, 100)", fontWeight: 600 }}>{accuracy.toFixed(0)}%</span>
             </div>
             <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
               <button
                 onClick={submitScore}
                 disabled={!hasStarted}
                 style={{
-                  background: hasStarted ? "rgb(80, 120, 220)" : "rgb(180, 180, 180)",
-                  color: "white",
+                  background: hasStarted ? "rgb(255, 180, 50)" : "rgb(80, 80, 90)",
+                  color: hasStarted ? "rgb(30, 30, 30)" : "rgb(120, 120, 120)",
                   border: "2px solid transparent",
                   borderRadius: "6px",
-                  padding: "10px 20px",
-                  fontSize: "12px",
+                  padding: "12px 24px",
+                  fontSize: "14px",
                   fontWeight: 700,
                   cursor: hasStarted ? "pointer" : "not-allowed",
                   fontFamily: titleFont,
@@ -815,12 +835,12 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
               <button
                 onClick={startNewRound}
                 style={{
-                  background: "white",
-                  color: "rgb(50, 50, 50)",
-                  border: "2px solid rgb(180, 180, 180)",
+                  background: "rgb(55, 55, 60)",
+                  color: "rgb(200, 200, 200)",
+                  border: "2px solid rgb(80, 80, 90)",
                   borderRadius: "6px",
-                  padding: "10px 20px",
-                  fontSize: "12px",
+                  padding: "12px 24px",
+                  fontSize: "14px",
                   fontWeight: 700,
                   cursor: "pointer",
                   fontFamily: titleFont,

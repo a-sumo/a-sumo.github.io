@@ -242,12 +242,13 @@ const nextPost =
     // Create the main container div
     const progressContainer = document.createElement("div");
     progressContainer.className =
-      "progress-container fixed top-0 z-10 h-1 w-full bg-skin-fill";
+      "progress-container fixed top-0 z-10 h-[6px] w-full bg-skin-fill";
 
     // Create the progress bar div
     const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar h-1 w-0 bg-skin-accent";
+    progressBar.className = "progress-bar h-[6px] bg-skin-accent transition-[width] duration-100 ease-out";
     progressBar.id = "myBar";
+    progressBar.style.width = "0%";
 
     // Append the progress bar to the progress container
     progressContainer.appendChild(progressBar);

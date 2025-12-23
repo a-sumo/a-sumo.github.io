@@ -116,10 +116,20 @@ function CodeBlock({ code, language }: CodeBlockProps) {
     <div className="code-block relative">
       <button
         onClick={copyToClipboard}
-        className="absolute right-2 top-2 z-10 rounded bg-[#1a1a1a] px-2 py-1 text-xs opacity-70 transition-opacity hover:opacity-100 text-gray-300"
+        className="absolute right-2 top-2 z-10 rounded bg-[#1a1a1a] p-2 opacity-70 transition-opacity hover:opacity-100"
         aria-label="Copy code"
       >
-        {copied ? "Copied!" : "Copy"}
+        <img
+          src={copied ? "/assets/icons/check-icon.svg" : "/assets/icons/copy-icon.svg"}
+          alt={copied ? "Copied" : "Copy"}
+          style={{
+            width: "28px",
+            height: "28px",
+            filter: copied
+              ? "invert(48%) sepia(79%) saturate(2476%) hue-rotate(118deg) brightness(95%) contrast(80%)"
+              : "invert(70%)"
+          }}
+        />
       </button>
       <Highlight theme={themes.vsDark} code={code.trim()} language={prismLang}>
         {({ style, tokens, getLineProps, getTokenProps }) => (

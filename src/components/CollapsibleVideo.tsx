@@ -51,7 +51,7 @@ export default function CollapsibleVideo({ src, trigger, preText = "", postText 
       </span>
       {postText}
       {isOpen && (
-        <span style={{ display: "block", marginTop: "6px", marginBottom: "12px", textAlign: "center" }}>
+        <span style={{ display: "block", marginTop: "12px", marginBottom: "12px", textAlign: "center" }}>
           <video
             ref={videoRef}
             src={src}

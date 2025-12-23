@@ -1,17 +1,18 @@
 import { useState, type ReactNode } from "react";
 
 interface ChapterProps {
+  id?: string;
   number: number;
   title: string;
   children: ReactNode;
   defaultOpen?: boolean;
 }
 
-export default function Chapter({ number, title, children, defaultOpen = true }: ChapterProps) {
+export default function Chapter({ id, number, title, children, defaultOpen = true }: ChapterProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <section style={{ margin: "40px 0" }}>
+    <section id={id} style={{ margin: "40px 0", scrollMarginTop: "80px" }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         style={{

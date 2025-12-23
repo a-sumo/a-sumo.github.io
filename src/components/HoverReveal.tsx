@@ -28,24 +28,26 @@ export default function HoverReveal({ trigger, imageSrc, imageAlt, imageWidth = 
       {isHovered && (
         <span style={{
           position: "absolute",
-          bottom: "100%",
+          top: "100%",
           left: "50%",
           transform: "translateX(-50%)",
-          marginBottom: "8px",
-          zIndex: 100,
+          marginTop: "8px",
+          zIndex: 9999,
           background: "white",
-          padding: "8px",
-          borderRadius: "8px",
+          padding: "12px",
+          borderRadius: "12px",
           boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
           border: "1px solid rgb(220, 220, 220)",
+          whiteSpace: "nowrap",
         }}>
           <img
             src={imageSrc}
             alt={imageAlt}
             style={{
               width: imageWidth,
+              maxWidth: "none",
               display: "block",
-              borderRadius: "4px",
+              borderRadius: "8px",
             }}
           />
         </span>

@@ -218,6 +218,19 @@ const socialIcons = {
       <path d="M5 16v-4"></path>
       <path d="M7 16v-3"></path>
     </svg>`,
+  "kofi-icon": `<svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <path d="M3 8h14a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-1.5"></path>
+      <path d="M3 8v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2v-8"></path>
+      <path d="M7.5 12a1.5 1.5 0 1 0 0 -3a1.5 1.5 0 0 0 0 3z" fill="currentColor"></path>
+      <path d="M11.5 12a1.5 1.5 0 1 0 0 -3a1.5 1.5 0 0 0 0 3z" fill="currentColor"></path>
+      <path d="M7.5 12l2 3l2 -3"></path>
+    </svg>`,
 };
 
 export default socialIcons;

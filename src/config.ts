@@ -158,4 +158,10 @@ export const SOCIALS: SocialObjects = [
     linkTitle: `${SITE.title} on SoundCloud`,
     active: false,
   },
+  {
+    name: "kofi-icon",
+    href: "https://ko-fi.com/a_sumo",
+    linkTitle: `Support ${SITE.title} on Ko-fi`,
+    active: true,
+  },
 ];

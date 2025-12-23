@@ -10,6 +10,15 @@ export default function CollapsibleCode({ src, trigger, language = "glsl" }: Col
   const [isOpen, setIsOpen] = useState(false);
   const [code, setCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = async () => {
+    if (code) {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   useEffect(() => {
     if (isOpen && !code) {
@@ -52,7 +61,7 @@ export default function CollapsibleCode({ src, trigger, language = "glsl" }: Col
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "8px 12px",
+            padding: "12px",
             background: "rgb(33, 37, 43)",
             borderBottom: "1px solid rgb(60, 64, 72)",
           }}>
@@ -63,22 +72,47 @@ export default function CollapsibleCode({ src, trigger, language = "glsl" }: Col
             }}>
               {language}
             </span>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsOpen(false);
-              }}
-              style={{
-                background: "none",
-                border: "none",
-                color: "rgb(140, 140, 140)",
-                cursor: "pointer",
-                fontSize: "12px",
-                padding: "2px 6px",
-              }}
-            >
-              ✕
-            </button>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  copyToClipboard();
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: copied ? "rgb(72, 187, 120)" : "rgb(140, 140, 140)",
+                  cursor: "pointer",
+                  padding: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                title={copied ? "Copied!" : "Copy to clipboard"}
+              >
+                <img
+                  src={copied ? "/assets/icons/check-icon.svg" : "/assets/icons/copy-icon.svg"}
+                  alt={copied ? "Copied" : "Copy"}
+                  style={{ width: "28px", height: "28px", filter: copied ? "invert(48%) sepia(79%) saturate(2476%) hue-rotate(118deg) brightness(95%) contrast(80%)" : "invert(70%)" }}
+                />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "rgb(140, 140, 140)",
+                  cursor: "pointer",
+                  fontSize: "12px",
+                  padding: "2px 6px",
+                }}
+              >
+                ✕
+              </button>
+            </div>
           </div>
           <pre style={{
             margin: 0,
