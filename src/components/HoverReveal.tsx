@@ -2,12 +2,13 @@ import { useState } from "react";
 
 interface HoverRevealProps {
   trigger: string;
-  imageSrc: string;
-  imageAlt: string;
+  imageSrc?: string;
+  imageAlt?: string;
   imageWidth?: string;
+  text?: string;
 }
 
-export default function HoverReveal({ trigger, imageSrc, imageAlt, imageWidth = "200px" }: HoverRevealProps) {
+export default function HoverReveal({ trigger, imageSrc, imageAlt, imageWidth = "200px", text }: HoverRevealProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -25,7 +26,18 @@ export default function HoverReveal({ trigger, imageSrc, imageAlt, imageWidth = 
       >
         {trigger}
       </span>
-      {isHovered && (
+      {isHovered && text && (
+        <span style={{
+          position: "absolute",
+          top: "-0.2em",
+          left: "100%",
+          marginLeft: "4px",
+          fontSize: "1.2em",
+        }}>
+          {text}
+        </span>
+      )}
+      {isHovered && imageSrc && (
         <span style={{
           position: "absolute",
           top: "100%",
