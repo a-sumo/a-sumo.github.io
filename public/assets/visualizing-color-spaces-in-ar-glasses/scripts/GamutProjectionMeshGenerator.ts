@@ -6,23 +6,45 @@
 @component
 export class GamutProjectionMeshGenerator extends BaseScriptComponent {
 
-    // ============ GEOMETRY SETTINGS ============
+    // ============ GEOMETRY ============
 
     @input
-    @hint("Size of the display space in scene units")
-    private _cubeSize: number = 100.0;
+    @hint("Size of the display volume in scene units")
+    private _displaySize: number = 100.0;
 
     @input
-    @hint("Size of each sample cube")
-    private _sampleSize: number = 1.0;
+    @hint("Size of each voxel cube")
+    @widget(new SliderWidget(0.1, 10, 0.1))
+    private _voxelSize: number = 1.0;
+
+    // ============ PROJECTION LINES ============
 
     @input
-    @hint("Projection blend: 0 = original input position/color, 1 = fully projected")
+    @hint("Show lines connecting input to projected positions")
+    private _showLines: boolean = true;
+
+    @input
+    @hint("Radius of projection line tubes")
+    private _lineRadius: number = 0.3;
+
+    @input
+    @hint("Tube segments (3-12)")
+    private _tubeSegments: number = 6;
+
+    // ============ PROJECTION ============
+
+    @input
+    @hint("Projection blend: 0 = input, 1 = projected")
+    @widget(new SliderWidget(0, 1, 0.01))
     private _projectionBlend: number = 1.0;
 
+    // ============ MATERIAL ============
+
     @input
-    @hint("Material for projected color cubes")
+    @hint("Material for voxels")
     material: Material;
+
+    // ============ COLOR SPACE ============
 
     @input
     @widget(
@@ -51,20 +73,42 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
     private _colorSpaceTo: number = 0;
 
     @input
-    @hint("Interpolation: 0 = from space, 1 = to space")
+    @hint("Color space blend: 0 = source, 1 = target")
+    @widget(new SliderWidget(0, 1, 0.01))
     private _blend: number = 0.0;
+
+    // ============ UI ============
 
     @input
     @hint("Text component to display active color space name")
     colorSpaceText: Text;
 
-    // ============ GAMUT SETTINGS ============
+    // ============ REST TRANSFORM ============
+
+    @input
+    @hint("Rest position (world space) - leave at 0,0,0 to use initial position")
+    restPosition: vec3 = new vec3(0, 0, 0);
+
+    @input
+    @hint("Rest rotation (euler degrees) - leave at 0,0,0 to use initial rotation")
+    restRotation: vec3 = new vec3(0, 0, 0);
+
+    @input
+    @hint("Capture current transform as rest position on awake")
+    useCurrentAsRest: boolean = true;
+
+    // ============ GAMUT ============
 
     @input
     @hint("Resolution of pigment mix sampling for gamut LUT")
+    @widget(new SliderWidget(5, 30, 1))
     private _gamutSampleSteps: number = 20;
 
-    // ============ PIGMENT COLORS ============
+    @input
+    @hint("Maximum input colors to support")
+    maxColors: number = 64;
+
+    // ============ PIGMENTS ============
 
     @input
     @hint("Pigment 0: White")
@@ -96,10 +140,6 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
     @widget(new ColorWidget())
     pig5Color: vec3 = new vec3(0, 0.47, 0.44);
 
-    @input
-    @hint("Maximum input colors to support")
-    maxColors: number = 64;
-
     // ============ PRIVATE STATE ============
 
     private static readonly NUM_PIGMENTS = 6;
@@ -122,7 +162,34 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
     private colorCount: number = 0;
     private mesh: RenderMesh | null = null;
 
+    // Projection tween state
+    private isTweening: boolean = false;
+    private tweenStartValue: number = 0;
+    private tweenEndValue: number = 1;
+    private tweenDuration: number = 0.5; // seconds
+    private tweenElapsed: number = 0;
+    private updateEvent: SceneEvent | null = null;
+
+    // Color space tween state (separate from projection tween)
+    private isBlendTweening: boolean = false;
+    private blendTweenStart: number = 0;
+    private blendTweenEnd: number = 1;
+    private blendTweenDuration: number = 0.5;
+    private blendTweenElapsed: number = 0;
+
+    // Transform tween state
+    private isTransformTweening: boolean = false;
+    private transformTweenStartPos: vec3 = new vec3(0, 0, 0);
+    private transformTweenEndPos: vec3 = new vec3(0, 0, 0);
+    private transformTweenStartRot: quat = quat.quatIdentity();
+    private transformTweenEndRot: quat = quat.quatIdentity();
+    private transformTweenDuration: number = 0.5;
+    private transformTweenElapsed: number = 0;
+    private storedRestPosition: vec3 = new vec3(0, 0, 0);
+    private storedRestRotation: quat = quat.quatIdentity();
+
     onAwake(): void {
+        this.captureRestTransform();
         this.initializePigments();
         this.buildGamutLUT();
         this.setupMeshVisual();
@@ -143,6 +210,22 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
         });
     }
 
+    private captureRestTransform(): void {
+        const transform = this.sceneObject.getTransform();
+        if (this.useCurrentAsRest) {
+            this.storedRestPosition = transform.getWorldPosition();
+            this.storedRestRotation = transform.getWorldRotation();
+        } else {
+            this.storedRestPosition = this.restPosition;
+            const rad = Math.PI / 180;
+            this.storedRestRotation = quat.fromEulerAngles(
+                this.restRotation.x * rad,
+                this.restRotation.y * rad,
+                this.restRotation.z * rad
+            );
+        }
+    }
+
     private updateMaterialParams(): void {
         if (this.material) {
             const pass = this.material.mainPass;
@@ -150,7 +233,7 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
             pass.colorSpaceTo = this._colorSpaceTo;
             pass.blend = this._blend;
             pass.projectionBlend = this._projectionBlend;
-            pass.cubeSize = this._cubeSize;
+            pass.cubeSize = this._displaySize;
         }
         this.updateColorSpaceText();
     }
@@ -361,7 +444,7 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
 
     // Always generate in RGB space - shader handles color space transformation
     private rgbToDisplayPosition(r: number, g: number, b: number): vec3 {
-        const size = this._cubeSize;
+        const size = this._displaySize;
         return new vec3(
             (r - 0.5) * size,
             (b - 0.5) * size,
@@ -427,22 +510,32 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
         this.meshBuilder.topology = MeshTopology.Triangles;
         this.meshBuilder.indexType = MeshIndexType.UInt16;
 
-        const size = this._sampleSize;
-
         // Generate cubes in RGB space using INPUT colors (shader handles transformation)
         for (let i = 0; i < this.projectedColors.length; i++) {
             const inputRGB = this.inputColors[i];
             const projectedRGB = this.projectedColors[i];
 
             // Position in RGB space based on input color
-            const pos = this.rgbToDisplayPosition(inputRGB.x, inputRGB.y, inputRGB.z);
+            const inputPos = this.rgbToDisplayPosition(inputRGB.x, inputRGB.y, inputRGB.z);
 
             this.generateCube(
-                pos.x, pos.y, pos.z,
+                inputPos.x, inputPos.y, inputPos.z,
                 inputRGB.x, inputRGB.y, inputRGB.z,
                 projectedRGB.x, projectedRGB.y, projectedRGB.z,
-                size
+                this._voxelSize
             );
+
+            // Generate tube connecting input to projected position
+            if (this._showLines) {
+                const projectedPos = this.rgbToDisplayPosition(projectedRGB.x, projectedRGB.y, projectedRGB.z);
+                this.generateTube(
+                    inputPos, projectedPos,
+                    inputRGB.x, inputRGB.y, inputRGB.z,
+                    projectedRGB.x, projectedRGB.y, projectedRGB.z,
+                    this._lineRadius,
+                    this._tubeSegments
+                );
+            }
         }
 
         if (this.meshBuilder.isValid()) {
@@ -504,6 +597,112 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
                 faceStart, faceStart + 1, faceStart + 2,
                 faceStart, faceStart + 2, faceStart + 3,
             ]);
+        }
+    }
+
+    /**
+     * Generate a tube connecting two positions
+     * Input end: vertices stay at input position (prRGB = inRGB)
+     * Projected end: vertices stay at projected position (inRGB = prRGB)
+     */
+    private generateTube(
+        startPos: vec3, endPos: vec3,
+        inR: number, inG: number, inB: number,
+        prR: number, prG: number, prB: number,
+        radius: number,
+        segments: number
+    ): void {
+        // Direction from start to end
+        const dir = new vec3(
+            endPos.x - startPos.x,
+            endPos.y - startPos.y,
+            endPos.z - startPos.z
+        );
+        const length = Math.sqrt(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+        if (length < 0.001) return; // Skip if too short
+
+        // Normalize direction
+        const dirN = new vec3(dir.x / length, dir.y / length, dir.z / length);
+
+        // Find perpendicular vectors for tube cross-section
+        let perpA: vec3;
+        if (Math.abs(dirN.y) < 0.9) {
+            // Cross with up vector
+            perpA = new vec3(
+                dirN.z * 0 - dirN.y * 0,
+                dirN.x * 0 - dirN.z * 1,
+                dirN.y * 1 - dirN.x * 0
+            );
+        } else {
+            // Cross with right vector
+            perpA = new vec3(
+                dirN.z * 0 - dirN.y * 0,
+                dirN.x * 0 - dirN.z * 0,
+                dirN.y * 0 - dirN.x * 1
+            );
+        }
+        // Normalize perpA
+        const lenA = Math.sqrt(perpA.x * perpA.x + perpA.y * perpA.y + perpA.z * perpA.z);
+        perpA = new vec3(perpA.x / lenA, perpA.y / lenA, perpA.z / lenA);
+
+        // perpB = dir x perpA
+        const perpB = new vec3(
+            dirN.y * perpA.z - dirN.z * perpA.y,
+            dirN.z * perpA.x - dirN.x * perpA.z,
+            dirN.x * perpA.y - dirN.y * perpA.x
+        );
+
+        const startIndex = this.meshBuilder.getVerticesCount();
+        const TWO_PI = Math.PI * 2;
+
+        // Generate vertices for both rings
+        for (let ring = 0; ring < 2; ring++) {
+            const center = ring === 0 ? startPos : endPos;
+            // Input end: prRGB = inRGB (stays at input position)
+            // Projected end: inRGB = prRGB (stays at projected position)
+            const uvInR = ring === 0 ? inR : prR;
+            const uvInG = ring === 0 ? inG : prG;
+            const uvInB = ring === 0 ? inB : prB;
+            const uvPrR = ring === 0 ? inR : prR;  // Same as input for ring 0
+            const uvPrG = ring === 0 ? inG : prG;
+            const uvPrB = ring === 0 ? inB : prB;
+
+            for (let i = 0; i <= segments; i++) {
+                const angle = (i / segments) * TWO_PI;
+                const cos = Math.cos(angle);
+                const sin = Math.sin(angle);
+
+                // Normal points outward from tube center
+                const nx = perpA.x * cos + perpB.x * sin;
+                const ny = perpA.y * cos + perpB.y * sin;
+                const nz = perpA.z * cos + perpB.z * sin;
+
+                // Position on ring
+                const px = center.x + nx * radius;
+                const py = center.y + ny * radius;
+                const pz = center.z + nz * radius;
+
+                this.meshBuilder.appendVerticesInterleaved([
+                    px, py, pz,
+                    nx, ny, nz,
+                    uvInR, uvInG,
+                    uvInB, uvPrR,
+                    uvPrG, uvPrB,
+                ]);
+            }
+        }
+
+        // Generate triangles connecting the two rings
+        const vertsPerRing = segments + 1;
+        for (let i = 0; i < segments; i++) {
+            const a = startIndex + i;
+            const b = startIndex + i + 1;
+            const c = startIndex + vertsPerRing + i;
+            const d = startIndex + vertsPerRing + i + 1;
+
+            // Two triangles per quad
+            this.meshBuilder.appendIndices([a, c, b]);
+            this.meshBuilder.appendIndices([b, c, d]);
         }
     }
 
@@ -637,18 +836,18 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
 
     // ============ PROPERTY ACCESSORS ============
 
-    get cubeSize(): number { return this._cubeSize; }
-    set cubeSize(value: number) {
-        this._cubeSize = value;
+    get displaySize(): number { return this._displaySize; }
+    set displaySize(value: number) {
+        this._displaySize = value;
         if (this.projectedColors.length > 0) {
             this.generateMesh();
             this.updateMaterialParams();
         }
     }
 
-    get sampleSize(): number { return this._sampleSize; }
-    set sampleSize(value: number) {
-        this._sampleSize = value;
+    get voxelSize(): number { return this._voxelSize; }
+    set voxelSize(value: number) {
+        this._voxelSize = value;
         if (this.projectedColors.length > 0) {
             this.generateMesh();
         }
@@ -686,5 +885,306 @@ export class GamutProjectionMeshGenerator extends BaseScriptComponent {
     set projectionBlend(value: number) {
         this._projectionBlend = Math.max(0, Math.min(1, value));
         this.updateMaterialParams();
+    }
+
+    get showLines(): boolean { return this._showLines; }
+    set showLines(value: boolean) {
+        this._showLines = value;
+        if (this.projectedColors.length > 0) {
+            this.generateMesh();
+        }
+    }
+
+    get lineRadius(): number { return this._lineRadius; }
+    set lineRadius(value: number) {
+        this._lineRadius = value;
+        if (this._showLines && this.projectedColors.length > 0) {
+            this.generateMesh();
+        }
+    }
+
+    get tubeSegments(): number { return this._tubeSegments; }
+    set tubeSegments(value: number) {
+        this._tubeSegments = Math.max(3, value);
+        if (this._showLines && this.projectedColors.length > 0) {
+            this.generateMesh();
+        }
+    }
+
+    /** Toggle projection lines visibility */
+    public setShowLines(show: boolean): void {
+        this.showLines = show;
+    }
+
+    /** Set line radius */
+    public setLineRadius(radius: number): void {
+        this.lineRadius = radius;
+    }
+
+    /** Set display size (convenience method for syncing across generators) */
+    public setDisplaySize(size: number): void {
+        this.displaySize = size;
+    }
+
+    /** Set voxel size (convenience method for syncing across generators) */
+    public setVoxelSize(size: number): void {
+        this.voxelSize = size;
+    }
+
+    // ============================================
+    // TWEEN API
+    // ============================================
+
+    private ensureUpdateEvent(): void {
+        if (!this.updateEvent) {
+            this.updateEvent = this.createEvent("UpdateEvent");
+            this.updateEvent.bind(() => this.onUpdate());
+        }
+    }
+
+    private onUpdate(): void {
+        if (!this.isTweening && !this.isBlendTweening && !this.isTransformTweening) return;
+
+        const dt = getDeltaTime();
+        let needsUpdate = false;
+
+        // Handle projection blend tween
+        if (this.isTweening) {
+            this.tweenElapsed += dt;
+
+            if (this.tweenElapsed >= this.tweenDuration) {
+                this._projectionBlend = this.tweenEndValue;
+                this.isTweening = false;
+            } else {
+                const t = this.tweenElapsed / this.tweenDuration;
+                const eased = t < 0.5
+                    ? 4 * t * t * t
+                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                this._projectionBlend = this.tweenStartValue + (this.tweenEndValue - this.tweenStartValue) * eased;
+            }
+            needsUpdate = true;
+        }
+
+        // Handle color space blend tween
+        if (this.isBlendTweening) {
+            this.blendTweenElapsed += dt;
+
+            if (this.blendTweenElapsed >= this.blendTweenDuration) {
+                this._blend = this.blendTweenEnd;
+                this.isBlendTweening = false;
+            } else {
+                const t = this.blendTweenElapsed / this.blendTweenDuration;
+                const eased = t < 0.5
+                    ? 4 * t * t * t
+                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                this._blend = this.blendTweenStart + (this.blendTweenEnd - this.blendTweenStart) * eased;
+            }
+            needsUpdate = true;
+        }
+
+        // Handle transform tween
+        if (this.isTransformTweening) {
+            this.transformTweenElapsed += dt;
+            const transform = this.sceneObject.getTransform();
+
+            if (this.transformTweenElapsed >= this.transformTweenDuration) {
+                transform.setWorldPosition(this.transformTweenEndPos);
+                transform.setWorldRotation(this.transformTweenEndRot);
+                this.isTransformTweening = false;
+            } else {
+                const t = this.transformTweenElapsed / this.transformTweenDuration;
+                const eased = t < 0.5
+                    ? 4 * t * t * t
+                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+                const pos = vec3.lerp(this.transformTweenStartPos, this.transformTweenEndPos, eased);
+                transform.setWorldPosition(pos);
+
+                const rot = quat.slerp(this.transformTweenStartRot, this.transformTweenEndRot, eased);
+                transform.setWorldRotation(rot);
+            }
+        }
+
+        if (needsUpdate) {
+            this.updateMaterialParams();
+        }
+    }
+
+    /**
+     * Tween projection blend to a target value
+     * @param target Target value (0 = input, 1 = projected)
+     * @param duration Duration in seconds (default 0.5)
+     */
+    public tweenProjectionTo(target: number, duration: number = 0.5): void {
+        this.ensureUpdateEvent();
+        this.tweenStartValue = this._projectionBlend;
+        this.tweenEndValue = Math.max(0, Math.min(1, target));
+        this.tweenDuration = duration;
+        this.tweenElapsed = 0;
+        this.isTweening = true;
+    }
+
+    /** Tween to fully projected state (projectionBlend = 1) */
+    public tweenToProjected(duration: number = 0.5): void {
+        this.tweenProjectionTo(1, duration);
+    }
+
+    /** Tween to input state (projectionBlend = 0) */
+    public tweenToInput(duration: number = 0.5): void {
+        this.tweenProjectionTo(0, duration);
+    }
+
+    /** Toggle between input and projected states with tween */
+    public toggleProjection(duration: number = 0.5): void {
+        // If currently tweening, reverse direction
+        if (this.isTweening) {
+            const temp = this.tweenStartValue;
+            this.tweenStartValue = this.tweenEndValue;
+            this.tweenEndValue = temp;
+            this.tweenElapsed = this.tweenDuration - this.tweenElapsed;
+        } else {
+            // Start new tween to opposite state
+            const target = this._projectionBlend < 0.5 ? 1 : 0;
+            this.tweenProjectionTo(target, duration);
+        }
+    }
+
+    /** Check if currently projected (projectionBlend >= 0.5) */
+    public isProjected(): boolean {
+        return this._projectionBlend >= 0.5;
+    }
+
+    /** Check if currently tweening */
+    public getIsTweening(): boolean {
+        return this.isTweening;
+    }
+
+    /** Stop any active tween */
+    public stopTween(): void {
+        this.isTweening = false;
+    }
+
+    // ============================================
+    // COLOR SPACE TWEEN API
+    // ============================================
+
+    /**
+     * Tween color space blend to a target value
+     * @param target Target blend value (0 = from space, 1 = to space)
+     * @param duration Duration in seconds (default 0.5)
+     */
+    public tweenBlendTo(target: number, duration: number = 0.5): void {
+        this.ensureUpdateEvent();
+        this.blendTweenStart = this._blend;
+        this.blendTweenEnd = Math.max(0, Math.min(1, target));
+        this.blendTweenDuration = duration;
+        this.blendTweenElapsed = 0;
+        this.isBlendTweening = true;
+    }
+
+    /**
+     * Tween back to RGB (rest position)
+     * Sets colorSpaceFrom to current colorSpaceTo, colorSpaceTo to RGB (0), and tweens blend to 1
+     * @param duration Duration in seconds (default 0.5)
+     */
+    public tweenToRest(duration: number = 0.5): void {
+        this._colorSpaceFrom = this._colorSpaceTo;
+        this._colorSpaceTo = 0; // RGB
+        this.tweenBlendTo(1, duration);
+    }
+
+    /**
+     * Tween to a specific color space
+     * Sets colorSpaceFrom to current colorSpaceTo, colorSpaceTo to target, resets blend to 0, then tweens to 1
+     * @param space Target color space index (0=RGB, 1=CIELAB, 2=CIEXYZ, 3=Oklab, 4=CIELUV)
+     * @param duration Duration in seconds (default 0.5)
+     */
+    public tweenToColorSpace(space: number, duration: number = 0.5): void {
+        this._colorSpaceFrom = this._colorSpaceTo;
+        this._colorSpaceTo = space;
+        this._blend = 0;
+        this.tweenBlendTo(1, duration);
+    }
+
+    /** Check if currently tweening color space blend */
+    public getIsBlendTweening(): boolean {
+        return this.isBlendTweening;
+    }
+
+    /** Stop color space blend tween */
+    public stopBlendTween(): void {
+        this.isBlendTweening = false;
+    }
+
+    /** Stop all tweens (projection and color space) */
+    public stopAllTweens(): void {
+        this.isTweening = false;
+        this.isBlendTweening = false;
+        this.isTransformTweening = false;
+    }
+
+    // ============================================
+    // TRANSFORM TWEEN API
+    // ============================================
+
+    /** Tween SceneObject to rest transform (position + rotation) */
+    public tweenToRestTransform(duration: number = 0.5): void {
+        this.ensureUpdateEvent();
+        const transform = this.sceneObject.getTransform();
+        this.transformTweenStartPos = transform.getWorldPosition();
+        this.transformTweenStartRot = transform.getWorldRotation();
+        this.transformTweenEndPos = this.storedRestPosition;
+        this.transformTweenEndRot = this.storedRestRotation;
+        this.transformTweenDuration = duration;
+        this.transformTweenElapsed = 0;
+        this.isTransformTweening = true;
+    }
+
+    /** Instantly snap SceneObject to rest transform */
+    public snapToRestTransform(): void {
+        const transform = this.sceneObject.getTransform();
+        transform.setWorldPosition(this.storedRestPosition);
+        transform.setWorldRotation(this.storedRestRotation);
+        this.isTransformTweening = false;
+    }
+
+    /** Tween SceneObject to a specific world position/rotation */
+    public tweenToTransform(position: vec3, rotation: quat, duration: number = 0.5): void {
+        this.ensureUpdateEvent();
+        const transform = this.sceneObject.getTransform();
+        this.transformTweenStartPos = transform.getWorldPosition();
+        this.transformTweenStartRot = transform.getWorldRotation();
+        this.transformTweenEndPos = position;
+        this.transformTweenEndRot = rotation;
+        this.transformTweenDuration = duration;
+        this.transformTweenElapsed = 0;
+        this.isTransformTweening = true;
+    }
+
+    /** Get stored rest position */
+    public getRestPosition(): vec3 {
+        return this.storedRestPosition;
+    }
+
+    /** Get stored rest rotation */
+    public getRestRotation(): quat {
+        return this.storedRestRotation;
+    }
+
+    /** Update rest transform to current position */
+    public setCurrentAsRest(): void {
+        const transform = this.sceneObject.getTransform();
+        this.storedRestPosition = transform.getWorldPosition();
+        this.storedRestRotation = transform.getWorldRotation();
+    }
+
+    /** Check if transform is currently tweening */
+    public getIsTransformTweening(): boolean {
+        return this.isTransformTweening;
+    }
+
+    /** Stop transform tween */
+    public stopTransformTween(): void {
+        this.isTransformTweening = false;
     }
 }

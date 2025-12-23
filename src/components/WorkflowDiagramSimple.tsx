@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Highlight, themes } from "prism-react-renderer";
 
 const ASSETS_PATH = "/assets/visualizing-color-spaces-in-ar-glasses";
+const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/a-sumo/specs-samples/main/Color-Spaces/Assets/Scripts";
 
 type ExpandedNode = "script" | "material" | null;
 type ExpandedDetail = "script" | "material" | null;
@@ -10,8 +11,10 @@ interface WorkflowDiagramSimpleProps {
   scriptLabel?: string;
   materialLabel?: string;
   materialCapture: string;
-  scriptCodeFile: string;
-  materialCodeFile: string;
+  scriptCodeFile?: string;
+  materialCodeFile?: string;
+  scriptGitHubPath?: string;
+  materialGitHubPath?: string;
 }
 
 // ============ Helper Components ============
@@ -146,6 +149,8 @@ export default function WorkflowDiagramSimple({
   materialCapture,
   scriptCodeFile,
   materialCodeFile,
+  scriptGitHubPath,
+  materialGitHubPath,
 }: WorkflowDiagramSimpleProps) {
   const [expandedNode, setExpandedNode] = useState<ExpandedNode>(null);
   const [expandedDetail, setExpandedDetail] = useState<ExpandedDetail>(null);
@@ -153,16 +158,32 @@ export default function WorkflowDiagramSimple({
   const [materialCode, setMaterialCode] = useState<string>("");
 
   useEffect(() => {
-    fetch(`${ASSETS_PATH}/scripts/${scriptCodeFile}`)
-      .then(res => res.text())
-      .then(setScriptCode)
-      .catch(() => setScriptCode("// Failed to load script"));
+    const scriptUrl = scriptGitHubPath
+      ? `${GITHUB_RAW_BASE}/${scriptGitHubPath}`
+      : scriptCodeFile
+        ? `${ASSETS_PATH}/scripts/${scriptCodeFile}`
+        : null;
 
-    fetch(`${ASSETS_PATH}/scripts/${materialCodeFile}`)
-      .then(res => res.text())
-      .then(setMaterialCode)
-      .catch(() => setMaterialCode("// Failed to load code"));
-  }, [scriptCodeFile, materialCodeFile]);
+    if (scriptUrl) {
+      fetch(scriptUrl)
+        .then(res => res.text())
+        .then(setScriptCode)
+        .catch(() => setScriptCode("// Failed to load script"));
+    }
+
+    const materialUrl = materialGitHubPath
+      ? `${GITHUB_RAW_BASE}/${materialGitHubPath}`
+      : materialCodeFile
+        ? `${ASSETS_PATH}/scripts/${materialCodeFile}`
+        : null;
+
+    if (materialUrl) {
+      fetch(materialUrl)
+        .then(res => res.text())
+        .then(setMaterialCode)
+        .catch(() => setMaterialCode("// Failed to load code"));
+    }
+  }, [scriptCodeFile, materialCodeFile, scriptGitHubPath, materialGitHubPath]);
 
   const toggleNode = (node: ExpandedNode) => {
     if (expandedNode === node) {

@@ -1,3 +1,4 @@
+
 /**
  * PigmentGamutMeshGenerator.ts
  *
@@ -7,27 +8,29 @@
 @component
 export class PigmentGamutMeshGenerator extends BaseScriptComponent {
 
-  // ============ GEOMETRY SETTINGS ============
+  // ============ GEOMETRY ============
 
   @input
-  @hint("Size of the overall cube in scene units")
-  private _cubeSize: number = 100.0;
+  @hint("Size of the display volume in scene units")
+  private _displaySize: number = 100.0;
 
   @input
-  @hint("Number of sample lines per axis (density of RGB sampling)")
-  private _gridDensity: number = 10;
+  @hint("Samples per axis (e.g., 10 = 10³ grid)")
+  @widget(new SliderWidget(2, 20, 1))
+  private _gridResolution: number = 10;
 
   @input
-  @hint("Number of samples per line")
-  private _lineSegments: number = 32;
+  @hint("Size of each voxel cube")
+  @widget(new SliderWidget(0.1, 10, 0.1))
+  private _voxelSize: number = 2.0;
+
+  // ============ MATERIAL ============
 
   @input
-  @hint("Size of each sample cube")
-  private _sampleSize: number = 2.0;
-
-  @input
-  @hint("Material for sample cubes")
+  @hint("Material for voxels")
   public material!: Material;
+
+  // ============ COLOR SPACE ============
 
   @input
   @widget(
@@ -56,24 +59,43 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
   private _colorSpaceTo: number = 0;
 
   @input
-  @hint("Interpolation: 0 = from space, 1 = to space")
+  @hint("Color space blend: 0 = source, 1 = target")
+  @widget(new SliderWidget(0, 1, 0.01))
   private _blend: number = 0.0;
+
+  // ============ UI ============
 
   @input
   @hint("Text component to display active color space name")
   colorSpaceText: Text;
 
-  // ============ GAMUT SETTINGS ============
+  // ============ REST TRANSFORM ============
 
   @input
-  @hint("Tolerance for matching RGB to achievable gamut (0-1)")
+  @hint("Rest position (world space) - leave at 0,0,0 to use initial position")
+  restPosition: vec3 = new vec3(0, 0, 0);
+
+  @input
+  @hint("Rest rotation (euler degrees) - leave at 0,0,0 to use initial rotation")
+  restRotation: vec3 = new vec3(0, 0, 0);
+
+  @input
+  @hint("Capture current transform as rest position on awake")
+  useCurrentAsRest: boolean = true;
+
+  // ============ GAMUT ============
+
+  @input
+  @hint("Tolerance for matching RGB to achievable gamut")
+  @widget(new SliderWidget(0.01, 0.2, 0.01))
   private _gamutTolerance: number = 0.05;
 
   @input
   @hint("Resolution of pigment mix sampling for gamut LUT")
+  @widget(new SliderWidget(5, 30, 1))
   private _gamutSampleSteps: number = 20;
 
-  // ============ PIGMENT COLORS ============
+  // ============ PIGMENTS ============
 
   @input
   @hint("Pigment 0: White")
@@ -120,13 +142,53 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
   private gamutLUT: vec3[] = [];
   private sampleData: { center: vec3; r: number; g: number; b: number }[] = [];
 
+  // Tween state (color space blend)
+  private isTweening: boolean = false;
+  private tweenStartValue: number = 0;
+  private tweenEndValue: number = 1;
+  private tweenDuration: number = 0.5;
+  private tweenElapsed: number = 0;
+  private updateEvent: SceneEvent | null = null;
+
+  // Transform tween state
+  private isTransformTweening: boolean = false;
+  private transformTweenStartPos: vec3 = new vec3(0, 0, 0);
+  private transformTweenEndPos: vec3 = new vec3(0, 0, 0);
+  private transformTweenStartRot: quat = quat.quatIdentity();
+  private transformTweenEndRot: quat = quat.quatIdentity();
+  private transformTweenDuration: number = 0.5;
+  private transformTweenElapsed: number = 0;
+  private storedRestPosition: vec3 = new vec3(0, 0, 0);
+  private storedRestRotation: quat = quat.quatIdentity();
+
+  // Precomputed achievability grid for fast lookups
+  private static readonly ACHIEV_GRID_RES = 32; // Resolution of precomputed grid
+  private achievabilityGrid: boolean[] = [];
+
   onAwake(): void {
+    this.captureRestTransform();
     this.initializePigments();
     this.buildGamutLUT();
     this.setupMeshVisual();
     this.collectSampleData();
     this.generateMesh();
     this.updateMaterialParams();
+  }
+
+  private captureRestTransform(): void {
+    const transform = this.sceneObject.getTransform();
+    if (this.useCurrentAsRest) {
+      this.storedRestPosition = transform.getWorldPosition();
+      this.storedRestRotation = transform.getWorldRotation();
+    } else {
+      this.storedRestPosition = this.restPosition;
+      const rad = Math.PI / 180;
+      this.storedRestRotation = quat.fromEulerAngles(
+        this.restRotation.x * rad,
+        this.restRotation.y * rad,
+        this.restRotation.z * rad
+      );
+    }
   }
 
   private initializePigments(): void {
@@ -249,24 +311,46 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
       }
     }
 
+    // Build precomputed achievability grid for fast lookups
+    this.buildAchievabilityGrid();
+
     print(`PigmentGamutMeshGenerator: Built LUT with ${this.gamutLUT.length} achievable colors`);
   }
 
-  private isColorAchievable(r: number, g: number, b: number): boolean {
-    const tolSq = this._gamutTolerance * this._gamutTolerance;
+  private buildAchievabilityGrid(): void {
+    const res = PigmentGamutMeshGenerator.ACHIEV_GRID_RES;
+    const total = res * res * res;
+    this.achievabilityGrid = new Array(total).fill(false);
 
+    const tol = this._gamutTolerance;
+
+    // Mark all grid cells that contain achievable colors
     for (const c of this.gamutLUT) {
-      const dr = r - c.x;
-      const dg = g - c.y;
-      const db = b - c.z;
-      const distSq = dr * dr + dg * dg + db * db;
+      // Find grid cells within tolerance of this color
+      const minR = Math.max(0, Math.floor((c.x - tol) * res));
+      const maxR = Math.min(res - 1, Math.floor((c.x + tol) * res));
+      const minG = Math.max(0, Math.floor((c.y - tol) * res));
+      const maxG = Math.min(res - 1, Math.floor((c.y + tol) * res));
+      const minB = Math.max(0, Math.floor((c.z - tol) * res));
+      const maxB = Math.min(res - 1, Math.floor((c.z + tol) * res));
 
-      if (distSq <= tolSq) {
-        return true;
+      for (let ri = minR; ri <= maxR; ri++) {
+        for (let gi = minG; gi <= maxG; gi++) {
+          for (let bi = minB; bi <= maxB; bi++) {
+            this.achievabilityGrid[ri * res * res + gi * res + bi] = true;
+          }
+        }
       }
     }
+  }
 
-    return false;
+  private isColorAchievable(r: number, g: number, b: number): boolean {
+    // Fast O(1) lookup using precomputed grid
+    const res = PigmentGamutMeshGenerator.ACHIEV_GRID_RES;
+    const ri = Math.min(res - 1, Math.max(0, Math.floor(r * res)));
+    const gi = Math.min(res - 1, Math.max(0, Math.floor(g * res)));
+    const bi = Math.min(res - 1, Math.max(0, Math.floor(b * res)));
+    return this.achievabilityGrid[ri * res * res + gi * res + bi];
   }
 
   // ============================================
@@ -328,7 +412,7 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
 
   // Always generate in RGB space - shader handles color space transformation
   private rgbToDisplayPosition(r: number, g: number, b: number): vec3 {
-    const size = this._cubeSize;
+    const size = this._displaySize;
     return new vec3(
       (r - 0.5) * size,
       (b - 0.5) * size,
@@ -342,7 +426,7 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
       pass.colorSpaceFrom = this._colorSpaceFrom;
       pass.colorSpaceTo = this._colorSpaceTo;
       pass.blend = this._blend;
-      pass.cubeSize = this._cubeSize;
+      pass.cubeSize = this._displaySize;
     }
     this.updateColorSpaceText();
   }
@@ -365,16 +449,14 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
 
   private collectSampleData(): void {
     this.sampleData = [];
-    const density = this._gridDensity;
-    const segments = this._lineSegments;
+    const res = this._gridResolution;
 
-    for (let ri = 0; ri <= density; ri++) {
-      for (let gi = 0; gi <= density; gi++) {
-        const r = ri / density;
-        const g = gi / density;
-
-        for (let bi = 0; bi <= segments; bi++) {
-          const b = bi / segments;
+    for (let ri = 0; ri <= res; ri++) {
+      for (let gi = 0; gi <= res; gi++) {
+        for (let bi = 0; bi <= res; bi++) {
+          const r = ri / res;
+          const g = gi / res;
+          const b = bi / res;
 
           if (!this.isColorAchievable(r, g, b)) continue;
 
@@ -384,7 +466,7 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
       }
     }
 
-    print(`PigmentGamutMeshGenerator: ${this.sampleData.length} achievable samples`);
+    print(`PigmentGamutMeshGenerator: ${this.sampleData.length} achievable voxels (from ${(res + 1) ** 3} tested)`);
   }
 
   private generateMesh(): void {
@@ -398,10 +480,8 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
     this.meshBuilder.topology = MeshTopology.Triangles;
     this.meshBuilder.indexType = MeshIndexType.UInt16;
 
-    const size = this._sampleSize;
-
     for (const sample of this.sampleData) {
-      this.generateCube(sample.center, sample.r, sample.g, sample.b, size);
+      this.generateCube(sample.center, sample.r, sample.g, sample.b, this._voxelSize);
     }
 
     if (this.meshBuilder.isValid()) {
@@ -526,31 +606,24 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
   // PROPERTY ACCESSORS
   // ============================================
 
-  get cubeSize(): number { return this._cubeSize; }
-  set cubeSize(value: number) {
-    this._cubeSize = value;
+  get displaySize(): number { return this._displaySize; }
+  set displaySize(value: number) {
+    this._displaySize = value;
     this.collectSampleData();
     this.generateMesh();
     this.updateMaterialParams();
   }
 
-  get gridDensity(): number { return this._gridDensity; }
-  set gridDensity(value: number) {
-    this._gridDensity = value;
+  get gridResolution(): number { return this._gridResolution; }
+  set gridResolution(value: number) {
+    this._gridResolution = Math.max(1, Math.floor(value));
     this.collectSampleData();
     this.generateMesh();
   }
 
-  get lineSegments(): number { return this._lineSegments; }
-  set lineSegments(value: number) {
-    this._lineSegments = value;
-    this.collectSampleData();
-    this.generateMesh();
-  }
-
-  get sampleSize(): number { return this._sampleSize; }
-  set sampleSize(value: number) {
-    this._sampleSize = value;
+  get voxelSize(): number { return this._voxelSize; }
+  set voxelSize(value: number) {
+    this._voxelSize = value;
     this.generateMesh();
   }
 
@@ -575,8 +648,181 @@ export class PigmentGamutMeshGenerator extends BaseScriptComponent {
   get gamutTolerance(): number { return this._gamutTolerance; }
   set gamutTolerance(value: number) {
     this._gamutTolerance = value;
-    this.buildGamutLUT();
+    this.buildAchievabilityGrid(); // Rebuild grid with new tolerance
     this.collectSampleData();
     this.generateMesh();
+  }
+
+  /** Set display size (convenience method for syncing across generators) */
+  public setDisplaySize(size: number): void {
+    this.displaySize = size;
+  }
+
+  /** Set voxel size (convenience method for syncing across generators) */
+  public setVoxelSize(size: number): void {
+    this.voxelSize = size;
+  }
+
+  /** Set grid resolution (convenience method for syncing across generators) */
+  public setGridResolution(res: number): void {
+    this.gridResolution = res;
+  }
+
+  // ============================================
+  // TWEEN API
+  // ============================================
+
+  private ensureUpdateEvent(): void {
+    if (!this.updateEvent) {
+      this.updateEvent = this.createEvent("UpdateEvent");
+      this.updateEvent.bind(() => this.onUpdate());
+    }
+  }
+
+  private onUpdate(): void {
+    if (!this.isTweening && !this.isTransformTweening) return;
+
+    const dt = getDeltaTime();
+
+    // Handle color space blend tween
+    if (this.isTweening) {
+      this.tweenElapsed += dt;
+      if (this.tweenElapsed >= this.tweenDuration) {
+        this._blend = this.tweenEndValue;
+        this.isTweening = false;
+      } else {
+        const t = this.tweenElapsed / this.tweenDuration;
+        const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        this._blend = this.tweenStartValue + (this.tweenEndValue - this.tweenStartValue) * eased;
+      }
+      this.updateMaterialParams();
+    }
+
+    // Handle transform tween
+    if (this.isTransformTweening) {
+      this.transformTweenElapsed += dt;
+      const transform = this.sceneObject.getTransform();
+
+      if (this.transformTweenElapsed >= this.transformTweenDuration) {
+        transform.setWorldPosition(this.transformTweenEndPos);
+        transform.setWorldRotation(this.transformTweenEndRot);
+        this.isTransformTweening = false;
+      } else {
+        const t = this.transformTweenElapsed / this.transformTweenDuration;
+        const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+        const pos = vec3.lerp(this.transformTweenStartPos, this.transformTweenEndPos, eased);
+        transform.setWorldPosition(pos);
+
+        const rot = quat.slerp(this.transformTweenStartRot, this.transformTweenEndRot, eased);
+        transform.setWorldRotation(rot);
+      }
+    }
+  }
+
+  /** Tween color space blend to a target value */
+  public tweenBlendTo(target: number, duration: number = 0.5): void {
+    this.ensureUpdateEvent();
+    this.tweenStartValue = this._blend;
+    this.tweenEndValue = Math.max(0, Math.min(1, target));
+    this.tweenDuration = duration;
+    this.tweenElapsed = 0;
+    this.isTweening = true;
+  }
+
+  /** Tween to rest position (RGB space, blend = 0) */
+  public tweenToRest(duration: number = 0.5): void {
+    this._colorSpaceFrom = this._colorSpaceTo;
+    this._colorSpaceTo = 0; // RGB
+    this.tweenBlendTo(1, duration);
+  }
+
+  /** Tween to a specific color space */
+  public tweenToColorSpace(space: number, duration: number = 0.5): void {
+    this._colorSpaceFrom = this._colorSpaceTo;
+    this._colorSpaceTo = space;
+    this._blend = 0;
+    this.tweenBlendTo(1, duration);
+  }
+
+  /** Check if currently tweening */
+  public getIsTweening(): boolean {
+    return this.isTweening;
+  }
+
+  /** Stop any active tween */
+  public stopTween(): void {
+    this.isTweening = false;
+  }
+
+  // ============================================
+  // TRANSFORM TWEEN API
+  // ============================================
+
+  /** Tween SceneObject to rest transform (position + rotation) */
+  public tweenToRestTransform(duration: number = 0.5): void {
+    this.ensureUpdateEvent();
+    const transform = this.sceneObject.getTransform();
+    this.transformTweenStartPos = transform.getWorldPosition();
+    this.transformTweenStartRot = transform.getWorldRotation();
+    this.transformTweenEndPos = this.storedRestPosition;
+    this.transformTweenEndRot = this.storedRestRotation;
+    this.transformTweenDuration = duration;
+    this.transformTweenElapsed = 0;
+    this.isTransformTweening = true;
+  }
+
+  /** Instantly snap SceneObject to rest transform */
+  public snapToRestTransform(): void {
+    const transform = this.sceneObject.getTransform();
+    transform.setWorldPosition(this.storedRestPosition);
+    transform.setWorldRotation(this.storedRestRotation);
+    this.isTransformTweening = false;
+  }
+
+  /** Tween SceneObject to a specific world position/rotation */
+  public tweenToTransform(position: vec3, rotation: quat, duration: number = 0.5): void {
+    this.ensureUpdateEvent();
+    const transform = this.sceneObject.getTransform();
+    this.transformTweenStartPos = transform.getWorldPosition();
+    this.transformTweenStartRot = transform.getWorldRotation();
+    this.transformTweenEndPos = position;
+    this.transformTweenEndRot = rotation;
+    this.transformTweenDuration = duration;
+    this.transformTweenElapsed = 0;
+    this.isTransformTweening = true;
+  }
+
+  /** Get stored rest position */
+  public getRestPosition(): vec3 {
+    return this.storedRestPosition;
+  }
+
+  /** Get stored rest rotation */
+  public getRestRotation(): quat {
+    return this.storedRestRotation;
+  }
+
+  /** Update rest transform to current position */
+  public setCurrentAsRest(): void {
+    const transform = this.sceneObject.getTransform();
+    this.storedRestPosition = transform.getWorldPosition();
+    this.storedRestRotation = transform.getWorldRotation();
+  }
+
+  /** Check if transform is currently tweening */
+  public getIsTransformTweening(): boolean {
+    return this.isTransformTweening;
+  }
+
+  /** Stop transform tween */
+  public stopTransformTween(): void {
+    this.isTransformTweening = false;
+  }
+
+  /** Stop all tweens (color space and transform) */
+  public stopAllTweens(): void {
+    this.isTweening = false;
+    this.isTransformTweening = false;
   }
 }

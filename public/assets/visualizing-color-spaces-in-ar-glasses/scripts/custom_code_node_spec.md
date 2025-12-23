@@ -1,3 +1,11 @@
+INSTRUCTIONS:
+NO inline comments for input and output variables.
+NO early returns. 
+Bottom Left UV is (0, 0).
+Top Right UV is (1, 1).
+
+SPECIFICATION:
+
 // Input Output Global Types
 global_float GlobalFloat;
 global_vec2 GlobalVec2;

@@ -220,7 +220,7 @@ const DIFFICULTY_CONFIG = {
     ].includes(p.name)),
   },
   god: {
-    name: "Give Me No Mercy",
+    name: "Give Me No Mercy!",
     description: "Primary colors only",
     pigments: PIGMENTS.filter(p => [
       "Titanium White", "Ivory Black",
@@ -558,50 +558,8 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
       }}>
         {/* Target Color */}
         <div>
-          <div style={{ fontSize: "12px", color: "rgb(100, 100, 100)", marginBottom: "8px", fontWeight: 500, display: "flex", justifyContent: "space-between", alignItems: "center", height: "28px" }}>
-            <span>Target Color</span>
-            <button
-              onClick={(e) => {
-                const btn = e.currentTarget;
-                btn.style.transform = "translateY(2px) scale(0.95)";
-                btn.style.boxShadow = "0 1px 2px rgba(0,0,0,0.1)";
-                setTimeout(() => {
-                  btn.style.transform = "translateY(-2px)";
-                  btn.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-                }, 150);
-                setTarget(randomColor());
-              }}
-              style={{
-                background: "white",
-                border: "1px solid rgb(220, 220, 220)",
-                borderRadius: "6px",
-                cursor: "pointer",
-                padding: "4px",
-                width: "28px",
-                height: "28px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transform: "translateY(-2px)",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.15)",
-                transition: "transform 0.15s ease, box-shadow 0.15s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-4px)";
-                e.currentTarget.style.boxShadow = "0 6px 12px rgba(0,0,0,0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = "0 4px 8px rgba(0,0,0,0.15)";
-              }}
-              title="Randomize target color"
-            >
-              <img
-                src="/assets/visualizing-color-spaces-in-ar-glasses/icons/random_item_mk.png"
-                alt="Randomize"
-                style={{ width: "18px", height: "18px", objectFit: "contain" }}
-              />
-            </button>
+          <div style={{ fontSize: "12px", color: "rgb(100, 100, 100)", marginBottom: "8px", fontWeight: 500, height: "28px", display: "flex", alignItems: "center" }}>
+            Target Color
           </div>
           <div style={{
             width: "100%",
@@ -611,8 +569,46 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
             border: "1px solid rgba(0,0,0,0.1)",
             boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
           }} />
-          <div style={{ fontSize: "11px", color: "rgb(120, 120, 120)", marginTop: "6px", textAlign: "center" }}>
-            {target.toUpperCase()}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginTop: "6px" }}>
+            <span style={{ fontSize: "11px", color: "rgb(120, 120, 120)" }}>
+              {target.toUpperCase()}
+            </span>
+            <button
+              onClick={(e) => {
+                const btn = e.currentTarget;
+                btn.style.transform = "scale(0.9)";
+                setTimeout(() => {
+                  btn.style.transform = "scale(1)";
+                }, 150);
+                setTarget(randomColor());
+              }}
+              style={{
+                background: "white",
+                border: "1px solid rgb(220, 220, 220)",
+                borderRadius: "4px",
+                cursor: "pointer",
+                padding: "2px",
+                width: "20px",
+                height: "20px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "transform 0.15s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgb(245, 245, 245)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "white";
+              }}
+              title="Randomize target color"
+            >
+              <img
+                src="/assets/visualizing-color-spaces-in-ar-glasses/icons/random_item_mk.png"
+                alt="Randomize"
+                style={{ width: "14px", height: "14px", objectFit: "contain" }}
+              />
+            </button>
           </div>
         </div>
 
@@ -829,8 +825,9 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                   cursor: "pointer",
                   fontFamily: titleFont,
                 }}
+                title="Start fresh with a new target color"
               >
-                Skip
+                New Color
               </button>
             </div>
           </>
