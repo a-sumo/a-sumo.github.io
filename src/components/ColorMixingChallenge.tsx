@@ -498,6 +498,7 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
       {/* Difficulty Selector */}
       <div style={{
         display: "flex",
+        flexWrap: "wrap",
         gap: "8px",
         marginBottom: "20px",
         justifyContent: "center",
@@ -518,17 +519,20 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                 color: isSelected ? "rgb(255, 255, 255)" : "rgb(150, 150, 150)",
                 border: isSelected ? `2px solid ${borderColors[d]}` : "2px solid rgb(60, 60, 65)",
                 borderRadius: "6px",
-                padding: "10px 14px",
-                fontSize: "13px",
+                padding: "8px 12px",
+                fontSize: "12px",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
                 textAlign: "center",
                 fontFamily: titleFont,
                 textTransform: "uppercase",
+                flex: "1 1 auto",
+                minWidth: "90px",
+                maxWidth: "140px",
               }}
             >
-              <div style={{ fontWeight: 700 }}>{DIFFICULTY_CONFIG[d].name}</div>
-              <div style={{ fontSize: "11px", opacity: 0.7, marginTop: "2px", fontWeight: 500, textTransform: "none" }}>
+              <div style={{ fontWeight: 700, fontSize: "11px" }}>{DIFFICULTY_CONFIG[d].name}</div>
+              <div style={{ fontSize: "10px", opacity: 0.7, marginTop: "2px", fontWeight: 500, textTransform: "none" }}>
                 {DIFFICULTY_CONFIG[d].pigments.length} pigments
               </div>
             </button>
@@ -669,13 +673,14 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
               padding: "10px 12px",
               border: "1px solid rgb(70, 70, 80)",
               display: "flex",
+              flexWrap: "wrap",
               alignItems: "center",
-              gap: "12px",
+              gap: "8px",
             }}>
               {/* Color swatch */}
               <div style={{
-                width: "32px",
-                height: "32px",
+                width: "28px",
+                height: "28px",
                 borderRadius: "6px",
                 background: slot.pigment?.hex || "#f5f5f5",
                 border: "1px solid rgba(0,0,0,0.1)",
@@ -687,7 +692,7 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                 value={slot.pigment?.name || ""}
                 onChange={(e) => handlePigmentChange(index, e.target.value)}
                 style={{
-                  flex: 1,
+                  flex: "1 1 120px",
                   minWidth: 0,
                   padding: "8px 10px",
                   fontSize: "13px",
@@ -710,8 +715,28 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                 ))}
               </select>
 
-              {/* Concentration slider */}
-              <div style={{ width: "90px", flexShrink: 0 }}>
+              {/* Clear button */}
+              <button
+                onClick={() => resetSlot(index)}
+                style={{
+                  fontSize: "12px",
+                  color: "rgb(180, 180, 180)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "4px",
+                  lineHeight: 1,
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = "rgb(100, 100, 100)"}
+                onMouseLeave={(e) => e.currentTarget.style.color = "rgb(180, 180, 180)"}
+                title="Clear slot"
+              >
+                ✕
+              </button>
+
+              {/* Concentration slider - full width on mobile */}
+              <div style={{ flex: "1 1 100%", minWidth: "100px" }}>
                 <input
                   type="range"
                   min="0"
@@ -736,25 +761,6 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                   {slot.concentration}%
                 </div>
               </div>
-
-              {/* Clear button */}
-              <button
-                onClick={() => resetSlot(index)}
-                style={{
-                  fontSize: "12px",
-                  color: "rgb(180, 180, 180)",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: "4px",
-                  lineHeight: 1,
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = "rgb(100, 100, 100)"}
-                onMouseLeave={(e) => e.currentTarget.style.color = "rgb(180, 180, 180)"}
-                title="Clear slot"
-              >
-                ✕
-              </button>
             </div>
           ))}
         </div>
@@ -814,7 +820,7 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
               <span style={{ color: "rgb(150, 150, 150)" }}>Accuracy: </span>
               <span style={{ color: "rgb(255, 200, 100)", fontWeight: 600 }}>{accuracy.toFixed(0)}%</span>
             </div>
-            <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", justifyContent: "center" }}>
               <button
                 onClick={submitScore}
                 disabled={!hasStarted}
@@ -823,11 +829,13 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                   color: hasStarted ? "rgb(30, 30, 30)" : "rgb(120, 120, 120)",
                   border: "2px solid transparent",
                   borderRadius: "6px",
-                  padding: "12px 24px",
-                  fontSize: "14px",
+                  padding: "10px 20px",
+                  fontSize: "13px",
                   fontWeight: 700,
                   cursor: hasStarted ? "pointer" : "not-allowed",
                   fontFamily: titleFont,
+                  flex: "1 1 auto",
+                  minWidth: "120px",
                 }}
               >
                 Submit Score
@@ -839,11 +847,13 @@ export default function ColorMixingChallenge({ targetColor: initialTarget = "#8B
                   color: "rgb(200, 200, 200)",
                   border: "2px solid rgb(80, 80, 90)",
                   borderRadius: "6px",
-                  padding: "12px 24px",
-                  fontSize: "14px",
+                  padding: "10px 20px",
+                  fontSize: "13px",
                   fontWeight: 700,
                   cursor: "pointer",
                   fontFamily: titleFont,
+                  flex: "1 1 auto",
+                  minWidth: "120px",
                 }}
                 title="Start fresh with a new target color"
               >

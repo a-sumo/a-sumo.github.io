@@ -24,6 +24,18 @@ import CollapsibleVideo from "@components/CollapsibleVideo";
 import HoverReveal from "@components/HoverReveal";
 import CollapsibleCode from "@components/CollapsibleCode";
 import Chapter from "@components/Chapter";
+import ArticleTimeline from "@components/ArticleTimeline";
+
+<ArticleTimeline
+  client:load
+  sections={[
+    { id: "chapter-1", label: "The Challenge of Color Mixing", type: "chapter" },
+    { id: "color-mixing-challenge", label: "Color Mixing Challenge", type: "challenge", parent: "chapter-1" },
+    { id: "chapter-2", label: "Building Color Spaces", type: "chapter" },
+    { id: "vfx-particles", label: "VFX Particles", type: "subsection" },
+    { id: "4-procedural-meshes", label: "Procedural Meshes", type: "subsection" },
+  ]}
+/>
 
 <div style="text-align: center;">
 	<a
@@ -41,6 +53,7 @@ import Chapter from "@components/Chapter";
 
 <div style={{ display: "flex", justifyContent: "center", margin: "32px 0" }}>
 <video
+	controls
 	autoPlay
 	loop
 	muted
@@ -51,11 +64,13 @@ import Chapter from "@components/Chapter";
 </video>
 </div>
 
-<Chapter client:load number={1} title="The Challenge of Color Mixing">
+<Chapter client:load id="chapter-1" number={1} title="The Challenge of Color Mixing">
 
-When mixing pigments on a palette, each decision moves the color across three dimensions: hue, saturation and value.
-These three dimensions are independent, or in technical terms, orthogonal. In theory, you can vary along one dimension while keeping others constant.
-This is how most digital color pickers work: you pick a hue on one axis and adjust saturation and lightness on another.
+One of the first steps a painter takes is that of assembling together the colors that will be laid on the canvas.
+This involves selecting a set of pigments, laying them out on a palette and mixing them. 
+During this process, each decision moves the color of the paint across three dimensions: hue, saturation(chromaicity) and value (lightness).
+In theory, these dimensions are independent, or orthogonal. This means you can change the value along one dimension while keeping others constant.
+Most digital color pickers are built on this assumption: you can pick a hue on one axis and adjust saturation and lightness on another.
 
 <div style={{ textAlign: "center", margin: "16px 0" }}>
 <img
@@ -66,37 +81,34 @@ This is how most digital color pickers work: you pick a hue on one axis and adju
 <p style={{ fontSize: "14px", color: "rgb(100, 100, 100)", marginTop: "8px" }}>Figma's HSL color picker: hue on one slider, saturation and lightness on a 2D plane.</p>
 </div>
 
-But with physical pigments, it's not so simple. For example, in order to de-saturate the green color of a tree as it vanishes into the horizon, you'll generally want to add a colder color to it, such as blue.
-But by adding blue, you also shift the hue towards... blue! So in practice, the dimensions aren't so independent after all.
-It turns out that mixing color pigments involves a kind of multidimensional navigation which experienced painters perform seamlessly.
-This navigation is crucial because it directly impacts the confidence of your brushstrokes and the fluidity of your artwork.
-The more problems you can solve ahead of laying your brush on the canvas, the more enjoyable the process for you, the painter, and the more free-flowing your painting will _feel_ to the viewer.
+Physical pigments, however are not as simple. For example, in order to de-saturate the green color of a tree as it vanishes into the horizon, you'll generally want to add a colder color to it, such as blue.
+But by adding blue, you also shift the hue towards... blue! This means that in practice, the dimensions aren't actually independent.
+It turns out that mixing color pigments involves a kind of multidimensional dance, which experienced painters perform seamlessly.
+Performing this process adequately has an impact on the confidence of your brushstrokes and the overall fluidity of your artwork.
+In fact, the more problems the painter can solve ahead of laying their brush on the canvas, the more enjoyable the process for them and the more free-flowing your painting will _feel_ to the viewer.
 
+Now, some shortcuts can be taken, namely using very few or lots of pigments.
 If you have too few pigments, you have little expressiveness and it may be unclear whether a certain color in your reference is even achievable.
-On the other hand, the more pigments you have, the more degrees of freedom, and hence more complexity. This complexity grows combinatorially: not only do you have more possible mixtures to consider, but many different mixtures can yield the same color!
-This makes it harder to reason about which path to take.
+On the other hand, the more pigments you have, the more degrees of freedom, and hence more complexity. 
+This complexity grows combinatorially: not only do you have more possible mixtures to consider, but many different mixtures can yield the same color!
+This makes it much harder to reason about which path to take. For a beginner, it's recipe for disaster.
 
-Wanna try? Here: I'll give you a color and you need to find out which mix achieves it. 
+Wanna try? Here: I'll give you a color and you need to find out which mix achieves it!
 
+<div style={{ textAlign: "center" }}>
 <CollapsibleVideo client:load src="/assets/visualizing-color-spaces-in-ar-glasses/videos/bonne_chance_franco-succession.mp4" preText='"' trigger="Bonne chance!" postText='"' description="Succession, Season 3 Episode 5" />
+</div>
 
+<div id="color-mixing-challenge" style={{ scrollMarginTop: "80px" }}>
 <ColorMixingChallenge client:load targetColor="#8B4513" />
+</div>
 
-<CollapsibleVideo
-	client:load
-	src="/assets/visualizing-color-spaces-in-ar-glasses/videos/excellent_wonderful_news.mp4"
-	preText='How was it? "'
-	trigger="Wonderful"
-	postText='"?'
-	description="Succession, Season 3 Episode 5"
-/>
-
-Mastering all these considerations takes years of practice.
-You just can't develop an intuition for how specific pigments for each specific brand will interact with one another across hue saturation and value just by watching video tutorials and reading books. You must paint, again and again, ideally with some guidance, but knowing that the process will be tedious.
+Now, it should be no surprise to you that mastering the pigment mixing process takes years of practice.
+You just can't develop an intuition for how specific color pigments will interact with one another across hue saturation and value just by watching video tutorials and reading books. You must paint, again and again, ideally with some guidance, but knowing that the process will be tedious.
 
 But how tedious does it really _need_ to be? Is frustration necessary for learning, or can skillful effort be sufficient?
 
-This brings us to our problem statement:
+Let us formulate our problem statement:
 
 <div id="problem-statement" style="background: rgb(255, 248, 222); border: 2px solid rgb(40, 39, 40); padding: 20px 24px; borderRadius: 8px; margin: 24px 0;">
 <ol style="margin: 0; paddingLeft: 20px; color: rgb(40, 39, 40); lineHeight: 1.8;">
@@ -108,46 +120,42 @@ This brings us to our problem statement:
 
 </Chapter>
 
-<Chapter client:load number={2} title="Building Color Spaces">
+<Chapter client:load id="chapter-2" number={2} title="Building Color Spaces">
 
-The kind of problem I described above is well-suited to what Bret Victor calls a [Seeing Space](https://worrydream.com/SeeingSpaces/): an environment that makes the invisible visible, letting you see the full range of possibilities at once rather than guessing blindly.
+The challenges I described above are well-suited to what Bret Victor calls [Seeing Spaces](https://worrydream.com/SeeingSpaces/): environments that make invisible relationships visible by giving you immediate, spatial representations of abstract data. Instead of holding mental models in your head and guessing at outcomes, you see the entire possibility space laid out before you.
 
-When you combine an axis for each color dimension, you get a color space: a seeing space for color.
+For color mixing, this means visualizing all three color dimensions simultaneously as you work. The tool for this is a color space: a 3D coordinate system where every possible color occupies a unique position.
 There are a wide variety of color spaces, but the ones that matter for painting are those that are perceptually accurate.
-Transitions between colors are particularly important as they inform mixing decisions.
+That's because transitions between colors end up informing mixing decisions.
 
-To answer the questions from Chapter 1, I needed a way to visualize color spaces while painting.
-AR glasses seemed ideal since they keep your hands free and integrate smoothly into the messy flow of painting.
-Fortunately, I got a pair of [Spectacles AR glasses](https://www.spectacles.com/).
+But seeing spaces only _really_ work when they're seamlessly integrated into the user's environment. They must also be highly responsive and conceptually powerful.
+That's a lot to ask from a smartphone, tablet or desktop. None of these devices can be integrated into the painting flow without disrupting it.
 
-The next thing I needed to figure out was which content to display and how to display it.
-Concretely, I wanted some way of knowing where a specific color on my palette sits in the color space, so that when I change its mixture, I can see the result.
-I also wanted to know which colors are accessible based on the paint drops available. The name for that is a [color gamut](https://en.wikipedia.org/wiki/Gamut).
-Finally, I wanted to see how a specific target color maps into this gamut: what's the closest I can get to a reference color based on the pigments at my disposal?
+Fortunately, we are in the age of AR glasses and I got a pair of [Spectacles](https://www.spectacles.com/).
 
-RGB is the obvious starting point, but it's a poor fit for this problem. It's perceptually inaccurate. [CIELAB](https://en.wikipedia.org/wiki/CIELAB_color_space), for instance, is better suited: it's designed so that equal distances in the space correspond to equal perceived color differences. 
+<div style={{ display: "flex", justifyContent: "center", margin: "24px 0" }}>
+<img
+	src="/assets/visualizing-color-spaces-in-ar-glasses/specs.png"
+	alt="Snap Spectacles AR glasses"
+	style={{ maxWidth: "400px", borderRadius: "8px" }}
+/>
+</div>
+
+With the hardware sorted, I needed to decide what exactly to visualize. I had three goals in mind:
+- See where a color on my palette sits in the color space, so when I change its mixture, I can track the result.
+- See which colors are reachable by mixing my available pigments, via what is called a [color gamut](https://en.wikipedia.org/wiki/Gamut).
+- See how a target color maps onto my gamut: what's the closest I can get to a reference color with my pigments?
+
+The sRGB space, which we'll improperly abbreviate as RGB, is the obvious starting point, but because of its perceptual inaccuracy, it's a poor fit for this problem.
+
+[CIELAB](https://en.wikipedia.org/wiki/CIELAB_color_space), for instance, is better suited: it's designed so that equal distances in the space correspond to equal perceived color differences. 
 This is also an intuitive choice for painters who are generally familiar with [Munsell Color System](https://en.wikipedia.org/wiki/Munsell_color_system). CIELAB works the same way: lightness on the vertical axis, hue as rotation, and saturation as distance from center.
 
-Next, I needed to figure out how to represent this space. I considered 4 main approaches:
+Next, I needed to figure out how to render this space. Solid meshes only show the surface, and volume raymarching is too expensive for AR (which renders stereo at 1.5x normal framerates). So I turned to particles.
 
-### 1. Solids
+### VFX Particles
 
-Because the surface of the domain matters as much as the interior, this approach is not particularly useful.
-
-### 2. Volumes
-
-These are generally rendered via volume raymarching. Maxime Heckel has written [a gorgeous article on the subject](https://blog.maximeheckel.com/posts/real-time-cloudscapes-with-volumetric-raymarching/) if you're interested.
-
-It's ideal to single out a subdomain of 3D volumetric data such as bones, which are more dense than surrounding flesh.
-But in the case of color spaces, each element has equal importance. It would be improper to integrate samples of density values over a ray path into a screen-projected value, as is done in raycasting.
-
-Additionally, the raycasting loop is expensive to compute. It only runs smoothly (no performance throttling) on 2024 Spectacles if you drop the volume grid's resolution. 
-
-Note that because AR glasses need to render one image for each eye at 1.5x the framerate of non head-worn devices for viewing comfort, performance is a real constraint.
-
-### 3. VFX Particles
-
-I'll tell you one thing: Lens Studio's VFX Editor is fun to use. It's like a stylish combo of Unity's VFX Graph and Blender's GeoNode Editor.
+I'll tell you one thing: Lens Studio's VFX Editor is fun to use. It's like a stylish combo of Unity's Visual Effects Graph and Blender's GeoNode Editor with some sparks of [Houdini VOP](https://tokeru.com/cgwiki/Houdini_Vops.html) brilliance.
 
 Now, it doesn't come without its own quirks, especially regarding my use case.
 
@@ -155,7 +163,7 @@ The main challenge was encoding the position of every element of the color space
 
 Figuring out a good encoding strategy was tricky. I stumbled on the lack of support for floating point textures in Lens Studio 5.15.
 Fortunately, the tutorial [Spawn Particles on Mesh](https://developers.snap.com/lens-studio/features/graphics/mesh-data-texture#spawn-particles-on-mesh) helped with this.
-I also had to deal with a quirk where the integer index of particles in the VFX Editor is always even. As a result, I had to spawn twice as many particles as those actually displayed.
+I also had to deal with a peculiarity where the integer index of particles in the VFX Editor is always even. As a result, I had to spawn twice as many particles as those actually displayed.
 This was painful to debug, but eventually I settled on a suitable workflow.
 
 The encoder material writes position and color data into render textures. The script orchestrates the pipeline, creating render targets and connecting the material output to the VFX input.
@@ -163,24 +171,42 @@ Finally, the VFX decoder spawns particles, sampling the render textures to set e
 
 <WorkflowDiagram client:load />
 
-Now, as happy as I was of having overcome those technical hurdles, the performance just wasn't there. Adding 3 such VFX to my scene would visibly reduce framerate.
+Here's the result:
+
+<div style={{ display: "flex", justifyContent: "center", margin: "24px 0" }}>
+<video
+	controls
+	muted
+	playsInline
+	style={{ maxWidth: "300px", borderRadius: "12px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
+>
+	<source src="/assets/visualizing-color-spaces-in-ar-glasses/demo_vfx_particles.mp4" type="video/mp4" />
+</video>
+</div>
+
+Now, as happy as I was to have overcome those technical hurdles, the performance just wasn't there. Adding 3 such VFX to my scene would visibly reduce framerate.
 On Spectacles, this results in a very bad user experience as virtual objects are out of sync with real world elements.
 I managed to improve performance a bit by using billboard quads instead of meshes, but it was nowhere near satisfactory.
 
-It's at this point that I began to question the whole 3D color space visualization approach.
-Was there something I was missing?
+At this point I hit a wall. I put the project aside and traveled to Brussels and Eindhoven for UnitedXR and the Spectacles x 3EALITY hackathon.
 
-As I stepped back to think, I noticed that color spaces have interesting **regularities**.
-Each element in Color Space A has a unique mapped element in Color Space B, a property known as bijectivity.
-This means that if you render out, say, grid lines for an RGB cube, you can simply deform them to get the resulting lines in the destination space.
+When I came back, <HoverReveal client:load trigger="it hit me" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/dj-khaled.gif" imageAlt="DJ Khaled - Another one" imageWidth="280px" />: color spaces have interesting **regularities**.
+The mapping from RGB to LAB is continuous—nearby colors stay nearby. This is what matters for visualization: if you render grid lines for an RGB cube, you can deform them into LAB space and they'll stretch and bend, but never break.
+
 Here's a [manim](https://github.com/3b1b/manim) visualization that showcases this process:
+
+<div style={{ display: "flex", justifyContent: "center", margin: "16px 0" }}>
 <img
 	src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.gif"
 	alt="Color space transforms"
 	style={{ width: "300px", borderRadius: "8px" }}
 />
+</div>
+
+<CollapsibleCode client:load src="/assets/visualizing-color-spaces-in-ar-glasses/animations/color_space_transforms.py" trigger="View manim source" language="python" />
+
 It was clear then that I didn't need a system as flexible as VFX particles to accommodate any arbitrary spatial layout.
-I could figure out one layout then deform it to achieve the others. This property of bijectivity led me to a fourth technique.
+I could "simply" define one layout and deform it to achieve the others. This led me to a fourth technique: procedural meshes.
 
 ### 4. Procedural Meshes
 

@@ -41,7 +41,9 @@ const { frontmatter } = Astro.props;
 </Layout>
 
 <style>
-  .kofi-container:hover .kofi-icon {
+  .kofi-container:hover .kofi-icon,
+  .kofi-container:focus .kofi-icon,
+  .kofi-container.touched .kofi-icon {
     animation: shake 0.5s ease-in-out;
   }
 
@@ -71,10 +73,40 @@ const { frontmatter } = Astro.props;
     border-right-color: #ff5e5b;
   }
 
-  .kofi-container:hover .kofi-text {
+  .kofi-container:hover .kofi-text,
+  .kofi-container:focus .kofi-text,
+  .kofi-container.touched .kofi-text {
     opacity: 1;
     transform: translateX(0);
     pointer-events: auto;
+  }
+
+  /* Mobile: show text below instead of to the right */
+  @media (max-width: 640px) {
+    .kofi-text {
+      position: absolute;
+      left: 50%;
+      top: 100%;
+      margin-left: 0;
+      margin-top: 0.5rem;
+      transform: translateX(-50%) translateY(-5px);
+    }
+
+    .kofi-text::before {
+      right: auto;
+      left: 50%;
+      top: auto;
+      bottom: 100%;
+      transform: translateX(-50%);
+      border-right-color: transparent;
+      border-bottom-color: #ff5e5b;
+    }
+
+    .kofi-container:hover .kofi-text,
+    .kofi-container:focus .kofi-text,
+    .kofi-container.touched .kofi-text {
+      transform: translateX(-50%) translateY(0);
+    }
   }
 
   @keyframes shake {
@@ -85,3 +117,20 @@ const { frontmatter } = Astro.props;
     80% { transform: rotate(10deg); }
   }
 </style>
+
+<script>
+  function initAboutKofiTouch() {
+    const kofiContainer = document.querySelector('#support .kofi-container');
+    if (kofiContainer) {
+      kofiContainer.addEventListener('touchstart', () => {
+        kofiContainer.classList.add('touched');
+        setTimeout(() => {
+          kofiContainer.classList.remove('touched');
+        }, 2000);
+      }, { passive: true });
+    }
+  }
+
+  initAboutKofiTouch();
+  document.addEventListener('astro:after-swap', initAboutKofiTouch);
+</script>

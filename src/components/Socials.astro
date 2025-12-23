@@ -13,14 +13,27 @@ const { centered = false } = Astro.props;
 <div class={`social-icons ${centered ? "flex" : ""}`}>
   {
     SOCIALS.filter(social => social.active).map(social => (
-      <LinkButton
-        href={social.href}
-        className="link-button"
-        title={social.linkTitle}
-      >
-        <Fragment set:html={socialIcons[social.name]} />
-        <span class="sr-only">{social.linkTitle}</span>
-      </LinkButton>
+      social.name === "kofi-icon" ? (
+        <a
+          href={social.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="kofi-container relative inline-flex items-center p-2 sm:p-1"
+          title={social.linkTitle}
+        >
+          <img src="/assets/icons/kofi-icon.png" alt="Ko-fi" class="kofi-icon h-6 w-6" />
+          <span class="kofi-text">Buy me a coffee</span>
+        </a>
+      ) : (
+        <LinkButton
+          href={social.href}
+          className="link-button"
+          title={social.linkTitle}
+        >
+          <Fragment set:html={socialIcons[social.name]} />
+          <span class="sr-only">{social.linkTitle}</span>
+        </LinkButton>
+      )
     ))
   }
 </div>
@@ -33,6 +46,89 @@ const { centered = false } = Astro.props;
     @apply p-2 sm:p-1;
   }
   .link-button:hover {
-  transform: perspective(1000px) rotateX(15deg) translateZ(-4px);
+    transform: perspective(1000px) rotateX(15deg) translateZ(-4px);
+  }
+
+  .kofi-container:hover .kofi-icon,
+  .kofi-container:focus .kofi-icon,
+  .kofi-container.touched .kofi-icon {
+    animation: shake 0.5s ease-in-out;
+  }
+
+  .kofi-text {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    margin-bottom: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    background-color: #ff5e5b;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+  }
+
+  .kofi-text::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #ff5e5b;
+  }
+
+  .kofi-container:hover .kofi-text,
+  .kofi-container:focus .kofi-text,
+  .kofi-container.touched .kofi-text {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Mobile: show text below instead of above to avoid clipping */
+  @media (max-width: 640px) {
+    .kofi-text {
+      bottom: auto;
+      top: 100%;
+      margin-bottom: 0;
+      margin-top: 0.5rem;
+    }
+    .kofi-text::after {
+      top: auto;
+      bottom: 100%;
+      border-top-color: transparent;
+      border-bottom-color: #ff5e5b;
+    }
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: rotate(0deg); }
+    20% { transform: rotate(-10deg); }
+    40% { transform: rotate(10deg); }
+    60% { transform: rotate(-10deg); }
+    80% { transform: rotate(10deg); }
   }
 </style>
+
+<script>
+  function initKofiTouch() {
+    const kofiContainers = document.querySelectorAll('.kofi-container');
+    kofiContainers.forEach(container => {
+      container.addEventListener('touchstart', (e) => {
+        container.classList.add('touched');
+        // Remove class after animation
+        setTimeout(() => {
+          container.classList.remove('touched');
+        }, 2000);
+      }, { passive: true });
+    });
+  }
+
+  initKofiTouch();
+  document.addEventListener('astro:after-swap', initKofiTouch);
+</script>

@@ -192,11 +192,11 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                   {/* Curved connector using SVG */}
                   <svg
                     width="30"
-                    height="44"
+                    height="36"
                     style={{ position: "absolute", left: 0, top: 0 }}
                   >
                     <path
-                      d="M 0 4 Q 14 4, 14 18 L 14 38"
+                      d="M 0 4 Q 14 4, 14 18 L 14 30"
                       fill="none"
                       stroke={activeSection === challengeSection.id ? "rgb(255, 180, 50)" : "rgba(140, 140, 140, 0.4)"}
                       strokeWidth="2"
@@ -212,7 +212,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                     style={{
                       position: "absolute",
                       left: "8px",
-                      top: "32px",
+                      top: "24px",
                       width: "12px",
                       height: "12px",
                       borderRadius: "3px",
@@ -233,7 +233,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                       style={{
                         position: "absolute",
                         left: "28px",
-                        top: "32px",
+                        top: "24px",
                         background: "rgb(40, 39, 40)",
                         color: "rgb(255, 200, 100)",
                         padding: "6px 10px",

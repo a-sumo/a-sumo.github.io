@@ -238,8 +238,8 @@ export default function WorkflowDiagramSimple({
       >
         {/* Script: show code directly */}
         {expandedNode === "script" && (
-          <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-4">
-            <h4 className="mb-3 text-base font-semibold">
+          <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-2 sm:p-4 overflow-hidden">
+            <h4 className="mb-3 text-sm sm:text-base font-semibold">
               {scriptLabel} (TypeScript)
             </h4>
             <CodeBlock code={scriptCode} language="typescript" />
@@ -248,10 +248,10 @@ export default function WorkflowDiagramSimple({
 
         {/* Material: show capture first */}
         {expandedNode === "material" && (
-          <div className="flex flex-col items-center animate-slideDown">
+          <div className="flex flex-col items-center animate-slideDown w-full px-2">
             <button
               onClick={() => toggleDetail("material")}
-              className="screenshot-btn rounded-lg border-2 transition-all duration-200"
+              className="screenshot-btn rounded-lg border-2 transition-all duration-200 max-w-full"
               style={{
                 borderColor: expandedDetail === "material" ? '#8CA9FF' : '#000',
                 padding: '12px',
@@ -264,7 +264,7 @@ export default function WorkflowDiagramSimple({
               <img
                 src={`${ASSETS_PATH}/captures/${materialCapture}`}
                 alt={materialLabel}
-                className="max-w-[520px] md:max-w-[680px]"
+                className="w-full max-w-[520px] md:max-w-[680px]"
               />
             </button>
             <span className="mt-2 text-xs text-skin-base/60">
@@ -281,8 +281,8 @@ export default function WorkflowDiagramSimple({
         }`}
       >
         {expandedDetail === "material" && (
-          <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-4">
-            <h4 className="mb-3 text-base font-semibold">
+          <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-2 sm:p-4 overflow-hidden">
+            <h4 className="mb-3 text-sm sm:text-base font-semibold">
               {materialLabel} (GLSL)
             </h4>
             <CodeBlock code={materialCode} language="glsl" />
