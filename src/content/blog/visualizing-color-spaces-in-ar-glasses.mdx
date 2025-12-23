@@ -1,20 +1,21 @@
 ---
 title: "Visualizing Color Spaces in Augmented Reality with Spectacles"
 description: "Building interactive 3D color space visualizations for Snap Spectacles AR glasses to help painters understand pigment mixing and color gamuts."
-pubDatetime: 2025-12-22T09:00:00Z
+pubDatetime: 2025-12-23T21:00:00Z
 tags:
   [
     "augmented reality",
-    "ar",
     "spectacles",
     "lens studio",
-    "ui",
-    "color space",
-    "vfx editor",
+    "snap ar",
+    "painting",
+    "color theory",
+    "vfx graph",
+    "procedural geometry",
   ]
 ogImage: /assets/visualizing-color-spaces-in-ar-glasses/full_demo_og.gif
 icon: /assets/visualizing-color-spaces-in-ar-glasses/ghost_color_space.png
-draft: true
+draft: false
 ---
 
 import WorkflowDiagram from "@components/WorkflowDiagram";
@@ -25,60 +26,117 @@ import HoverReveal from "@components/HoverReveal";
 import CollapsibleCode from "@components/CollapsibleCode";
 import Chapter from "@components/Chapter";
 import ArticleTimeline from "@components/ArticleTimeline";
+import VideoPlayer from "@components/VideoPlayer";
+import SeriesNav from "@components/SeriesNav";
 
-<ArticleTimeline
-  client:load
-  sections={[
-    { id: "chapter-1", label: "The Challenge of Color Mixing", type: "chapter" },
-    { id: "color-mixing-challenge", label: "Color Mixing Challenge", type: "challenge", parent: "chapter-1" },
-    { id: "chapter-2", label: "Building Color Spaces", type: "chapter" },
-    { id: "vfx-particles", label: "VFX Particles", type: "subsection" },
-    { id: "4-procedural-meshes", label: "Procedural Meshes", type: "subsection" },
-  ]}
+<SeriesNav
+	client:load
+	seriesName="AR Assistant for Painters"
+	currentPart={2}
+	parts={[
+		{
+			title: "Eyedropper for Spectacles",
+			href: "/posts/eyedropper-for-spectacles-ar-glasses",
+		},
+		{
+			title: "Visualizing Color Spaces",
+			href: "/posts/visualizing-color-spaces-in-ar-glasses",
+		},
+	]}
 />
 
-<div style="text-align: center;">
+<ArticleTimeline
+	client:load
+	sections={[
+		{
+			id: "chapter-1",
+			label: "The Challenge of Color Mixing",
+			type: "chapter",
+		},
+		{
+			id: "color-mixing-challenge",
+			label: "Color Mixing Challenge",
+			type: "challenge",
+			parent: "chapter-1",
+		},
+		{ id: "chapter-2", label: "Building Color Spaces", type: "chapter" },
+		{ id: "vfx-particles", label: "VFX Particles", type: "subsection" },
+		{
+			id: "4-procedural-meshes",
+			label: "Procedural Meshes",
+			type: "subsection",
+		},
+	]}
+/>
+
+<div
+	style={{
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		gap: "24px",
+		flexWrap: "wrap",
+		fontFamily: '"Roboto Mono", monospace',
+		fontSize: "13px",
+		marginBottom: "8px",
+	}}
+>
 	<a
 		href="https://github.com/a-sumo/specs-samples/"
-		style="display: inline-flex; align-items: center; gap: 10px;"
+		style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+	>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="currentColor"
+		>
+			<path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+		</svg>
+		a-sumo/specs-samples
+	</a>
+	<a
+		href="https://www.spectacles.com/lens/7d51502d17fd43afb9c9dc279932d7a9?type=SNAPCODE&metadata=01"
+		style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
 	>
 		<img
-			src="/assets/visualizing-color-spaces-in-ar-glasses/ghost_color_space.png"
-			width="80"
-			alt="Color Space Sample Project"
+			src="/assets/icons/snapcode-color-spaces.svg"
+			width="96"
+			height="96"
+			alt="Snapcode"
 		/>
-		<span>a-sumo/specs-samples</span>
+		Try on Spectacles
 	</a>
 </div>
 
-<div style={{ display: "flex", justifyContent: "center", margin: "32px 0" }}>
-<video
-	controls
-	autoPlay
-	loop
-	muted
-	playsInline
-	style={{ maxWidth: "300px", borderRadius: "12px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
->
-	<source src="/assets/visualizing-color-spaces-in-ar-glasses/full_demo.mp4" type="video/mp4" />
-</video>
-</div>
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-color-spaces-in-ar-glasses/full_demo.mp4"
+	autoPlay={true}
+	preload="auto"
+/>
 
 <Chapter client:load id="chapter-1" number={1} title="The Challenge of Color Mixing">
 
 One of the first steps a painter takes is that of assembling together the colors that will be laid on the canvas.
-This involves selecting a set of pigments, laying them out on a palette and mixing them. 
-During this process, each decision moves the color of the paint across three dimensions: hue, saturation(chromaicity) and value (lightness).
+This involves selecting a set of pigments, laying them out on a palette and mixing them.
+During this process, each decision moves the color of the paint across three dimensions: hue, saturation (chromaticity) and value (lightness).
 In theory, these dimensions are independent, or orthogonal. This means you can change the value along one dimension while keeping others constant.
 Most digital color pickers are built on this assumption: you can pick a hue on one axis and adjust saturation and lightness on another.
 
 <div style={{ textAlign: "center", margin: "16px 0" }}>
-<img
-	src="/assets/visualizing-color-spaces-in-ar-glasses/figma_hsl_color_picker.png"
-	alt="Figma HSL color picker"
-	style={{ width: "200px", borderRadius: "8px" }}
-/>
-<p style={{ fontSize: "14px", color: "rgb(100, 100, 100)", marginTop: "8px" }}>Figma's HSL color picker: hue on one slider, saturation and lightness on a 2D plane.</p>
+	<img
+		src="/assets/visualizing-color-spaces-in-ar-glasses/figma_hsl_color_picker.png"
+		alt="Figma HSL color picker"
+		style={{ width: "200px", borderRadius: "8px" }}
+	/>
+	<p
+		style={{ fontSize: "14px", color: "rgb(100, 100, 100)", marginTop: "8px" }}
+	>
+		Figma's HSL color picker: hue on one slider, saturation and lightness on a
+		2D plane.
+	</p>
 </div>
 
 Physical pigments, however are not as simple. For example, in order to de-saturate the green color of a tree as it vanishes into the horizon, you'll generally want to add a colder color to it, such as blue.
@@ -89,18 +147,25 @@ In fact, the more problems the painter can solve ahead of laying their brush on 
 
 Now, some shortcuts can be taken, namely using very few or lots of pigments.
 If you have too few pigments, you have little expressiveness and it may be unclear whether a certain color in your reference is even achievable.
-On the other hand, the more pigments you have, the more degrees of freedom, and hence more complexity. 
+On the other hand, the more pigments you have, the more degrees of freedom, and hence more complexity.
 This complexity grows combinatorially: not only do you have more possible mixtures to consider, but many different mixtures can yield the same color!
-This makes it much harder to reason about which path to take. For a beginner, it's recipe for disaster.
+This makes it much harder to reason about which path to take. For a beginner, it's a recipe for disaster.
 
 Wanna try? Here: I'll give you a color and you need to find out which mix achieves it!
 
 <div style={{ textAlign: "center" }}>
-<CollapsibleVideo client:load src="/assets/visualizing-color-spaces-in-ar-glasses/videos/bonne_chance_franco-succession.mp4" preText='"' trigger="Bonne chance!" postText='"' description="Succession, Season 3 Episode 5" />
+	<CollapsibleVideo
+		client:load
+		src="/assets/visualizing-color-spaces-in-ar-glasses/videos/bonne_chance_franco-succession.mp4"
+		preText=""
+		trigger="Bonne chance!"
+		postText=""
+		description="Succession, Season 3 Episode 5"
+	/>
 </div>
 
 <div id="color-mixing-challenge" style={{ scrollMarginTop: "80px" }}>
-<ColorMixingChallenge client:load targetColor="#8B4513" />
+	<ColorMixingChallenge client:load targetColor="#8B4513" />
 </div>
 
 Now, it should be no surprise to you that mastering the pigment mixing process takes years of practice.
@@ -110,19 +175,32 @@ But how tedious does it really _need_ to be? Is frustration necessary for learni
 
 Let us formulate our problem statement:
 
-<div id="problem-statement" style="background: rgb(255, 248, 222); border: 2px solid rgb(40, 39, 40); padding: 20px 24px; borderRadius: 8px; margin: 24px 0;">
-<ol style="margin: 0; paddingLeft: 20px; color: rgb(40, 39, 40); lineHeight: 1.8;">
-<li id="q-color-range"><strong>What does the full range of perceivable colors look like?</strong></li>
-<li id="q-gamut"><strong>Which colors can I achieve with the pigments on my palette?</strong></li>
-<li id="q-projection"><strong>How close can I get to a target color given my available pigments?</strong></li>
-</ol>
+<div
+	id="problem-statement"
+	style="background: rgb(255, 248, 222); border: 2px solid rgb(40, 39, 40); padding: 20px 24px; borderRadius: 8px; margin: 24px 0;"
+>
+	<ol style="margin: 0; paddingLeft: 20px; color: rgb(40, 39, 40); lineHeight: 1.8;">
+		<li id="q-color-range">
+			<strong>What does the full range of perceivable colors look like?</strong>
+		</li>
+		<li id="q-gamut">
+			<strong>
+				Which colors can I achieve with the pigments on my palette?
+			</strong>
+		</li>
+		<li id="q-projection">
+			<strong>
+				How close can I get to a target color given my available pigments?
+			</strong>
+		</li>
+	</ol>
 </div>
+
+These challenges are well-suited to what Bret Victor calls [Seeing Spaces](https://worrydream.com/SeeingSpaces/): environments that make invisible relationships visible by giving you immediate, spatial representations of abstract data. Instead of holding mental models in your head and guessing at outcomes, you see the entire possibility space laid out before you.
 
 </Chapter>
 
 <Chapter client:load id="chapter-2" number={2} title="Building Color Spaces">
-
-The challenges I described above are well-suited to what Bret Victor calls [Seeing Spaces](https://worrydream.com/SeeingSpaces/): environments that make invisible relationships visible by giving you immediate, spatial representations of abstract data. Instead of holding mental models in your head and guessing at outcomes, you see the entire possibility space laid out before you.
 
 For color mixing, this means visualizing all three color dimensions simultaneously as you work. The tool for this is a color space: a 3D coordinate system where every possible color occupies a unique position.
 There are a wide variety of color spaces, but the ones that matter for painting are those that are perceptually accurate.
@@ -131,29 +209,34 @@ That's because transitions between colors end up informing mixing decisions.
 But seeing spaces only _really_ work when they're seamlessly integrated into the user's environment. They must also be highly responsive and conceptually powerful.
 That's a lot to ask from a smartphone, tablet or desktop. None of these devices can be integrated into the painting flow without disrupting it.
 
-Fortunately, we are in the age of AR glasses and I got a pair of [Spectacles](https://www.spectacles.com/).
+Luckily, we are entering the age of AR glasses and I got a pair of [Spectacles](https://www.spectacles.com/).
 
 <div style={{ display: "flex", justifyContent: "center", margin: "24px 0" }}>
-<img
-	src="/assets/visualizing-color-spaces-in-ar-glasses/specs.png"
-	alt="Snap Spectacles AR glasses"
-	style={{ maxWidth: "400px", borderRadius: "8px" }}
-/>
+	<img
+		src="/assets/visualizing-color-spaces-in-ar-glasses/specs.png"
+		alt="Snap Spectacles AR glasses"
+		style={{ maxWidth: "400px", borderRadius: "8px" }}
+	/>
 </div>
 
 With the hardware sorted, I needed to decide what exactly to visualize. I had three goals in mind:
+
 - See where a color on my palette sits in the color space, so when I change its mixture, I can track the result.
 - See which colors are reachable by mixing my available pigments, via what is called a [color gamut](https://en.wikipedia.org/wiki/Gamut).
 - See how a target color maps onto my gamut: what's the closest I can get to a reference color with my pigments?
 
 The sRGB space, which we'll improperly abbreviate as RGB, is the obvious starting point, but because of its perceptual inaccuracy, it's a poor fit for this problem.
 
-[CIELAB](https://en.wikipedia.org/wiki/CIELAB_color_space), for instance, is better suited: it's designed so that equal distances in the space correspond to equal perceived color differences. 
+[CIELAB](https://en.wikipedia.org/wiki/CIELAB_color_space), for instance, is better suited: it's designed so that equal distances in the space correspond to equal perceived color differences.
 This is also an intuitive choice for painters who are generally familiar with [Munsell Color System](https://en.wikipedia.org/wiki/Munsell_color_system). CIELAB works the same way: lightness on the vertical axis, hue as rotation, and saturation as distance from center.
 
 Next, I needed to figure out how to render this space. Solid meshes only show the surface, and volume raymarching is too expensive for AR (which renders stereo at 1.5x normal framerates). So I turned to particles.
 
+<div id="vfx-particles" style={{ scrollMarginTop: "80px" }}>
+
 ### VFX Particles
+
+</div>
 
 I'll tell you one thing: Lens Studio's VFX Editor is fun to use. It's like a stylish combo of Unity's Visual Effects Graph and Blender's GeoNode Editor with some sparks of [Houdini VOP](https://tokeru.com/cgwiki/Houdini_Vops.html) brilliance.
 
@@ -173,97 +256,142 @@ Finally, the VFX decoder spawns particles, sampling the render textures to set e
 
 Here's the result:
 
-<div style={{ display: "flex", justifyContent: "center", margin: "24px 0" }}>
-<video
-	controls
-	muted
-	playsInline
-	style={{ maxWidth: "300px", borderRadius: "12px", boxShadow: "0 4px 20px rgba(0,0,0,0.15)" }}
->
-	<source src="/assets/visualizing-color-spaces-in-ar-glasses/demo_vfx_particles.mp4" type="video/mp4" />
-</video>
-</div>
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-color-spaces-in-ar-glasses/demo_vfx_particles.mp4"
+	preload="metadata"
+/>
 
-Now, as happy as I was to have overcome those technical hurdles, the performance just wasn't there. Adding 3 such VFX to my scene would visibly reduce framerate.
-On Spectacles, this results in a very bad user experience as virtual objects are out of sync with real world elements.
-I managed to improve performance a bit by using billboard quads instead of meshes, but it was nowhere near satisfactory.
+Now, as happy as I was to have overcome those technical hurdles, the performance just wasn't there. Adding 3 such VFX to my scene would visibly reduce framerate, which drastically deteriorates user experience.
+Rendering particles as billboard quads instead of 3D meshes helped, but the improvement wasn't satisfactory.
 
-At this point I hit a wall. I put the project aside and traveled to Brussels and Eindhoven for UnitedXR and the Spectacles x 3EALITY hackathon.
+At this point I hit a wall. As it happened, I had to travel to Brussels and Eindhoven for UnitedXR and the Spectacles x 3EALITY hackathon, which gave me a chance to step away from the problem.
 
 When I came back, <HoverReveal client:load trigger="it hit me" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/dj-khaled.gif" imageAlt="DJ Khaled - Another one" imageWidth="280px" />: color spaces have interesting **regularities**.
-The mapping from RGB to LAB is continuous—nearby colors stay nearby. This is what matters for visualization: if you render grid lines for an RGB cube, you can deform them into LAB space and they'll stretch and bend, but never break.
+The mapping from RGB to LAB is continuous. In other words, nearby colors stay nearby. The math behind it is juicy but put simply, if you render grid lines for an RGB cube, you can deform them into LAB space and they'll stretch and bend, but never break.
 
 Here's a [manim](https://github.com/3b1b/manim) visualization that showcases this process:
 
 <div style={{ display: "flex", justifyContent: "center", margin: "16px 0" }}>
-<img
-	src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.gif"
-	alt="Color space transforms"
-	style={{ width: "300px", borderRadius: "8px" }}
-/>
+	<img
+		src="/assets/visualizing-color-spaces-in-ar-glasses/color_space_transforms.gif"
+		alt="Color space transforms"
+		style={{ width: "300px", borderRadius: "8px" }}
+	/>
 </div>
 
-<CollapsibleCode client:load src="/assets/visualizing-color-spaces-in-ar-glasses/animations/color_space_transforms.py" trigger="View manim source" language="python" />
+<CollapsibleCode
+	client:load
+	src="/assets/visualizing-color-spaces-in-ar-glasses/animations/color_space_transforms.py"
+	trigger="View manim source"
+	language="python"
+/>
 
 It was clear then that I didn't need a system as flexible as VFX particles to accommodate any arbitrary spatial layout.
-I could "simply" define one layout and deform it to achieve the others. This led me to a fourth technique: procedural meshes.
+I could <HoverReveal client:load trigger={`"simply"`} text="😉" /> define one layout and deform it to achieve the others.
 
-### 4. Procedural Meshes
+<div id="4-procedural-meshes" style={{ scrollMarginTop: "80px" }}>
+
+### Procedural Meshes
+
+</div>
 
 In Lens Studio, you can [create meshes procedurally](https://developers.snap.com/lens-studio/lens-studio-workflow/scene-set-up/3d/procedural-mesh).
 Using the [MeshBuilder](https://developers.snap.com/lens-studio/api/lens-scripting/classes/Built-In.MeshBuilder.html) API, you can specify vertex positions and store any attribute you like.
-Then, you can assign a material that alters the position of the vertices.
-When I tried this, I was mindblown by the performance improvement. 
+Then, you can assign a material that alters the position of those vertices.
+When I tried this, I was mindblown by the performance improvement.
 
-Though the procedural mesh generation was quite delicate, once done I could essentially let my imagination run wild. 
-Moreover, because the vertices are looped over in the GPU via vertex shaders, I didn't have to worry about their count. 
+Though the procedural mesh generation was quite delicate, once done I could essentially let my imagination run wild.
+And since vertices are looped over in the GPU via vertex shaders, I didn't have to worry about their count.
 
-To make the process of low-level geometry construction and manipulation bearable, I used a coding agent supplemented with a <CollapsibleCode client:load src="/assets/visualizing-color-spaces-in-ar-glasses/scripts/custom_code_node_spec.md" trigger="Custom Code Node specification" language="glsl" />. 
+To make the process of low-level geometry construction and manipulation more, let's say... humane, I used a coding agent supplemented with a <CollapsibleCode client:load src="/assets/visualizing-color-spaces-in-ar-glasses/scripts/custom_code_node_spec.md" trigger="Custom Code Node specification" language="glsl" />.
+
+I initially went for lines. It came up as a good balance of volumetric space-filling and low polycount.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-color-spaces-in-ar-glasses/videos/line-rendering-color-spaces.MP4"
+	preload="metadata"
+/>
+
+Then, I tried spawning cubes and repositioning their vertices.
+The performance was great, much better than VFX particles rendered as cube meshes.
+I suspect this is due to memory allocation niceties of the MeshBuilder API, coupled with not creating any new geometry at runtime.
+
 Having cleared a path towards seamless rendering of color spaces, I could now tackle the painting workflow pain points mentioned earlier.
 
-### Full Color Space
+<div
+	style={{
+		display: "grid",
+		gridTemplateColumns: "repeat(3, 1fr)",
+		gap: "24px",
+		marginBottom: "24px",
+		alignItems: "start",
+	}}
+>
+	<div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+		<div style={{ background: "rgb(40, 39, 40)", color: "white", padding: "8px 16px", borderRadius: "8px", marginBottom: "12px", textAlign: "center" }}>
+			<span style={{ fontFamily: '"Roboto", sans-serif', fontWeight: "bold", fontSize: "14px" }}>Full Color Space</span>
+		</div>
+		<p style={{ fontSize: "15px", lineHeight: 1.6 }}>The complete CIELAB color space, rendered as a grid of cubes. We can now see the full range of perceivable colors and where any given color sits within it. Solves <a href="#q-color-range">Problem 1</a>.</p>
+		<div style={{ marginTop: "auto" }}>
+			<WorkflowDiagramSimple
+				client:load
+				scriptLabel="Script"
+				materialLabel="Material"
+				materialCapture="full_color_space.png"
+				scriptCodeFile="RGBCubeGenerator.ts"
+				materialCodeFile="full_space_mat.txt"
+			/>
+		</div>
+	</div>
+	<div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+		<div style={{ background: "rgb(40, 39, 40)", color: "white", padding: "8px 16px", borderRadius: "8px", marginBottom: "12px", textAlign: "center" }}>
+			<span style={{ fontFamily: '"Roboto", sans-serif', fontWeight: "bold", fontSize: "14px" }}>Pigment Mixing Gamut</span>
+		</div>
+		<p style={{ fontSize: "15px", lineHeight: 1.6 }}>This workflow computes the gamut of a set of pigments via three-way subtractive mixing. With it, we can see which colors are achievable with a given palette. Solves <a href="#q-gamut">Problem 2</a>.</p>
+		<div style={{ marginTop: "auto" }}>
+			<WorkflowDiagramSimple
+				client:load
+				scriptLabel="Script"
+				materialLabel="Material"
+				materialCapture="full_color_space.png"
+				scriptCodeFile="PigmentGamutMeshGenerator.ts"
+				materialCodeFile="pigment_gamut_mat.txt"
+			/>
+		</div>
+	</div>
+	<div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+		<div style={{ background: "rgb(40, 39, 40)", color: "white", padding: "8px 16px", borderRadius: "8px", marginBottom: "12px", textAlign: "center" }}>
+			<span style={{ fontFamily: '"Roboto", sans-serif', fontWeight: "bold", fontSize: "14px" }}>Pigment Projection</span>
+		</div>
+		<p style={{ fontSize: "15px", lineHeight: 1.6 }}>This workflow projects a color onto the gamut boundary. Given a set of pigments and a target color, we now know in advance which achievable color is closest. Solves <a href="#q-projection">Problem 3</a>.</p>
+		<div style={{ marginTop: "auto" }}>
+			<WorkflowDiagramSimple
+				client:load
+				scriptLabel="Script"
+				materialLabel="Material"
+				materialCapture="projector.png"
+				scriptCodeFile="GamutProjectionMeshGenerator.ts"
+				materialCodeFile="projector_mat.txt"
+			/>
+		</div>
+	</div>
+</div>
 
-The complete CIELAB color space rendered as a grid of lines. This answers [question 1](#q-color-range).
+And one final demo in-editor, because I can't go out there not looking <HoverReveal client:load trigger="good" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/DJ-Khaled-mirror.jpg" imageAlt="DJ Khaled mirror" imageWidth="280px" />.
 
-
-<WorkflowDiagramSimple
+<VideoPlayer
 	client:load
-	scriptLabel="Script"
-	materialLabel="Material"
-	materialCapture="full_color_space.png"
-	scriptCodeFile="RGBCubeGenerator.ts"
-	materialCodeFile="full_space_mat.txt"
+	src="/assets/visualizing-color-spaces-in-ar-glasses/videos/in_editor_demo.mp4"
+	preload="metadata"
 />
 
-### Pigment Mixing Gamut
+In [Part 1](/posts/eyedropper-for-spectacles-ar-glasses), we saw how to sample colors from our environment, which gives us the colors on our palette. In Part 2, we've managed to see, via computational tools, where those pigments can take us.
 
-The subset of colors reachable by mixing specific pigments. This answers [question 2](#q-gamut).
+But this is still too abstract. We need additional steps to blend these seeing spaces into a coherent user experience.
 
-I tried spawning cubes and repositioning their vertices.
-The performance was great, much better than VFX particles rendered as cube meshes. 
-I suspect this is due to memory allocation niceties of the MeshBuilder API, coupled with not creating any new geometry at runtime. 
-
-<WorkflowDiagramSimple
-	client:load
-	scriptLabel="Script"
-	materialLabel="Material"
-	materialCapture="full_color_space.png"
-	scriptCodeFile="PigmentGamutMeshGenerator.ts"
-	materialCodeFile="pigment_gamut_mat.txt"
-/>
-
-### Pigment Projection
-
-A target color projected onto the gamut boundary. This answers [question 3](#q-projection).
-
-<WorkflowDiagramSimple
-	client:load
-	scriptLabel="Script"
-	materialLabel="Material"
-	materialCapture="projector.png"
-	scriptCodeFile="GamutProjectionMeshGenerator.ts"
-	materialCodeFile="projector_mat.txt"
-/>
+Ideally, we'd like to preview the scene around us under the constraint of the pigments at our disposal, and have our assistant guide us towards achieving something close to our reference without disrupting our flow or limiting our creative freedom.
 
 </Chapter>
 
