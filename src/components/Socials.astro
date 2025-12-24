@@ -10,7 +10,7 @@ export interface Props {
 const { centered = false } = Astro.props;
 ---
 
-<div class={`social-icons ${centered ? "flex" : ""}`}>
+<div class={`social-icons ${centered ? "justify-center" : ""}`}>
   {
     SOCIALS.filter(social => social.active).map(social => (
       social.name === "kofi-icon" ? (
@@ -40,7 +40,7 @@ const { centered = false } = Astro.props;
 
 <style>
   .social-icons {
-    @apply flex-wrap justify-center gap-1;
+    @apply flex flex-wrap items-center gap-1;
   }
   .link-button {
     @apply p-2 sm:p-1;

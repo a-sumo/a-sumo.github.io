@@ -4,6 +4,7 @@ import Breadcrumbs from "@components/Breadcrumbs.astro";
 import Footer from "@components/Footer.astro";
 import Header from "@components/Header.astro";
 import Layout from "./Layout.astro";
+import Socials from "@components/Socials.astro";
 
 export interface Props {
   frontmatter: {
@@ -26,111 +27,9 @@ const { frontmatter } = Astro.props;
     </section>
 
     <section id="support" class="mb-28 max-w-3xl">
-      <a
-        href="https://ko-fi.com/a_sumo"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="kofi-container group relative inline-flex items-center gap-2"
-      >
-        <img src="/assets/icons/kofi-icon.png" alt="Ko-fi" class="kofi-icon h-10" />
-        <span class="kofi-text">Buy me a coffee</span>
-      </a>
+      <Socials />
     </section>
   </main>
   <Footer />
 </Layout>
 
-<style>
-  .kofi-container:hover .kofi-icon,
-  .kofi-container:focus .kofi-icon,
-  .kofi-container.touched .kofi-icon {
-    animation: shake 0.5s ease-in-out;
-  }
-
-  .kofi-text {
-    position: absolute;
-    left: 100%;
-    margin-left: 0.75rem;
-    padding: 0.5rem 1rem;
-    background-color: #ff5e5b;
-    color: white;
-    font-weight: 500;
-    border-radius: 0.5rem;
-    white-space: nowrap;
-    opacity: 0;
-    transform: translateX(-10px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    pointer-events: none;
-  }
-
-  .kofi-text::before {
-    content: '';
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    border: 6px solid transparent;
-    border-right-color: #ff5e5b;
-  }
-
-  .kofi-container:hover .kofi-text,
-  .kofi-container:focus .kofi-text,
-  .kofi-container.touched .kofi-text {
-    opacity: 1;
-    transform: translateX(0);
-    pointer-events: auto;
-  }
-
-  /* Mobile: show text below instead of to the right */
-  @media (max-width: 640px) {
-    .kofi-text {
-      position: absolute;
-      left: 50%;
-      top: 100%;
-      margin-left: 0;
-      margin-top: 0.5rem;
-      transform: translateX(-50%) translateY(-5px);
-    }
-
-    .kofi-text::before {
-      right: auto;
-      left: 50%;
-      top: auto;
-      bottom: 100%;
-      transform: translateX(-50%);
-      border-right-color: transparent;
-      border-bottom-color: #ff5e5b;
-    }
-
-    .kofi-container:hover .kofi-text,
-    .kofi-container:focus .kofi-text,
-    .kofi-container.touched .kofi-text {
-      transform: translateX(-50%) translateY(0);
-    }
-  }
-
-  @keyframes shake {
-    0%, 100% { transform: rotate(0deg); }
-    20% { transform: rotate(-10deg); }
-    40% { transform: rotate(10deg); }
-    60% { transform: rotate(-10deg); }
-    80% { transform: rotate(10deg); }
-  }
-</style>
-
-<script>
-  function initAboutKofiTouch() {
-    const kofiContainer = document.querySelector('#support .kofi-container');
-    if (kofiContainer) {
-      kofiContainer.addEventListener('touchstart', () => {
-        kofiContainer.classList.add('touched');
-        setTimeout(() => {
-          kofiContainer.classList.remove('touched');
-        }, 2000);
-      }, { passive: true });
-    }
-  }
-
-  initAboutKofiTouch();
-  document.addEventListener('astro:after-swap', initAboutKofiTouch);
-</script>
