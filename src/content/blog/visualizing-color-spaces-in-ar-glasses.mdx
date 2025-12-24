@@ -320,15 +320,7 @@ I suspect this is due to memory allocation niceties of the MeshBuilder API, coup
 
 Having cleared a path towards seamless rendering of color spaces, I could now tackle the painting workflow pain points mentioned earlier.
 
-<div
-	style={{
-		display: "grid",
-		gridTemplateColumns: "repeat(3, 1fr)",
-		gap: "24px",
-		marginBottom: "24px",
-		alignItems: "start",
-	}}
->
+<div className="workflow-grid">
 	<div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
 		<div style={{ background: "rgb(40, 39, 40)", color: "white", padding: "8px 16px", borderRadius: "8px", marginBottom: "12px", textAlign: "center" }}>
 			<span style={{ fontFamily: '"Roboto", sans-serif', fontWeight: "bold", fontSize: "14px" }}>Full Color Space</span>
