@@ -46,9 +46,9 @@ export const SOCIALS: SocialObjects = [
   },
   {
     name: "Instagram",
-    href: "",
-    linkTitle: `${SITE.title} on Instagram`,
-    active: false,
+    href: "https://www.instagram.com/plasma_holographics/",
+    linkTitle: `Plasma Holographics on Instagram`,
+    active: true,
   },
   {
     name: "LinkedIn",
