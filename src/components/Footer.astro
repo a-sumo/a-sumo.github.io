@@ -6,14 +6,15 @@ const currentYear = new Date().getFullYear();
 
 export interface Props {
   noMarginTop?: boolean;
+  noSocials?: boolean;
 }
 
-const { noMarginTop = false } = Astro.props;
+const { noMarginTop = false, noSocials = false } = Astro.props;
 ---
 
 <footer class={`${noMarginTop ? "" : "mt-auto"}`}>
   <div class="footer-wrapper">
-    <Socials centered />
+    {!noSocials && <Socials centered />}
     <div class="copyright-wrapper">
       <span>Copyright &#169; {currentYear}</span>
       <span class="separator">&nbsp;|&nbsp;</span>
