@@ -1,0 +1,61 @@
+---
+import { blogroll } from "@data/blogroll.ts";
+
+// Show up to 3 bloggers in the preview
+const previewBloggers = blogroll.slice(0, 3);
+---
+
+{previewBloggers.length > 0 && (
+  <div class="blogroll-preview mt-8 pt-8 border-t border-dashed border-skin-line">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-sm font-medium text-skin-base opacity-70 uppercase tracking-wide">
+        From the community
+      </h3>
+      <a
+        href="/resources/blogroll/"
+        class="text-sm text-skin-accent hover:underline"
+      >
+        See all →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {previewBloggers.map((blogger) => (
+        <a
+          href={blogger.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="blogger-card flex items-center gap-3 p-3 border border-skin-line rounded-lg hover:border-skin-accent transition-colors"
+        >
+          {blogger.avatar ? (
+            <img
+              src={blogger.avatar}
+              alt={blogger.name}
+              class="w-10 h-10 rounded-full object-cover flex-shrink-0"
+            />
+          ) : (
+            <div class="w-10 h-10 rounded-full bg-skin-card flex items-center justify-center flex-shrink-0">
+              <span class="text-base font-semibold text-skin-base">
+                {blogger.name.charAt(0)}
+              </span>
+            </div>
+          )}
+          <div class="flex-1 min-w-0">
+            <span class="font-medium text-skin-base text-sm block truncate">
+              {blogger.name}
+            </span>
+            {blogger.handle && (
+              <span class="text-xs text-skin-base opacity-60">@{blogger.handle}</span>
+            )}
+          </div>
+        </a>
+      ))}
+    </div>
+  </div>
+)}
+
+<style>
+  .blogger-card:hover {
+    background-color: rgba(var(--color-card), 0.3);
+  }
+</style>

@@ -1,0 +1,80 @@
+---
+import Layout from "@layouts/Layout.astro";
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Breadcrumbs from "@components/Breadcrumbs.astro";
+import { blogroll } from "@data/blogroll.ts";
+---
+
+<Layout title="Blogroll - Community">
+  <Header activeNav="resources" />
+  <Breadcrumbs />
+
+  <main id="main-content">
+    <section class="py-12 px-4">
+      <div class="mx-auto max-w-3xl">
+        <h1 class="text-2xl font-semibold text-skin-accent mb-2">Blogroll</h1>
+        <p class="text-skin-base opacity-80 mb-8">
+          Blogs from the community that I enjoy and recommend.
+        </p>
+
+        <div class="flex flex-col gap-6">
+          {blogroll.map((blogger) => (
+            <a
+              href={blogger.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="blogger-card flex items-start gap-4 p-4 border border-skin-line rounded-lg hover:border-skin-accent transition-colors"
+            >
+              {blogger.avatar ? (
+                <img
+                  src={blogger.avatar}
+                  alt={blogger.name}
+                  class="w-14 h-14 rounded-full object-cover flex-shrink-0"
+                />
+              ) : (
+                <div class="w-14 h-14 rounded-full bg-skin-card flex items-center justify-center flex-shrink-0">
+                  <span class="text-xl font-semibold text-skin-base">
+                    {blogger.initials || blogger.name.charAt(0)}
+                  </span>
+                </div>
+              )}
+              <div class="flex-1 min-w-0">
+                <div class="flex items-baseline gap-2 flex-wrap">
+                  <span class="font-medium text-skin-base">{blogger.name}</span>
+                  {blogger.handle && (
+                    <span class="text-sm text-skin-base opacity-60">@{blogger.handle}</span>
+                  )}
+                </div>
+                <p class="text-sm text-skin-base opacity-80 mt-1">
+                  {blogger.description}
+                </p>
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 text-skin-base opacity-40 flex-shrink-0"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>
+
+<style>
+  .blogger-card:hover {
+    background-color: rgba(var(--color-card), 0.3);
+  }
+</style>

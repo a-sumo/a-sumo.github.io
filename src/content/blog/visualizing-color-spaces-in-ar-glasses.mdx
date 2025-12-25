@@ -24,6 +24,7 @@ import ColorMixingChallenge from "@components/ColorMixingChallenge";
 import CollapsibleVideo from "@components/CollapsibleVideo";
 import HoverReveal from "@components/HoverReveal";
 import CollapsibleCode from "@components/CollapsibleCode";
+import ReferencePreview from "@components/ReferencePreview";
 import Chapter from "@components/Chapter";
 import ArticleTimeline from "@components/ArticleTimeline";
 import VideoPlayer from "@components/VideoPlayer";
@@ -177,21 +178,17 @@ Let us formulate our problem statement:
 
 <div
 	id="problem-statement"
-	style="background: rgb(255, 248, 222); border: 2px solid rgb(40, 39, 40); padding: 20px 24px; borderRadius: 8px; margin: 24px 0;"
+	style={{ background: "rgb(255, 248, 222)", border: "2px solid rgb(40, 39, 40)", padding: "20px 24px 20px 48px", borderRadius: "8px", margin: "24px 0" }}
 >
-	<ol style="margin: 0; paddingLeft: 20px; color: rgb(40, 39, 40); lineHeight: 1.8;">
+	<ol style={{ margin: 0, paddingLeft: 0, color: "rgb(40, 39, 40)", lineHeight: 1.8, listStylePosition: "outside" }}>
 		<li id="q-color-range">
 			<strong>What does the full range of perceivable colors look like?</strong>
 		</li>
 		<li id="q-gamut">
-			<strong>
-				Which colors can I achieve with the pigments on my palette?
-			</strong>
+			<strong>Which colors can I achieve with the pigments on my palette?</strong>
 		</li>
 		<li id="q-projection">
-			<strong>
-				How close can I get to a target color given my available pigments?
-			</strong>
+			<strong>How close can I get to a target color given my available pigments?</strong>
 		</li>
 	</ol>
 </div>
@@ -202,7 +199,8 @@ These challenges are well-suited to what Bret Victor calls [Seeing Spaces](https
 
 <Chapter client:load id="chapter-2" number={2} title="Building Color Spaces">
 
-For color mixing, this means visualizing all three color dimensions simultaneously as you work. The tool for this is a color space: a 3D coordinate system where every possible color occupies a unique position.
+For color mixing, this means visualizing all three color dimensions simultaneously as you work. The tool for this is a color space: a 3D coordinate system where every possible color occupies a unique position. For a comprehensive introduction to <ReferencePreview client:load trigger="color spaces, models and gamuts" href="https://www.makingsoftware.com/chapters/color-spaces-models-and-gamuts" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/captures/dan-hollick-col-spaces.png" imageAlt="Color Spaces, Models, and Gamuts by Dan Hollick" refNumber={1} />, I highly recommend Dan Hollick's excellent article.
+
 There are a wide variety of color spaces, but the ones that matter for painting are those that are perceptually accurate.
 That's because transitions between colors end up informing mixing decisions.
 
@@ -386,5 +384,17 @@ But this is still too abstract. We need additional steps to blend these seeing s
 Ideally, we'd like to preview the scene around us under the constraint of the pigments at our disposal, and have our assistant guide us towards achieving something close to our reference without disrupting our flow or limiting our creative freedom.
 
 </Chapter>
+
+---
+
+## Resources
+
+<div style={{ background: "rgb(248, 248, 250)", border: "1px solid rgb(220, 220, 225)", borderRadius: "8px", padding: "20px 24px", margin: "24px 0" }}>
+
+**[1]** Dan Hollick, ["Color Spaces, Models, and Gamuts"](https://www.makingsoftware.com/chapters/color-spaces-models-and-gamuts) — An excellent, accessible introduction to understanding how color works in digital systems. Highly recommended for anyone wanting to build intuition about color.
+
+</div>
+
+---
 
 ## Up next: Image Processing Pipeline with Roboflow, Snap Cloud x Supabase and Gemini
