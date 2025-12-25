@@ -7,7 +7,7 @@ title: ""
 
 ## Armand Sumo
 
-<img src="/assets/armand_pic.jpg" alt="Armand" width="200" style="border-radius: 8px;" />
+<img src="/assets/armand_pic.jpg" alt="Armand" width="200" height="200" loading="eager" fetchpriority="high" decoding="async" style="border-radius: 8px;" />
 
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 24px auto; width: 60%;" />
 
