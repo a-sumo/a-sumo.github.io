@@ -32,22 +32,11 @@ export const LOGO_IMAGE = {
 };
 
 export const SOCIALS: SocialObjects = [
+  // Row 1: Professional
   {
     name: "Github",
     href: "https://github.com/a-sumo",
     linkTitle: ` ${SITE.title} on Github`,
-    active: true,
-  },
-  {
-    name: "Facebook",
-    href: "",
-    linkTitle: `${SITE.title} on Facebook`,
-    active: false,
-  },
-  {
-    name: "Instagram",
-    href: "https://www.instagram.com/plasma_holographics/",
-    linkTitle: `Plasma Holographics on Instagram`,
     active: true,
   },
   {
@@ -62,10 +51,30 @@ export const SOCIALS: SocialObjects = [
     linkTitle: `Send an email to ${SITE.title}`,
     active: true,
   },
+  // Row 2: Social/Content
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/plasma_holographics/",
+    linkTitle: `Plasma Holographics on Instagram`,
+    active: true,
+  },
   {
     name: "X",
-    href: "",
+    href: "https://x.com/bodhictt",
     linkTitle: `${SITE.title} on X`,
+    active: true,
+  },
+  {
+    name: "YouTube",
+    href: "https://www.youtube.com/@s-curvilinear",
+    linkTitle: `${SITE.title} on YouTube`,
+    active: true,
+  },
+  // Row 3: Support (Ko-fi moved to end)
+  {
+    name: "Facebook",
+    href: "",
+    linkTitle: `${SITE.title} on Facebook`,
     active: false,
   },
   {
@@ -73,12 +82,6 @@ export const SOCIALS: SocialObjects = [
     href: "r",
     linkTitle: `${SITE.title} on Twitch`,
     active: false,
-  },
-  {
-    name: "YouTube",
-    href: "https://www.youtube.com/@s-curvilinear",
-    linkTitle: `${SITE.title} on YouTube`,
-    active: true,
   },
   {
     name: "WhatsApp",
