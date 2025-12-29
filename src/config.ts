@@ -56,13 +56,13 @@ export const SOCIALS: SocialObjects = [
     name: "Instagram",
     href: "https://www.instagram.com/plasma_holographics/",
     linkTitle: `Plasma Holographics on Instagram`,
-    active: true,
+    active: false,
   },
   {
     name: "X",
     href: "https://x.com/bodhictt",
     linkTitle: `${SITE.title} on X`,
-    active: true,
+    active: false,
   },
   {
     name: "YouTube",
