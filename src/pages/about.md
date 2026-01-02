@@ -13,9 +13,7 @@ title: ""
 
 </div>
 
-Software Engineer exploring the intersection of web technologies, 3D graphics, and wearable AR. I'm interested in building interfaces that feel natural and help people engage more fully with the world around them and within themselves.
-
-Outside of work, you'll find me running, dancing (popping and hip-hop), or lost in electronic music.
+Creative Technologist working at the intersection of web, 3D graphics, and wearable AR. I build tools and experiences that help people engage more fully with the world around them and within themselves.
 
 Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/armand-sumo/) or by email.
 
