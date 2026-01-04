@@ -1,0 +1,88 @@
+---
+title: "Vector Fields in Augmented Reality"
+description: ""
+pubDatetime: 2026-01-05T21:00:00Z
+tags:
+  [
+    "augmented reality",
+    "spectacles",
+    "lens studio",
+    "snap ar",
+    "manim",
+    "vector fields",
+
+    "procedural geometry",
+  ]
+ogImage: /assets/Vector-Field-demo.gif
+draft: true
+---
+import WorkflowDiagram from "@components/WorkflowDiagram";
+import WorkflowDiagramSimple from "@components/WorkflowDiagramSimple";
+import ColorMixingChallenge from "@components/ColorMixingChallenge";
+import CollapsibleVideo from "@components/CollapsibleVideo";
+import HoverReveal from "@components/HoverReveal";
+import CollapsibleCode from "@components/CollapsibleCode";
+import ReferencePreview from "@components/ReferencePreview";
+import Chapter from "@components/Chapter";
+import ArticleTimeline from "@components/ArticleTimeline";
+import VideoPlayer from "@components/VideoPlayer";
+import SeriesNav from "@components/SeriesNav";
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vecor-fields-on-ar-glasses/videos/Vector-Field-demo.mp4"
+	autoPlay={true}
+	preload="auto"
+/>
+
+<Chapter client:load id="chapter-1" number={1} title="Rendering 3D Lines" />
+
+We use the MeshBuilder API to create tubes.
+We then deform them on the GPU.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction.mp4"
+	preload="metadata"
+	maxWidth="100%"
+/>
+
+<CollapsibleCode
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/tube_construction.py"
+	trigger="View manim source"
+	language="python"
+/>
+
+<WorkflowDiagramSimple
+	client:load
+	scriptLabel="TubeTest.ts"
+	materialLabel="TubeTestShader.js"
+	materialCapture="tube_material.png"
+	scriptCodeFile="TubeTest.ts"
+	materialCodeFile="TubeTestShader.js"
+	basePath="/assets/visualizing-vector-fields-on-ar-glasses"
+/>
+
+
+<Chapter client:load id="chapter-3" number={3} title="Deforming the Lines on the GPU" />
+
+<div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
+	<VideoPlayer
+		client:load
+		src="/assets/visualizing-vector-fields-on-ar-glasses/videos/test-tube-recording.mp4"
+		preload="metadata"
+		maxWidth="100%"
+	/>
+	<VideoPlayer
+		client:load
+		src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeTestDemo.mp4"
+		preload="metadata"
+		maxWidth="100%"
+	/>
+</div>
+
+<Chapter client:load id="chapter-3" number={3} title="Creating a Vector Field" />
+<Chapter client:load id="chapter-4" number={4} title="Integrating a Vector Field" />
+
+<Chapter client:load id="chapter-5" number={5} title="UX Considerations" />

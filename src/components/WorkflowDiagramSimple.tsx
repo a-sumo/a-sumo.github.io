@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Highlight, themes } from "prism-react-renderer";
 
-const ASSETS_PATH = "/assets/visualizing-color-spaces-in-ar-glasses";
+const DEFAULT_ASSETS_PATH = "/assets/visualizing-color-spaces-in-ar-glasses";
 const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/a-sumo/specs-samples/main/Color-Spaces/Assets/Scripts";
 
 type ExpandedNode = "script" | "material" | null;
@@ -15,6 +15,7 @@ interface WorkflowDiagramSimpleProps {
   materialCodeFile?: string;
   scriptGitHubPath?: string;
   materialGitHubPath?: string;
+  basePath?: string;
 }
 
 // ============ Helper Components ============
@@ -24,6 +25,7 @@ interface NodeIconProps {
   label: string;
   isExpanded: boolean;
   onClick: () => void;
+  basePath?: string;
 }
 
 interface PortConfig {
@@ -31,7 +33,7 @@ interface PortConfig {
   outputs?: boolean;
 }
 
-function NodeIcon({ icon, label, isExpanded, onClick, ports }: NodeIconProps & { ports?: PortConfig }) {
+function NodeIcon({ icon, label, isExpanded, onClick, ports, basePath = DEFAULT_ASSETS_PATH }: NodeIconProps & { ports?: PortConfig }) {
   return (
     <div className="node-wrapper relative flex items-center">
       {ports?.inputs && (
@@ -63,7 +65,7 @@ function NodeIcon({ icon, label, isExpanded, onClick, ports }: NodeIconProps & {
         aria-expanded={isExpanded}
       >
         <img
-          src={`${ASSETS_PATH}/icons/${icon}.png`}
+          src={`${basePath}/icons/${icon}.png`}
           alt={label}
           className="h-14 w-14 md:h-16 md:w-16"
           style={{ border: 'none' }}
@@ -161,6 +163,7 @@ export default function WorkflowDiagramSimple({
   materialCodeFile,
   scriptGitHubPath,
   materialGitHubPath,
+  basePath = DEFAULT_ASSETS_PATH,
 }: WorkflowDiagramSimpleProps) {
   const [expandedNode, setExpandedNode] = useState<ExpandedNode>(null);
   const [expandedDetail, setExpandedDetail] = useState<ExpandedDetail>(null);
@@ -171,7 +174,7 @@ export default function WorkflowDiagramSimple({
     const scriptUrl = scriptGitHubPath
       ? `${GITHUB_RAW_BASE}/${scriptGitHubPath}`
       : scriptCodeFile
-        ? `${ASSETS_PATH}/scripts/${scriptCodeFile}`
+        ? `${basePath}/scripts/${scriptCodeFile}`
         : null;
 
     if (scriptUrl) {
@@ -184,7 +187,7 @@ export default function WorkflowDiagramSimple({
     const materialUrl = materialGitHubPath
       ? `${GITHUB_RAW_BASE}/${materialGitHubPath}`
       : materialCodeFile
-        ? `${ASSETS_PATH}/scripts/${materialCodeFile}`
+        ? `${basePath}/scripts/${materialCodeFile}`
         : null;
 
     if (materialUrl) {
@@ -193,7 +196,7 @@ export default function WorkflowDiagramSimple({
         .then(setMaterialCode)
         .catch(() => setMaterialCode("// Failed to load code"));
     }
-  }, [scriptCodeFile, materialCodeFile, scriptGitHubPath, materialGitHubPath]);
+  }, [scriptCodeFile, materialCodeFile, scriptGitHubPath, materialGitHubPath, basePath]);
 
   const toggleNode = (node: ExpandedNode) => {
     if (expandedNode === node) {
@@ -219,6 +222,7 @@ export default function WorkflowDiagramSimple({
           isExpanded={expandedNode === "script"}
           onClick={() => toggleNode("script")}
           ports={{ outputs: true }}
+          basePath={basePath}
         />
         <Connector />
         <NodeIcon
@@ -227,6 +231,7 @@ export default function WorkflowDiagramSimple({
           isExpanded={expandedNode === "material"}
           onClick={() => toggleNode("material")}
           ports={{ inputs: true }}
+          basePath={basePath}
         />
       </div>
 
@@ -262,7 +267,7 @@ export default function WorkflowDiagramSimple({
               aria-label="Toggle Material code"
             >
               <img
-                src={`${ASSETS_PATH}/captures/${materialCapture}`}
+                src={`${basePath}/captures/${materialCapture}`}
                 alt={materialLabel}
                 className="w-full max-w-[520px] md:max-w-[680px]"
               />

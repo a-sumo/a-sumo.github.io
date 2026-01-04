@@ -159,9 +159,23 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"playfulness-and-functionality-fluid-ui.mdx": {
+	id: "playfulness-and-functionality-fluid-ui.mdx";
+  slug: "playfulness-and-functionality-fluid-ui";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "visualizing-color-spaces-in-ar-glasses.mdx": {
 	id: "visualizing-color-spaces-in-ar-glasses.mdx";
   slug: "visualizing-color-spaces-in-ar-glasses";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
+"visualizing-vector-fields-on-ar-glasses.mdx": {
+	id: "visualizing-vector-fields-on-ar-glasses.mdx";
+  slug: "visualizing-vector-fields-on-ar-glasses";
   body: string;
   collection: "blog";
   data: InferEntrySchema<"blog">
