@@ -140,3 +140,13 @@ dist
 .DS_Store
 .DS_Store
 public/assets/.DS_Store
+
+# Manim output
+media/
+__pycache__/
+*.py
+
+# Keep only captures, icons, scripts, videos in vector-fields assets
+public/assets/visualizing-vector-fields-on-ar-glasses/media/
+public/assets/visualizing-vector-fields-on-ar-glasses/__pycache__/
+public/assets/visualizing-vector-fields-on-ar-glasses/*.py
