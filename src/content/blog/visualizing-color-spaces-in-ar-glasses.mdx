@@ -265,8 +265,8 @@ Rendering particles as billboard quads instead of 3D meshes helped, but the impr
 
 At this point I hit a wall. As it happened, I had to travel to Brussels and Eindhoven for UnitedXR and the Spectacles x 3EALITY hackathon, which gave me a chance to step away from the problem.
 
-When I came back, <HoverReveal client:load trigger="it hit me" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/dj-khaled.gif" imageAlt="DJ Khaled - Another one" imageWidth="280px" />: color spaces have interesting **regularities**.
-The mapping from RGB to LAB is continuous. In other words, nearby colors stay nearby. The math behind it is juicy but put simply, if you render grid lines for an RGB cube, you can deform them into LAB space and they'll stretch and bend, but never break.
+Later on it occured to me that the mapping between color spaces has interesting is continous. In other words, nearby colors stay nearby. 
+Put simply, if you render grid lines for an RGB cube, you can deform them into LAB space and they'll stretch and bend, but never break.
 
 Here's a [manim](https://github.com/3b1b/manim) visualization that showcases this process:
 
