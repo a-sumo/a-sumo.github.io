@@ -17,7 +17,84 @@ Creative Technologist working at the intersection of web, 3D graphics, and weara
 
 Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/armand-sumo/) or by email.
 
-<a href="https://docs.google.com/viewer?url=https://a-sumo.github.io/assets/Armand_Sumo_AR_Engineer_CV.pdf" target="_blank" style="display: inline-block; margin-top: 16px;">View my Resume →</a>
+<div class="resume-section">
+  <button class="resume-toggle" aria-expanded="false">
+    <span class="resume-text">Resume</span> <span class="resume-arrow">▼</span>
+  </button>
+  <div class="resume-options">
+    <a href="https://docs.google.com/viewer?url=https://a-sumo.github.io/assets/Armand_Sumo_AR_Engineer_CV.pdf" target="_blank">View</a>
+    <a href="/assets/Armand_Sumo_AR_Engineer_CV.pdf" download="Armand_Sumo_AR_Engineer_CV.pdf">Download</a>
+  </div>
+</div>
+
+<style>
+.resume-section {
+  display: inline-block;
+  margin-top: 16px;
+}
+.resume-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.resume-text {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.resume-toggle:hover {
+  color: rgb(var(--color-accent));
+}
+.resume-arrow {
+  font-size: 0.6em;
+  transition: transform 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  top: 0.2em;
+}
+.resume-section.open .resume-arrow {
+  transform: rotate(180deg);
+}
+.resume-options {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease, opacity 0.25s ease, margin 0.25s ease;
+  opacity: 0;
+  margin-top: 0;
+}
+.resume-section.open .resume-options {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 8px;
+}
+.resume-options > a {
+  overflow: hidden;
+  display: block;
+  padding: 4px 0;
+}
+.resume-options a:hover {
+  color: rgb(var(--color-accent));
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const section = document.querySelector('.resume-section');
+  const toggle = document.querySelector('.resume-toggle');
+
+  toggle?.addEventListener('click', (e) => {
+    e.preventDefault();
+    section.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', section.classList.contains('open'));
+  });
+});
+</script>
 
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 32px 0;" />
 
