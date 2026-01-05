@@ -17,7 +17,7 @@ Creative Technologist working at the intersection of web, 3D graphics, and weara
 
 Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/armand-sumo/) or by email.
 
-<a href="/assets/Armand_Sumo_AR_Engineer_CV.pdf" target="_blank" style="display: inline-block; margin-top: 16px;">View my Resume →</a>
+<a href="https://docs.google.com/viewer?url=https://a-sumo.github.io/assets/Armand_Sumo_AR_Engineer_CV.pdf" target="_blank" style="display: inline-block; margin-top: 16px;">View my Resume →</a>
 
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 32px 0;" />
 
