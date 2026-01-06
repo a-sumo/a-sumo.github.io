@@ -61,10 +61,15 @@ Their visualization is generally done in one of either approaches: arrows, parti
 
 <Chapter client:load id="chapter-1" number={1} title="Rendering 3D Lines" />
 
-As of writing this, the best resource on Lens Studio's AssetStore
-has an example made by Snap called VolumetricLine. This served as a great starting point. What are particles  but very stout lines? 
-What are arrows but static lines with a pointer? If I could somehow render 2D lines, particles and 
-
+The approach to rendering 3D lines consists in generating tubes with capped ends. Lens Studio offers a MeshBuilder API, which we first explored in our [article on color spaces](/posts/visualizing-color-spaces-in-ar-glasses). If the normals are encoded correctly, which is contingent on having a correct vertex order, the GPU vertex interpolation will provide smooth color transitions across the base of the tube and across endcaps.
+I've made a Manim visualization that showcases the geometry construction process.
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction.webm"
+	preload="metadata"
+	maxWidth="100%"
+	noBorder={true}
+/>
 
 <CollapsibleCode
 	client:load
@@ -156,14 +161,6 @@ private generateSingleTubeCaps(gridX: number, gridY: number, startVertexIndex: n
 }
 ```
 
-The construction process can be summarized as following:
-<VideoPlayer
-	client:load
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction.webm"
-	preload="metadata"
-	maxWidth="100%"
-	noBorder={true}
-/>
 
 Here's the complete worflow:
 <WorkflowDiagramSimple
@@ -177,10 +174,26 @@ Here's the complete worflow:
 	packagePath="Vector-Fields/exports/TestTubeDeformation.lspkg"
 />
 
-<Chapter client:load id="chapter-3" number={3} title="Deforming the 3D Lines on the GPU" />
+<Chapter client:load id="chapter-2" number={2} title="Deforming the 3D Lines on the GPU" />
 
-Deforming 3D lines has an added difficulty of preserving the volume of the tube. 
-If we just offset point positions by the same vector, we end up with an wrong endcaps.
+Deforming 3D lines has an added difficulty of preserving the volume of the tube.
+If we just offset point positions by the same vector, we end up with wrong endcaps.
+
+The solution is to compute a moving coordinate frame along the path. At each point, we calculate:
+- a **Tangent (T)** vector: The direction the tube is heading (derivative of the path)
+- a **Normal (N)** vector: Perpendicular to the tangent
+- a **Binormal (B)** vector: Cross product of tangent and normal
+
+Each vertex is then positioned using: `p = center + (cos θ · N + sin θ · B) · radius`
+A key node from the material editor to make everything work is the Object to World converter.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeDeformation.webm"
+	preload="metadata"
+	maxWidth="100%"
+	noBorder={true}
+/>
 <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
 	<VideoPlayer
 		client:load
@@ -196,7 +209,163 @@ If we just offset point positions by the same vector, we end up with an wrong en
 	/>
 </div>
 
-<Chapter client:load id="chapter-3" number={3} title="Creating and integrating a Vector Field" />
-Here's what this looks like when rendered on AR glasses:
+<Chapter client:load id="chapter-3" number={3} title="Creating and Integrating a Vector Field" />
+Now that we have a solid approach for procedural tube mesh deformation, we can deform the meshes along the vector field.
+A vector field stores vector at each coordinate in space, so for each point of the tube's frame, we can sample that vector to infer the position change to apply.
+If we keep the tubes' origin static, prevent their deformation along the frame but simply change their orientation, we get an actual arrow representation of the vector field.
 
+To trace paths through the field, we integrate: starting from a sample point, we repeatedly query the field and step in that direction: `pos += field(pos) * stepSize`. At each step, we compute a local T/N/B (Tangent, Normal, Binormal) coordinate frame that follows the path curvature.
+
+The shader supports several field presets, each with distinct flow characteristics:
+
+#### 3.1 Contraction
+Vectors spiral inward toward a target point, creating sink-like behavior.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldContraction.webm"
+	preload="metadata"
+	maxWidth="100%"
+	noBorder={true}
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.1a: Field visualization showing contraction flow pattern</p>
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/contraction-demo.mp4"
+	preload="metadata"
+	maxWidth="100%"
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.1b: Demo on Spectacles</p>
+
+#### 3.2 Expansion
+Radial waves emanate outward from the target with 3D oscillation perpendicular to the flow.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldExpansion.webm"
+	preload="metadata"
+	maxWidth="100%"
+	noBorder={true}
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.2a: Field visualization showing expansion flow pattern</p>
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/expansion-demo.mp4"
+	preload="metadata"
+	maxWidth="100%"
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.2b: Demo on Spectacles</p>
+
+#### 3.3 Circulation
+A 3D swirling vortex that mixes rotation in multiple planes around the target.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldCirculation.webm"
+	preload="metadata"
+	maxWidth="100%"
+	noBorder={true}
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.3a: Field visualization showing circulation flow pattern</p>
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/circulation-demo.mp4"
+	preload="metadata"
+	maxWidth="100%"
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.3b: Demo on Spectacles</p>
+
+#### 3.4 Vortex
+Rotating cellular patterns with an added spin component based on angular position.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldVortex.webm"
+	preload="metadata"
+	maxWidth="100%"
+	noBorder={true}
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.4a: Field visualization showing vortex flow pattern</p>
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/vortex-demo.mp4"
+	preload="metadata"
+	maxWidth="100%"
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.4b: Demo on Spectacles</p>
+
+#### 3.5 Waves
+Sinusoidal interference patterns where each axis oscillates based on the other two coordinates.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldWaves.webm"
+	preload="metadata"
+	maxWidth="100%"
+	noBorder={true}
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.5a: Field visualization showing wave interference pattern</p>
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/waves-demo.mp4"
+	preload="metadata"
+	maxWidth="100%"
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.5b: Demo on Spectacles</p>
+
+#### 3.6 Implementation Workflow
+
+The complete workflow connects a TypeScript component that generates procedural tube geometry with a custom shader that integrates the vector field on the GPU:
+
+<WorkflowDiagramSimple
+	client:load
+	scriptLabel="VectorField.ts"
+	materialLabel="VectorFieldShader.mat"
+	materialCapture="vector-field-material.png"
+	scriptCodeFile="VectorField.ts"
+	materialCodeFile="VectorFieldShader.js"
+	basePath="/assets/visualizing-vector-fields-on-ar-glasses"
+	packagePath="Vector-Fields/exports/VectorField.lspkg"
+/>
+
+<Chapter client:load id="chapter-4" number={4} title="Magnetic Field Visualization" />
+
+Magnetic fields from dipole magnets follow a specific physical formula. Each dipole creates a field that depends on the magnetic moment and distance: `B = (3(m·r̂)r̂ - m) / r³`. When combining two dipoles, the resulting field creates the characteristic field line patterns seen around bar magnets.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/MagneticField.webm"
+	preload="metadata"
+	maxWidth="100%"
+	noBorder={true}
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 4.1: Magnetic field visualization showing dipole field computation and integration</p>
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/magnetic-field-demo.mp4"
+	preload="metadata"
+	maxWidth="100%"
+/>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 4.2: Demo on Spectacles with interactive magnet positioning</p>
+
+#### 4.1 Implementation Workflow
+
+The magnetic field implementation uses the same tube mesh generation approach but with a physically-based dipole field formula in the shader:
+
+<WorkflowDiagramSimple
+	client:load
+	scriptLabel="MagneticField.ts"
+	materialLabel="MagneticFieldShader.mat"
+	materialCapture="magnetic-field-material.png"
+	scriptCodeFile="MagneticField.ts"
+	materialCodeFile="MagneticFieldShader.js"
+	basePath="/assets/visualizing-vector-fields-on-ar-glasses"
+	packagePath="Vector-Fields/exports/MagneticField.lspkg"
+/>
 
