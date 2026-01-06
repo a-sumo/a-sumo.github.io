@@ -59,7 +59,7 @@ export default function VideoPlayer({
   }, [autoPlay]);
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", margin: "24px 0" }}>
+    <div style={{ display: "flex", justifyContent: "center" }}>
       <video
         ref={videoRef}
         controls={controls}
@@ -74,7 +74,6 @@ export default function VideoPlayer({
           width: "100%",
           borderRadius,
           boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-          backgroundColor: "#000",
         }}
       >
         <source src={src} type="video/mp4" />

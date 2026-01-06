@@ -13,7 +13,7 @@ tags:
 
     "procedural geometry",
   ]
-ogImage: /assets/Vector-Field-demo.gif
+ogImage: /assets/MagneticFieldDemo.gif
 draft: true
 ---
 import WorkflowDiagram from "@components/WorkflowDiagram";
@@ -27,18 +27,47 @@ import Chapter from "@components/Chapter";
 import ArticleTimeline from "@components/ArticleTimeline";
 import VideoPlayer from "@components/VideoPlayer";
 import SeriesNav from "@components/SeriesNav";
+import VectorFieldViz from "@components/VectorFieldViz";
 
-<VideoPlayer
-	client:load
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/Vector-Field-demo.mp4"
-	autoPlay={true}
-	preload="auto"
-/>
+If you try to model the speed and direction of the wind that hits a plane, or the strengh and direction of the gravitational force that 
+keeps satellites orbiting around the Earth, you will necessarily cross paths with Vector fields. 
+If you want I'd recommend Bartosz Ciechanowsky Airfoil for a primer on the contexts where vector fields might be useful. https://ciechanow.ski/airfoil/
+
+At their core, these are a mathematical structure that assign a value, in our case a vector for each point in space. If this vector only has one coordinates,
+we call it scalar field. If it has less than three coordinates, we call it a vector field, and from 4 and above we call them Tensor Fields.
+Each vector encodes the direction and magnitude. 
+
+They're used to drive smoke simulations, fluid, advect particles, or influence soft body movement. 
+But visualizing them has always been a challenge. Arrows, Particles or Trail Lines. 
+
+
+<VectorFieldViz client:load fieldType="dipole" />
+
+Here's what this looks like when rendered on AR glasses:
+
+<div style={{ display: "flex", gap: "8px", justifyContent: "center", alignItems: "center" }}>
+	<VideoPlayer
+		client:load
+		src="/assets/visualizing-vector-fields-on-ar-glasses/videos/Vector-Field-demo.mp4"
+		autoPlay={true}
+		preload="auto"
+		maxWidth="100%"
+	/>
+	<VideoPlayer
+		client:load
+		src="/assets/visualizing-vector-fields-on-ar-glasses/videos/MagneticFieldDemo.mp4"
+		autoPlay={true}
+		preload="auto"
+		maxWidth="100%"
+	/>
+</div>
 
 <Chapter client:load id="chapter-1" number={1} title="Rendering 3D Lines" />
 
 As of writing this, the best resource on Lens Studio's AssetStore
-has an example made by Snap called VolumetricLine. This served as a great starting point.
+has an example made by Snap called VolumetricLine. This served as a great starting point. What are particles  but very stout lines? 
+What are arrows but static lines with a pointer? If I could somehow render 2D lines, particles and 
+
 
 <CollapsibleCode
 	client:load
