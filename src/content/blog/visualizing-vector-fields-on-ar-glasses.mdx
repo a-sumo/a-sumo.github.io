@@ -59,6 +59,21 @@ Their visualization is generally done in one of either approaches: arrows, parti
 
 <VectorFieldViz client:load fieldType="dipole" />
 
+<ArticleTimeline
+	client:load
+	sections={[
+		{ id: "chapter-1", label: "Rendering 3D Lines", type: "chapter" },
+		{ id: "chapter-2", label: "Deforming Lines on GPU", type: "chapter" },
+		{ id: "chapter-3", label: "Vector Field Integration", type: "chapter" },
+		{ id: "contraction", label: "Contraction", type: "subsection", parent: "chapter-3" },
+		{ id: "expansion", label: "Expansion", type: "subsection", parent: "chapter-3" },
+		{ id: "circulation", label: "Circulation", type: "subsection", parent: "chapter-3" },
+		{ id: "vortex", label: "Vortex", type: "subsection", parent: "chapter-3" },
+		{ id: "waves", label: "Waves", type: "subsection", parent: "chapter-3" },
+		{ id: "chapter-4", label: "Magnetic Field", type: "chapter" },
+	]}
+/>
+
 <Chapter client:load id="chapter-1" number={1} title="Rendering 3D Lines" />
 
 The approach to rendering 3D lines consists in generating tubes with capped ends. Lens Studio offers a MeshBuilder API, which we first explored in our [article on color spaces](/posts/visualizing-color-spaces-in-ar-glasses). If the normals are encoded correctly, which is contingent on having a correct vertex order, the GPU vertex interpolation will provide smooth color transitions across the base of the tube and across endcaps.
@@ -218,6 +233,7 @@ To trace paths through the field, we integrate: starting from a sample point, we
 
 The shader supports several field presets, each with distinct flow characteristics:
 
+<span id="contraction"></span>
 #### 3.1 Contraction
 Vectors spiral inward toward a target point, creating sink-like behavior.
 
@@ -238,6 +254,7 @@ Vectors spiral inward toward a target point, creating sink-like behavior.
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.1b: Demo on Spectacles</p>
 
+<span id="expansion"></span>
 #### 3.2 Expansion
 Radial waves emanate outward from the target with 3D oscillation perpendicular to the flow.
 
@@ -258,6 +275,7 @@ Radial waves emanate outward from the target with 3D oscillation perpendicular t
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.2b: Demo on Spectacles</p>
 
+<span id="circulation"></span>
 #### 3.3 Circulation
 A 3D swirling vortex that mixes rotation in multiple planes around the target.
 
@@ -278,6 +296,7 @@ A 3D swirling vortex that mixes rotation in multiple planes around the target.
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.3b: Demo on Spectacles</p>
 
+<span id="vortex"></span>
 #### 3.4 Vortex
 Rotating cellular patterns with an added spin component based on angular position.
 
@@ -298,6 +317,7 @@ Rotating cellular patterns with an added spin component based on angular positio
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.4b: Demo on Spectacles</p>
 
+<span id="waves"></span>
 #### 3.5 Waves
 Sinusoidal interference patterns where each axis oscillates based on the other two coordinates.
 
@@ -325,10 +345,10 @@ The complete workflow connects a TypeScript component that generates procedural 
 <WorkflowDiagramSimple
 	client:load
 	scriptLabel="VectorField.ts"
-	materialLabel="VectorFieldShader.mat"
+	materialLabel="VectorField.mat"
 	materialCapture="vector-field-material.png"
 	scriptCodeFile="VectorField.ts"
-	materialCodeFile="VectorFieldShader.js"
+	materialCodeFile="VectorField.js"
 	basePath="/assets/visualizing-vector-fields-on-ar-glasses"
 	packagePath="Vector-Fields/exports/VectorField.lspkg"
 />
@@ -361,10 +381,10 @@ The magnetic field implementation uses the same tube mesh generation approach bu
 <WorkflowDiagramSimple
 	client:load
 	scriptLabel="MagneticField.ts"
-	materialLabel="MagneticFieldShader.mat"
+	materialLabel="MagneticField.mat"
 	materialCapture="magnetic-field-material.png"
 	scriptCodeFile="MagneticField.ts"
-	materialCodeFile="MagneticFieldShader.js"
+	materialCodeFile="MagneticField.js"
 	basePath="/assets/visualizing-vector-fields-on-ar-glasses"
 	packagePath="Vector-Fields/exports/MagneticField.lspkg"
 />
