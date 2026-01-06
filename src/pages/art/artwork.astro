@@ -5,16 +5,16 @@ import Footer from "@components/Footer.astro";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
 
 const artwork = [
-  { title: "Flume - The Difference", video: "/assets/artwork/Flume-The-Difference.mp4", comment: "2020 - Made with SideFX Houdini" },
-  { title: "Flume - Heater", video: "/assets/artwork/Flume-Heater.mp4", comment: "2021 - Made with SideFX Houdini" },
-  { title: "Flume - DHLC", video: "/assets/artwork/Flume-DHLC.mp4", comment: "2021 - Made with SideFX Houdini" },
-  { title: "Getter - Bad Acid", video: "/assets/artwork/Getter-Bad-Acid.mp4", comment: "2021 - Made with SideFX Houdini" },
+  { title: "Flume - The Difference", video: "/assets/artwork/Flume-The-Difference.mp4", thumbnail: "/assets/artwork/thumbnails/Flume-The-Difference.jpg", comment: "2020 - Made with SideFX Houdini" },
+  { title: "Flume - Heater", video: "/assets/artwork/Flume-Heater.mp4", thumbnail: "/assets/artwork/thumbnails/Flume-Heater.jpg", comment: "2021 - Made with SideFX Houdini" },
+  { title: "Flume - DHLC", video: "/assets/artwork/Flume-DHLC.mp4", thumbnail: "/assets/artwork/thumbnails/Flume-DHLC.jpg", comment: "2021 - Made with SideFX Houdini" },
+  { title: "Getter - Bad Acid", video: "/assets/artwork/Getter-Bad-Acid.mp4", thumbnail: "/assets/artwork/thumbnails/Getter-Bad-Acid.jpg", comment: "2021 - Made with SideFX Houdini" },
 ];
 
 const experiments = [
-  { title: "Flume - 3 Eras Teaser", video: "/assets/artwork/Flume-3-Eras-Teaser.mp4" },
-  { title: "Flume - Chalk", video: "/assets/artwork/Flume-Chalk-test.mp4" },
-  { title: "Flume - I Can't Tell", video: "/assets/artwork/Flume-I-Cant-Tell.mp4" },
+  { title: "Flume - 3 Eras Teaser", video: "/assets/artwork/Flume-3-Eras-Teaser.mp4", thumbnail: "/assets/artwork/thumbnails/Flume-3-Eras-Teaser.jpg" },
+  { title: "Flume - Chalk", video: "/assets/artwork/Flume-Chalk-test.mp4", thumbnail: "/assets/artwork/thumbnails/Flume-Chalk-test.jpg" },
+  { title: "Flume - I Can't Tell", video: "/assets/artwork/Flume-I-Cant-Tell.mp4", thumbnail: "/assets/artwork/thumbnails/Flume-I-Cant-Tell.jpg" },
 ];
 ---
 
@@ -36,18 +36,18 @@ const experiments = [
               </div>
 
               <!-- Video container -->
-              <div class="mb-4 relative w-full">
-                <video
-                  src={item.video}
-                  class="w-full border border-skin-border artwork-video"
-                  controls
-                  loop
-                  muted
-                  playsinline
-                  preload={index < 4 ? "auto" : "metadata"}
-                >
-                  Your browser does not support the video tag.
-                </video>
+              <div class="mb-4 relative w-full video-container" data-video={item.video}>
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  class="w-full border border-skin-border cursor-pointer video-thumbnail"
+                  loading="lazy"
+                />
+                <button class="play-button" aria-label="Play video">
+                  <svg viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </button>
               </div>
 
               {item.comment && (
@@ -73,8 +73,18 @@ const experiments = [
                 <div class="h-20 mb-4 flex items-center justify-center w-full">
                   <h3 class="text-lg font-medium text-skin-base leading-tight px-2">{item.title}</h3>
                 </div>
-                <div class="mb-4 relative w-full">
-                  <video src={item.video} class="w-full border border-skin-border artwork-video" controls loop muted playsinline preload="metadata"></video>
+                <div class="mb-4 relative w-full video-container" data-video={item.video}>
+                  <img
+                    src={item.thumbnail}
+                    alt={item.title}
+                    class="w-full border border-skin-border cursor-pointer video-thumbnail"
+                    loading="lazy"
+                  />
+                  <button class="play-button" aria-label="Play video">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="w-16 h-16">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </button>
                 </div>
               </article>
             ))}
@@ -95,9 +105,38 @@ const experiments = [
     text-overflow: ellipsis;
   }
 
-  .artwork-video {
+  .video-container {
+    position: relative;
     background-color: #000;
-    max-width: 100%;
+  }
+
+  .video-thumbnail {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    padding: 1rem;
+    cursor: pointer;
+    color: #000;
+    transition: background 0.2s, transform 0.2s;
+  }
+
+  .play-button:hover {
+    background: #fff;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  .video-container video {
+    width: 100%;
     height: auto;
   }
 
@@ -107,34 +146,35 @@ const experiments = [
 </style>
 
 <script>
-  function initVideos() {
-    const videos = document.querySelectorAll('.artwork-video');
+  function initVideoThumbnails() {
+    const containers = document.querySelectorAll('.video-container');
 
-    // Force reload video sources after View Transitions
-    videos.forEach(video => {
-      video.load();
-    });
+    containers.forEach(container => {
+      const thumbnail = container.querySelector('.video-thumbnail');
+      const playButton = container.querySelector('.play-button');
+      const videoSrc = container.dataset.video;
 
-    // Intersection Observer for lazy video loading
-    const videoObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const video = entry.target;
-        if (entry.isIntersecting) {
-          video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
-      });
-    }, {
-      rootMargin: '50px',
-      threshold: 0.1
-    });
+      if (!thumbnail || !playButton || !videoSrc) return;
 
-    videos.forEach(video => {
-      videoObserver.observe(video);
+      const handleClick = () => {
+        const video = document.createElement('video');
+        video.src = videoSrc;
+        video.controls = true;
+        video.loop = true;
+        video.muted = true;
+        video.playsInline = true;
+        video.className = 'w-full border border-skin-border';
+
+        container.innerHTML = '';
+        container.appendChild(video);
+        video.play().catch(() => {});
+      };
+
+      thumbnail.addEventListener('click', handleClick);
+      playButton.addEventListener('click', handleClick);
     });
   }
 
   // Handle both initial page load and Astro View Transitions
-  document.addEventListener('astro:page-load', initVideos);
+  document.addEventListener('astro:page-load', initVideoThumbnails);
 </script>
