@@ -8,6 +8,7 @@ interface VideoPlayerProps {
   controls?: boolean;
   maxWidth?: string;
   borderRadius?: string;
+  noBorder?: boolean;
   preload?: "auto" | "metadata" | "none";
   className?: string;
 }
@@ -20,6 +21,7 @@ export default function VideoPlayer({
   controls = true,
   maxWidth = "300px",
   borderRadius = "12px",
+  noBorder = false,
   preload = "metadata",
   className = "",
 }: VideoPlayerProps) {
@@ -72,8 +74,8 @@ export default function VideoPlayer({
         style={{
           maxWidth,
           width: "100%",
-          borderRadius,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+          borderRadius: noBorder ? "0" : borderRadius,
+          boxShadow: noBorder ? "none" : "0 4px 20px rgba(0,0,0,0.15)",
         }}
       >
         <source src={src} type="video/mp4" />

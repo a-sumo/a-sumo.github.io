@@ -159,8 +159,6 @@ export default function VectorFieldViz({
     };
   }, [fieldType]);
 
-  const getField = vectorFields[fieldType];
-
   // Initialize Three.js
   useEffect(() => {
     if (!containerRef.current) return;
@@ -206,7 +204,7 @@ export default function VectorFieldViz({
     scene.add(trailsGroupRef.current);
 
     // Initialize arrows
-    createArrows();
+    createArrowsForField(vectorFields[initialFieldType]);
 
     // Initialize particles
     initParticles();
@@ -225,16 +223,21 @@ export default function VectorFieldViz({
   }, []); // Only run once on mount - field changes are handled by refs
 
   // Create arrow grid with mesh-based thick arrows
-  const createArrows = () => {
+  const createArrowsForField = (fieldFn: (x: number, y: number) => { x: number; y: number }) => {
     if (!arrowsGroupRef.current) return;
+
+    // Dispose old geometries
+    arrowsGroupRef.current.children.forEach(child => {
+      if ((child as THREE.Mesh).geometry) (child as THREE.Mesh).geometry.dispose();
+    });
     arrowsGroupRef.current.clear();
 
-    const gridSize = 16;
-    const spacing = 0.5;
+    const gridSize = 14;
+    const spacing = 0.55;
     const arrowMaterial = new THREE.MeshBasicMaterial({
       color: 0x3b82f6,
       transparent: true,
-      opacity: 0.75,
+      opacity: 0.8,
       side: THREE.DoubleSide,
     });
 
@@ -242,7 +245,7 @@ export default function VectorFieldViz({
       for (let j = -gridSize / 2; j <= gridSize / 2; j++) {
         const x = i * spacing;
         const y = j * spacing;
-        const field = getField(x, y);
+        const field = fieldFn(x, y);
         const mag = Math.sqrt(field.x * field.x + field.y * field.y);
 
         if (mag < 0.01) continue;
@@ -255,11 +258,11 @@ export default function VectorFieldViz({
         const px = -ny;
         const py = nx;
 
-        // Fixed arrow dimensions
-        const shaftLength = Math.min(mag * 0.15, 0.25);
-        const shaftThickness = 0.02;
-        const headLength = 0.08;
-        const headBase = 0.06;
+        // Arrow dimensions - scale with magnitude but with good minimums
+        const shaftLength = Math.max(0.15, Math.min(mag * 0.4, 0.4));
+        const shaftThickness = 0.03;
+        const headLength = 0.14;
+        const headBase = 0.1;
 
         // Arrow shaft as quad (2 triangles)
         const shaftEndX = x + nx * shaftLength;
@@ -280,13 +283,11 @@ export default function VectorFieldViz({
         // Arrow head as triangle (fixed size)
         const tipX = shaftEndX + nx * headLength;
         const tipY = shaftEndY + ny * headLength;
-        const baseX = shaftEndX;
-        const baseY = shaftEndY;
 
         const headVerts = new Float32Array([
           tipX, tipY, 0,
-          baseX - px * headBase, baseY - py * headBase, 0,
-          baseX + px * headBase, baseY + py * headBase, 0,
+          shaftEndX - px * headBase, shaftEndY - py * headBase, 0,
+          shaftEndX + px * headBase, shaftEndY + py * headBase, 0,
         ]);
         const headGeom = new THREE.BufferGeometry();
         headGeom.setAttribute('position', new THREE.BufferAttribute(headVerts, 3));
@@ -328,8 +329,8 @@ export default function VectorFieldViz({
     particlesGroupRef.current.clear();
     trailsGroupRef.current.clear();
 
-    const particleMaterial = new THREE.MeshBasicMaterial({ color: 0x8b5cf6 });
-    const particleGeometry = new THREE.CircleGeometry(0.04, 8);
+    const particleMaterial = new THREE.MeshBasicMaterial({ color: 0x2d7a4e }); // Dark green
+    const particleGeometry = new THREE.CircleGeometry(0.05, 8);
 
     // Get blended field using refs
     const prevField = vectorFields[prevFieldTypeRef.current];
@@ -390,12 +391,8 @@ export default function VectorFieldViz({
 
       // Reset if out of bounds or should teleport
       if (Math.abs(p.pos.x) > 5 || Math.abs(p.pos.y) > 4 || shouldTeleport) {
-        // Spawn at edges for better flow visualization
-        const edge = Math.floor(Math.random() * 4);
-        if (edge === 0) p.pos.set(-4.5 + Math.random() * 9, 3.5); // top
-        else if (edge === 1) p.pos.set(-4.5 + Math.random() * 9, -3.5); // bottom
-        else if (edge === 2) p.pos.set(-4.5, -3 + Math.random() * 6); // left
-        else p.pos.set(4.5, -3 + Math.random() * 6); // right
+        // Spawn uniformly across the field
+        p.pos.set((Math.random() - 0.5) * 9, (Math.random() - 0.5) * 7);
         p.vel.set(0, 0);
         p.trail = [];
       }
@@ -412,13 +409,13 @@ export default function VectorFieldViz({
         const trailPoints = p.trail.map(t => new THREE.Vector3(t.x, t.y, 0));
         const trailGeometry = new THREE.BufferGeometry().setFromPoints(trailPoints);
 
-        // Create gradient colors for trail (purple to blue)
+        // Create gradient colors for trail (dark green)
         const colors = new Float32Array(p.trail.length * 3);
         for (let i = 0; i < p.trail.length; i++) {
           const alpha = i / p.trail.length;
-          colors[i * 3] = 0.55 * alpha;     // R
-          colors[i * 3 + 1] = 0.36 * alpha; // G
-          colors[i * 3 + 2] = 0.96 * alpha; // B (purple #8b5cf6)
+          colors[i * 3] = 0.18 * alpha;     // R
+          colors[i * 3 + 1] = 0.48 * alpha; // G
+          colors[i * 3 + 2] = 0.31 * alpha; // B (dark green #2d7a4e)
         }
         trailGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
@@ -477,81 +474,14 @@ export default function VectorFieldViz({
   // Track if arrows need rebuilding
   const arrowsBuiltForFieldRef = useRef<FieldType | null>(null);
 
-  // Rebuild arrows only when switching to arrows mode or field changes while in arrows mode
+  // Rebuild arrows when field changes while in arrows mode
   useEffect(() => {
     if (!arrowsGroupRef.current || !sceneRef.current || !rendererRef.current || !cameraRef.current) return;
 
     // Only rebuild arrows if in arrows mode and field changed
     if (mode === "arrows" && arrowsBuiltForFieldRef.current !== fieldType) {
       arrowsBuiltForFieldRef.current = fieldType;
-
-      const newArrowsGroup = new THREE.Group();
-      const gridSize = 16;
-      const spacing = 0.5;
-      const arrowMaterial = new THREE.MeshBasicMaterial({
-        color: 0x3b82f6,
-        transparent: true,
-        opacity: 0.75,
-        side: THREE.DoubleSide,
-      });
-
-      const field = vectorFields[fieldType];
-
-      for (let i = -gridSize / 2; i <= gridSize / 2; i++) {
-        for (let j = -gridSize / 2; j <= gridSize / 2; j++) {
-          const x = i * spacing;
-          const y = j * spacing;
-          const f = field(x, y);
-          const mag = Math.sqrt(f.x * f.x + f.y * f.y);
-          if (mag < 0.01) continue;
-
-          // Normalize direction
-          const nx = f.x / mag;
-          const ny = f.y / mag;
-          const px = -ny;
-          const py = nx;
-
-          // Fixed arrow dimensions
-          const shaftLength = Math.min(mag * 0.15, 0.25);
-          const shaftThickness = 0.02;
-          const headLength = 0.08;
-          const headBase = 0.06;
-
-          // Arrow shaft
-          const shaftEndX = x + nx * shaftLength;
-          const shaftEndY = y + ny * shaftLength;
-          const shaftVerts = new Float32Array([
-            x - px * shaftThickness, y - py * shaftThickness, 0,
-            x + px * shaftThickness, y + py * shaftThickness, 0,
-            shaftEndX + px * shaftThickness, shaftEndY + py * shaftThickness, 0,
-            x - px * shaftThickness, y - py * shaftThickness, 0,
-            shaftEndX + px * shaftThickness, shaftEndY + py * shaftThickness, 0,
-            shaftEndX - px * shaftThickness, shaftEndY - py * shaftThickness, 0,
-          ]);
-          const shaftGeom = new THREE.BufferGeometry();
-          shaftGeom.setAttribute('position', new THREE.BufferAttribute(shaftVerts, 3));
-          newArrowsGroup.add(new THREE.Mesh(shaftGeom, arrowMaterial));
-
-          // Arrow head (fixed size)
-          const tipX = shaftEndX + nx * headLength;
-          const tipY = shaftEndY + ny * headLength;
-          const headVerts = new Float32Array([
-            tipX, tipY, 0,
-            shaftEndX - px * headBase, shaftEndY - py * headBase, 0,
-            shaftEndX + px * headBase, shaftEndY + py * headBase, 0,
-          ]);
-          const headGeom = new THREE.BufferGeometry();
-          headGeom.setAttribute('position', new THREE.BufferAttribute(headVerts, 3));
-          newArrowsGroup.add(new THREE.Mesh(headGeom, arrowMaterial));
-        }
-      }
-
-      // Dispose old arrow geometries
-      arrowsGroupRef.current.children.forEach(child => {
-        if ((child as THREE.Mesh).geometry) (child as THREE.Mesh).geometry.dispose();
-      });
-      arrowsGroupRef.current.clear();
-      newArrowsGroup.children.forEach(child => arrowsGroupRef.current!.add(child));
+      createArrowsForField(vectorFields[fieldType]);
     }
 
     // Update visibility
@@ -618,10 +548,10 @@ export default function VectorFieldViz({
           onWheel={(e) => {
             e.preventDefault();
             const currentIndex = fieldTypes.indexOf(fieldType);
-            if (e.deltaY > 0 && currentIndex < fieldTypes.length - 1) {
-              setFieldType(fieldTypes[currentIndex + 1]);
-            } else if (e.deltaY < 0 && currentIndex > 0) {
-              setFieldType(fieldTypes[currentIndex - 1]);
+            if (e.deltaY > 0) {
+              setFieldType(fieldTypes[(currentIndex + 1) % fieldTypes.length]);
+            } else if (e.deltaY < 0) {
+              setFieldType(fieldTypes[(currentIndex - 1 + fieldTypes.length) % fieldTypes.length]);
             }
           }}
           onMouseDown={(e) => handleDragStart(e.clientY)}
@@ -635,16 +565,24 @@ export default function VectorFieldViz({
           <div className="vfv-carousel-track">
             {fieldTypes.map((key, index) => {
               const currentIndex = fieldTypes.indexOf(fieldType);
-              const offset = index - currentIndex;
-              // Add drag offset to visual position (scaled down for smoothness)
+              const n = fieldTypes.length;
+              // Calculate looping offset (-1, 0, +1, +2 wrapping around)
+              let offset = index - currentIndex;
+              // Wrap around for looping effect
+              if (offset > n / 2) offset -= n;
+              if (offset < -n / 2) offset += n;
+
+              // Only show items within range [-1, 2] for cleaner look
+              if (offset < -1 || offset > 2) return null;
+
               const dragAngleOffset = (dragOffset / 50) * -15;
-              const angle = offset * 40 + dragAngleOffset;
-              const radius = 45;
+              const angle = offset * 35 + dragAngleOffset;
+              const radius = 40;
               const translateZ = Math.cos(angle * Math.PI / 180) * radius;
               const translateY = Math.sin(angle * Math.PI / 180) * radius;
               const effectiveOffset = Math.abs(offset + dragOffset / 100);
-              const scale = Math.max(0.65, 1 - effectiveOffset * 0.12);
-              const opacity = effectiveOffset < 0.3 ? 1 : Math.max(0.25, 1 - effectiveOffset * 0.3);
+              const scale = Math.max(0.7, 1 - effectiveOffset * 0.15);
+              const opacity = effectiveOffset < 0.3 ? 1 : Math.max(0.15, 1 - effectiveOffset * 0.45);
               const zIndex = 10 - Math.floor(effectiveOffset);
 
               return (
@@ -668,17 +606,17 @@ export default function VectorFieldViz({
               className="vfv-carousel-arrow up"
               onClick={() => {
                 const idx = fieldTypes.indexOf(fieldType);
-                if (idx > 0) setFieldType(fieldTypes[idx - 1]);
+                const prevIdx = (idx - 1 + fieldTypes.length) % fieldTypes.length;
+                setFieldType(fieldTypes[prevIdx]);
               }}
-              disabled={fieldTypes.indexOf(fieldType) === 0}
             >▲</button>
             <button
               className="vfv-carousel-arrow down"
               onClick={() => {
                 const idx = fieldTypes.indexOf(fieldType);
-                if (idx < fieldTypes.length - 1) setFieldType(fieldTypes[idx + 1]);
+                const nextIdx = (idx + 1) % fieldTypes.length;
+                setFieldType(fieldTypes[nextIdx]);
               }}
-              disabled={fieldTypes.indexOf(fieldType) === fieldTypes.length - 1}
             >▼</button>
           </div>
         </div>
@@ -793,7 +731,7 @@ export default function VectorFieldViz({
         .vfv-carousel-track {
           position: relative;
           width: 160px;
-          height: 85px;
+          height: 100px;
           perspective: 300px;
           display: flex;
           align-items: center;
@@ -802,7 +740,7 @@ export default function VectorFieldViz({
         }
         .vfv-carousel-item {
           position: absolute;
-          padding: 6px 14px;
+          padding: 2px 14px;
           border: none;
           background: transparent;
           color: rgb(80, 80, 80);
