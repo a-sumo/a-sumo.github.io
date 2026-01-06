@@ -7,7 +7,6 @@ import Datetime from "@components/Datetime";
 import type { CollectionEntry } from "astro:content";
 import { slugifyStr } from "@utils/slugify";
 import ShareLinks from "@components/ShareLinks.astro";
-import BlogrollPreview from "@components/BlogrollPreview.astro";
 import { SITE } from "@config";
 
 export interface Props {
@@ -183,9 +182,6 @@ const nextPost =
         )
       }
     </div>
-
-    <!-- Blogroll Preview -->
-    <BlogrollPreview />
 
     <!-- Feedback Section -->
     <hr class="my-8 border-dashed" />
