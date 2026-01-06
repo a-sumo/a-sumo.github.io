@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Highlight, themes } from "prism-react-renderer";
 
 const DEFAULT_ASSETS_PATH = "/assets/visualizing-color-spaces-in-ar-glasses";
-const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/a-sumo/specs-samples/main/Color-Spaces/Assets/Scripts";
+const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/a-sumo/specs-samples/refs/heads/main";
+const GITHUB_DOWNLOAD_BASE = "https://github.com/a-sumo/specs-samples/raw/main";
 
 type ExpandedNode = "script" | "material" | null;
 type ExpandedDetail = "script" | "material" | null;
@@ -16,6 +17,10 @@ interface WorkflowDiagramSimpleProps {
   scriptGitHubPath?: string;
   materialGitHubPath?: string;
   basePath?: string;
+  /** Path to LSPKG file relative to repo root, e.g. "Vector-Fields/Packages/TubeShader.lspkg" */
+  packagePath?: string;
+  /** GitHub raw base URL, defaults to specs-samples repo */
+  githubRawBase?: string;
 }
 
 // ============ Helper Components ============
@@ -96,6 +101,26 @@ interface CodeBlockProps {
   language: string;
 }
 
+// ============ Download Button ============
+
+interface DownloadPackageButtonProps {
+  packageUrl: string;
+  packageName: string;
+}
+
+function DownloadPackageButton({ packageUrl, packageName }: DownloadPackageButtonProps) {
+  return (
+    <a
+      href={packageUrl}
+      download={packageName}
+      className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all duration-200 border-2 border-black bg-white text-black hover:border-[#8CA9FF] hover:text-[#8CA9FF]"
+      title={`Download ${packageName} - Import into Lens Studio`}
+    >
+      Download Package
+    </a>
+  );
+}
+
 function CodeBlock({ code, language }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
@@ -164,15 +189,21 @@ export default function WorkflowDiagramSimple({
   scriptGitHubPath,
   materialGitHubPath,
   basePath = DEFAULT_ASSETS_PATH,
+  packagePath,
+  githubRawBase = GITHUB_RAW_BASE,
 }: WorkflowDiagramSimpleProps) {
   const [expandedNode, setExpandedNode] = useState<ExpandedNode>(null);
   const [expandedDetail, setExpandedDetail] = useState<ExpandedDetail>(null);
   const [scriptCode, setScriptCode] = useState<string>("");
   const [materialCode, setMaterialCode] = useState<string>("");
 
+  // Build package URL and name (use download base for auto-download)
+  const packageUrl = packagePath ? `${GITHUB_DOWNLOAD_BASE}/${packagePath}` : null;
+  const packageName = packagePath ? packagePath.split('/').pop() || 'package.lspkg' : null;
+
   useEffect(() => {
     const scriptUrl = scriptGitHubPath
-      ? `${GITHUB_RAW_BASE}/${scriptGitHubPath}`
+      ? `${githubRawBase}/${scriptGitHubPath}`
       : scriptCodeFile
         ? `${basePath}/scripts/${scriptCodeFile}`
         : null;
@@ -185,7 +216,7 @@ export default function WorkflowDiagramSimple({
     }
 
     const materialUrl = materialGitHubPath
-      ? `${GITHUB_RAW_BASE}/${materialGitHubPath}`
+      ? `${githubRawBase}/${materialGitHubPath}`
       : materialCodeFile
         ? `${basePath}/scripts/${materialCodeFile}`
         : null;
@@ -196,7 +227,7 @@ export default function WorkflowDiagramSimple({
         .then(setMaterialCode)
         .catch(() => setMaterialCode("// Failed to load code"));
     }
-  }, [scriptCodeFile, materialCodeFile, scriptGitHubPath, materialGitHubPath, basePath]);
+  }, [scriptCodeFile, materialCodeFile, scriptGitHubPath, materialGitHubPath, basePath, githubRawBase]);
 
   const toggleNode = (node: ExpandedNode) => {
     if (expandedNode === node) {
@@ -244,9 +275,11 @@ export default function WorkflowDiagramSimple({
         {/* Script: show code directly */}
         {expandedNode === "script" && (
           <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-2 sm:p-4 overflow-hidden">
-            <h4 className="mb-3 text-sm sm:text-base font-semibold">
-              {scriptLabel} (TypeScript)
-            </h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm sm:text-base font-semibold">
+                {scriptLabel} (TypeScript)
+              </h4>
+            </div>
             <CodeBlock code={scriptCode} language="typescript" />
           </div>
         )}
@@ -254,6 +287,11 @@ export default function WorkflowDiagramSimple({
         {/* Material: show capture first */}
         {expandedNode === "material" && (
           <div className="flex flex-col items-center animate-slideDown w-full px-2">
+            {packageUrl && packageName && (
+              <div className="mb-3">
+                <DownloadPackageButton packageUrl={packageUrl} packageName={packageName} />
+              </div>
+            )}
             <button
               onClick={() => toggleDetail("material")}
               className="screenshot-btn rounded-lg border-2 transition-all duration-200 max-w-full"
@@ -287,9 +325,14 @@ export default function WorkflowDiagramSimple({
       >
         {expandedDetail === "material" && (
           <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-2 sm:p-4 overflow-hidden">
-            <h4 className="mb-3 text-sm sm:text-base font-semibold">
-              {materialLabel} (GLSL)
-            </h4>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm sm:text-base font-semibold">
+                {materialLabel} (GLSL)
+              </h4>
+              {packageUrl && packageName && (
+                <DownloadPackageButton packageUrl={packageUrl} packageName={packageName} />
+              )}
+            </div>
             <CodeBlock code={materialCode} language="glsl" />
           </div>
         )}
