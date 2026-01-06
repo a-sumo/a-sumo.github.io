@@ -83,17 +83,30 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 }
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const section = document.querySelector('.resume-section');
-  const toggle = document.querySelector('.resume-toggle');
+<script is:inline>
+(function() {
+  function initResume() {
+    const section = document.querySelector('.resume-section');
+    const toggle = document.querySelector('.resume-toggle');
 
-  toggle?.addEventListener('click', (e) => {
-    e.preventDefault();
-    section.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', section.classList.contains('open'));
-  });
-});
+    if (!toggle || toggle.dataset.initialized) return;
+    toggle.dataset.initialized = 'true';
+
+    toggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      section.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', section.classList.contains('open'));
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initResume);
+  } else {
+    initResume();
+  }
+
+  document.addEventListener('astro:page-load', initResume);
+})();
 </script>
 
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 32px 0;" />
