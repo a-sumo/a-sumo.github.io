@@ -329,7 +329,7 @@ export default function VectorFieldViz({
     particlesGroupRef.current.clear();
     trailsGroupRef.current.clear();
 
-    const particleMaterial = new THREE.MeshBasicMaterial({ color: 0x2d7a4e }); // Dark green
+    const particleMaterial = new THREE.MeshBasicMaterial({ color: 0xff6b35 }); // Orange
     const particleGeometry = new THREE.CircleGeometry(0.05, 8);
 
     // Get blended field using refs
@@ -409,13 +409,15 @@ export default function VectorFieldViz({
         const trailPoints = p.trail.map(t => new THREE.Vector3(t.x, t.y, 0));
         const trailGeometry = new THREE.BufferGeometry().setFromPoints(trailPoints);
 
-        // Create gradient colors for trail (dark green)
+        // Create gradient colors for trail (pink/purple → orange)
         const colors = new Float32Array(p.trail.length * 3);
+        // Pink/purple at tail (old): #c77dff (0.78, 0.49, 1.0)
+        // Orange at head (new): #ff6b35 (1.0, 0.42, 0.21)
         for (let i = 0; i < p.trail.length; i++) {
-          const alpha = i / p.trail.length;
-          colors[i * 3] = 0.18 * alpha;     // R
-          colors[i * 3 + 1] = 0.48 * alpha; // G
-          colors[i * 3 + 2] = 0.31 * alpha; // B (dark green #2d7a4e)
+          const t = i / p.trail.length; // 0=oldest, 1=newest
+          colors[i * 3] = (0.78 + 0.22 * t) * t;     // R: lerp 0.78→1.0, fade with t
+          colors[i * 3 + 1] = (0.49 - 0.07 * t) * t; // G: lerp 0.49→0.42, fade with t
+          colors[i * 3 + 2] = (1.0 - 0.79 * t) * t;  // B: lerp 1.0→0.21, fade with t
         }
         trailGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
