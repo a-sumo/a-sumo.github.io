@@ -44,6 +44,8 @@ export default function ExpandableImage({ src, alt, caption }: ExpandableImagePr
         <img
           src={src}
           alt={alt}
+          loading="lazy"
+          decoding="async"
           style={{
             width: "100%",
             borderRadius: "8px",
