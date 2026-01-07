@@ -397,8 +397,8 @@ export default function VectorFieldViz({
         p.trail = [];
       }
 
-      // Draw particle
-      if (mode === "particles" || mode === "trails") {
+      // Draw particle (only in particles mode, not trails/flow lines)
+      if (mode === "particles") {
         const mesh = new THREE.Mesh(particleGeometry, particleMaterial);
         mesh.position.set(p.pos.x, p.pos.y, 0);
         particlesGroupRef.current!.add(mesh);
@@ -540,7 +540,7 @@ export default function VectorFieldViz({
             className={mode === "trails" ? "active" : ""}
             onClick={() => setMode("trails")}
           >
-            Trails
+            Flow Lines
           </button>
         </div>
 

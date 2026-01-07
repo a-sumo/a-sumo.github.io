@@ -66,10 +66,30 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
     }
   });
 
-  const getNodePosition = (index: number) => {
-    const totalHeight = 200; // Total height of timeline in px
-    return (index / (mainSections.length - 1)) * totalHeight;
+  // Calculate max sidequests for any parent to determine spacing
+  const maxSidequests = Math.max(0, ...Array.from(sidequestsByParent.values()).map(s => s.length));
+  const sidequestSpacing = 24;
+  const sidequestBranchPadding = maxSidequests > 0 ? maxSidequests * sidequestSpacing + 16 : 0;
+
+  const getNodePosition = (index: number, sectionId: string) => {
+    const baseHeight = 240;
+    // Add extra spacing after sections that have sidequests
+    let extraSpacing = 0;
+    for (let i = 0; i < index; i++) {
+      const section = mainSections[i];
+      const sidequests = sidequestsByParent.get(section.id) || [];
+      if (sidequests.length > 0) {
+        extraSpacing += sidequests.length * sidequestSpacing + 20;
+      }
+    }
+    return (index / (mainSections.length - 1)) * baseHeight + extraSpacing;
   };
+
+  // Calculate total height based on all sidequests
+  const totalHeight = 240 + Array.from(sidequestsByParent.values()).reduce(
+    (acc, sidequests) => acc + (sidequests.length > 0 ? sidequests.length * sidequestSpacing + 20 : 0),
+    0
+  );
 
   return (
     <div
@@ -94,7 +114,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
         }
       `}</style>
 
-      <div style={{ position: "relative", height: "200px", width: "60px" }}>
+      <div style={{ position: "relative", height: `${totalHeight}px`, width: "60px" }}>
         {/* Background line - centered at x=7 */}
         <div
           style={{
@@ -128,7 +148,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
           const isPast = sections.findIndex(s => s.id === activeSection) >= sections.findIndex(s => s.id === section.id);
           const isHovered = hoveredSection === section.id;
           const sidequests = sidequestsByParent.get(section.id) || [];
-          const nodeY = getNodePosition(index);
+          const nodeY = getNodePosition(index, section.id);
           const nodeSize = section.type === "chapter" ? 14 : 10;
 
           return (
@@ -187,88 +207,102 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
               )}
 
               {/* Sidequest branch - renders as a single connected branch with multiple nodes */}
-              {sidequests.length > 0 && (
-                <div
-                  style={{
-                    position: "absolute",
-                    left: "15px",
-                    top: "-4px",
-                  }}
-                >
-                  {/* Curved connector from main line to branch */}
-                  <svg
-                    width="30"
-                    height={20 + sidequests.length * 16}
-                    style={{ position: "absolute", left: 0, top: 0 }}
+              {sidequests.length > 0 && (() => {
+                const branchX = 24; // x position of branch line
+                const sqNodeSize = 8;
+                const firstNodeY = 18; // Where first node appears
+                const lastNodeY = firstNodeY + (sidequests.length - 1) * sidequestSpacing;
+
+                return (
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: "8px",
+                      top: "0px",
+                    }}
                   >
-                    {/* Initial curve */}
-                    <path
-                      d="M 0 4 Q 14 4, 14 18"
-                      fill="none"
-                      stroke="rgba(140, 140, 140, 0.4)"
-                      strokeWidth="2"
-                    />
-                    {/* Vertical line for branch */}
-                    <line
-                      x1="14"
-                      y1="18"
-                      x2="14"
-                      y2={18 + (sidequests.length - 1) * 16}
-                      stroke="rgba(140, 140, 140, 0.4)"
-                      strokeWidth="2"
-                    />
-                  </svg>
-
-                  {/* Sidequest nodes along the branch */}
-                  {sidequests.map((sidequest, sidequestIndex) => (
-                    <div key={sidequest.id}>
-                      <button
-                        onClick={() => scrollToSection(sidequest.id)}
-                        onMouseEnter={() => setHoveredSection(sidequest.id)}
-                        onMouseLeave={() => setHoveredSection(null)}
-                        style={{
-                          position: "absolute",
-                          left: "8px",
-                          top: `${14 + sidequestIndex * 16}px`,
-                          width: "10px",
-                          height: "10px",
-                          borderRadius: "3px",
-                          background: activeSection === sidequest.id ? "rgb(255, 180, 50)" : "rgb(180, 180, 180)",
-                          border: activeSection === sidequest.id ? "2px solid rgb(255, 220, 100)" : "2px solid white",
-                          cursor: "pointer",
-                          transition: "all 0.2s ease",
-                          boxShadow: activeSection === sidequest.id ? "0 0 0 3px rgba(255, 180, 50, 0.3)" : "none",
-                          transform: hoveredSection === sidequest.id ? "scale(1.2)" : "scale(1)",
-                          padding: 0,
-                        }}
-                        title={sidequest.label}
+                    {/* SVG for curve and vertical line */}
+                    <svg
+                      width="40"
+                      height={lastNodeY + 10}
+                      style={{ position: "absolute", left: 0, top: 0, overflow: "visible" }}
+                    >
+                      {/* Curved arch from main line (0,0) to first node position */}
+                      <path
+                        d={`M 0 0 Q ${branchX} 0, ${branchX} ${firstNodeY}`}
+                        fill="none"
+                        stroke="rgba(140, 140, 140, 0.4)"
+                        strokeWidth="2"
                       />
-
-                      {/* Sidequest tooltip */}
-                      {hoveredSection === sidequest.id && (
-                        <div
-                          style={{
-                            position: "absolute",
-                            left: "28px",
-                            top: `${14 + sidequestIndex * 16}px`,
-                            background: "rgb(40, 39, 40)",
-                            color: "rgb(255, 200, 100)",
-                            padding: "6px 10px",
-                            borderRadius: "4px",
-                            fontSize: "11px",
-                            fontWeight: 500,
-                            whiteSpace: "nowrap",
-                            boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                            zIndex: 50,
-                          }}
-                        >
-                          {sidequest.label}
-                        </div>
+                      {/* Vertical line between nodes */}
+                      {sidequests.length > 1 && (
+                        <line
+                          x1={branchX}
+                          y1={firstNodeY}
+                          x2={branchX}
+                          y2={lastNodeY}
+                          stroke="rgba(140, 140, 140, 0.4)"
+                          strokeWidth="2"
+                        />
                       )}
-                    </div>
-                  ))}
-                </div>
-              )}
+                    </svg>
+
+                    {/* Sidequest nodes */}
+                    {sidequests.map((sidequest, sidequestIndex) => {
+                      const nodeTop = firstNodeY + sidequestIndex * sidequestSpacing;
+                      const isSidequestActive = activeSection === sidequest.id;
+                      const isSidequestHovered = hoveredSection === sidequest.id;
+                      return (
+                        <div key={sidequest.id}>
+                          <button
+                            onClick={() => scrollToSection(sidequest.id)}
+                            onMouseEnter={() => setHoveredSection(sidequest.id)}
+                            onMouseLeave={() => setHoveredSection(null)}
+                            style={{
+                              position: "absolute",
+                              left: `${branchX - sqNodeSize / 2}px`,
+                              top: `${nodeTop - sqNodeSize / 2}px`,
+                              width: `${sqNodeSize}px`,
+                              height: `${sqNodeSize}px`,
+                              borderRadius: "2px",
+                              background: isSidequestActive ? "rgb(140, 169, 255)" : "rgb(160, 160, 160)",
+                              border: "none",
+                              cursor: "pointer",
+                              transition: "all 0.2s ease",
+                              boxShadow: isSidequestActive ? "0 0 0 2px rgba(140, 169, 255, 0.4)" : "none",
+                              transform: isSidequestHovered ? "scale(1.3)" : "scale(1)",
+                              padding: 0,
+                            }}
+                            title={sidequest.label}
+                          />
+
+                          {/* Sidequest tooltip */}
+                          {isSidequestHovered && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                left: `${branchX + sqNodeSize / 2 + 10}px`,
+                                top: `${nodeTop - sqNodeSize / 2}px`,
+                                background: "rgb(40, 39, 40)",
+                                color: "rgb(200, 200, 200)",
+                                padding: "5px 9px",
+                                borderRadius: "4px",
+                                fontSize: "10px",
+                                fontWeight: 500,
+                                whiteSpace: "nowrap",
+                                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                                zIndex: 50,
+                              }}
+                            >
+                              {sidequest.label}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
             </div>
           );
         })}
