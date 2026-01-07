@@ -1,6 +1,6 @@
 ---
 title: "Vector Fields in Augmented Reality"
-description: ""
+description: "Visualizing vector fields on Snap Spectacles using procedural tube meshes, GPU deformation with TNB frames, and real-time field integration."
 pubDatetime: 2026-01-05T21:00:00Z
 tags:
   [
@@ -10,25 +10,60 @@ tags:
     "snap ar",
     "manim",
     "vector fields",
-
     "procedural geometry",
   ]
 ogImage: /assets/MagneticFieldDemo.gif
-draft: true
+draft: false
 ---
-import WorkflowDiagram from "@components/WorkflowDiagram";
 import WorkflowDiagramSimple from "@components/WorkflowDiagramSimple";
-import ColorMixingChallenge from "@components/ColorMixingChallenge";
-import CollapsibleVideo from "@components/CollapsibleVideo";
-import HoverReveal from "@components/HoverReveal";
-import CollapsibleCode from "@components/CollapsibleCode";
-import ReferencePreview from "@components/ReferencePreview";
 import Chapter from "@components/Chapter";
 import ArticleTimeline from "@components/ArticleTimeline";
 import VideoPlayer from "@components/VideoPlayer";
 import ManimVideo from "@components/ManimVideo";
-import SeriesNav from "@components/SeriesNav";
+import Note from "@components/Note";
 import VectorFieldViz from "@components/VectorFieldViz";
+import ExpandableImage from "@components/ExpandableImage";
+
+<div
+	style={{
+		display: "flex",
+		justifyContent: "center",
+		alignItems: "center",
+		gap: "24px",
+		flexWrap: "wrap",
+		fontFamily: '"Roboto Mono", monospace',
+		fontSize: "13px",
+		marginBottom: "8px",
+	}}
+>
+	<a
+		href="https://github.com/a-sumo/specs-samples/"
+		style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+	>
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="currentColor"
+		>
+			<path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+		</svg>
+		a-sumo/specs-samples
+	</a>
+	<a
+		href="https://www.spectacles.com/lens/588755bd7dd34c90a42f807104ef0bdf?type=SNAPCODE&metadata=01"
+		style={{ display: "inline-flex", alignItems: "center", gap: "8px" }}
+	>
+		<img
+			src="/assets/icons/snapcode-vector-fields.png"
+			width="96"
+			height="96"
+			alt="Snapcode"
+		/>
+		Try on Spectacles
+	</a>
+</div>
 
 <div style={{ display: "flex", gap: "8px", justifyContent: "center", alignItems: "center" }}>
 	<VideoPlayer
@@ -47,39 +82,58 @@ import VectorFieldViz from "@components/VectorFieldViz";
 	/>
 </div>
 
-If you try to model the speed and direction of the wind that hits a plane, or the strengh and direction of the gravitational force that 
-keeps satellites orbiting around the Earth, you will necessarily cross paths with Vector fields. 
-If you want I'd recommend Bartosz Ciechanowsky Airfoil for a primer on the contexts where vector fields might be useful. https://ciechanow.ski/airfoil/
+To model wind around an aircraft wing, gravitational pull on satellites, or magnetic forces between poles, we use vector fields.
 
-At their core, these are a mathematical structure that assign a value, in our case a vector for each point in space. If this vector only has one coordinates,
-we call it scalar field. If it has less than three coordinates, we call it a vector field, and from 4 and above we call them Tensor Fields.
-Each vector encodes the direction and magnitude. 
+In essence, a vector field is a direction and magnitude assigned to every point in space.
 
-They're used to drive smoke simulations, fluid, advect particles, or influence soft body movement.
-Their visualization is generally done in one of either approaches: arrows, particles or trail lines.
+More practically though, vector fields represent either *motion* itself, or what drives it such as a *force*.
 
+There are three main approaches to visualize motion: 
+1. We can grid space with sample points and show where each point is being pulled and how strongly. This is done with *arrows*. 
+2. We can also show how an element with a mass moves when carried by the flow, which is done via *particles*. 
+3. Or we can trace the paths a massless particle would follow through the field, with *flow lines*.
+
+<div id="vector-field-viz">
 <VectorFieldViz client:load fieldType="dipole" />
+</div>
 
 <ArticleTimeline
 	client:load
 	sections={[
+		{ id: "vector-field-viz", label: "Interactive Demo", type: "sidequest", parent: "chapter-1" },
 		{ id: "chapter-1", label: "Rendering 3D Lines", type: "chapter" },
-		{ id: "proc-gen-code", label: "Proc Gen Code", type: "subsection", parent: "chapter-1" },
 		{ id: "chapter-2", label: "Deforming Lines on GPU", type: "chapter" },
 		{ id: "chapter-3", label: "Vector Field Integration", type: "chapter" },
-		{ id: "contraction", label: "Contraction", type: "subsection", parent: "chapter-3" },
-		{ id: "expansion", label: "Expansion", type: "subsection", parent: "chapter-3" },
-		{ id: "circulation", label: "Circulation", type: "subsection", parent: "chapter-3" },
-		{ id: "vortex", label: "Vortex", type: "subsection", parent: "chapter-3" },
-		{ id: "waves", label: "Waves", type: "subsection", parent: "chapter-3" },
+		{ id: "contraction", label: "Contraction", type: "sidequest", parent: "chapter-3" },
+		{ id: "expansion", label: "Expansion", type: "sidequest", parent: "chapter-3" },
+		{ id: "circulation", label: "Circulation", type: "sidequest", parent: "chapter-3" },
+		{ id: "vortex", label: "Vortex", type: "sidequest", parent: "chapter-3" },
+		{ id: "waves", label: "Waves", type: "sidequest", parent: "chapter-3" },
 		{ id: "chapter-4", label: "Magnetic Field", type: "chapter" },
+		{ id: "chapter-5", label: "Performance", type: "chapter" },
+		{ id: "chapter-6", label: "UX", type: "chapter" },
 	]}
 />
 
 <Chapter client:load id="chapter-1" number={1} title="Rendering 3D Lines" />
 
-The approach to rendering 3D lines consists in generating tubes with capped ends. Lens Studio offers a MeshBuilder API, which we first explored in our [article on color spaces](/posts/visualizing-color-spaces-in-ar-glasses). If the normals are encoded correctly, which is contingent on having a correct vertex order, the GPU vertex interpolation will provide smooth color transitions across the base of the tube and across endcaps.
-Here's the geometry construction process.
+Rendering vector fields in 2D is fairly straightforward.
+
+In 3D on AR glasses, however, we need to satisfy a few constraints:
+
+The geometry must look consistent from all viewing angles. A volumetric line shouldn't look flat from certain directions.
+
+Also, the geometry must adapt to its spatial context, which in this case is the direction and magnitude sampled at a spatial location.
+Importing static or pre-animated 3D objects wouldn't allow this kind of adaptivity, which means we must generate the geometry procedurally.  
+
+Finally, it must run smoothly in real time, while looking believable, so we need a minimal rendering procedure.
+
+The most straightforward approach to render 3D lines is to generate tubes with capped ends. In Lens Studio, we can do this via the MeshBuilder API, which we first explored in our [article on color spaces](/posts/visualizing-color-spaces-in-ar-glasses). 
+
+If the normals are encoded correctly (which requires having proper vertex ordering), GPU interpolation provides smooth color transitions across the tube surface and endcaps, which yields a believable look with minimal geometry.
+
+The video below illustrates the construction process:
+
 <ManimVideo
 	client:load
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction.webm"
@@ -87,6 +141,7 @@ Here's the geometry construction process.
 	preload="metadata"
 	maxWidth="100%"
 	noBorder={true}
+	autoPlay={true}
 />
 
 <span id="proc-gen-code"></span>
@@ -178,18 +233,6 @@ private generateSingleTubeCaps(gridX: number, gridY: number, startVertexIndex: n
 
 </details>
 
-Here's the complete worflow:
-<WorkflowDiagramSimple
-	client:load
-	scriptLabel="TubeTest.ts"
-	materialLabel="TestTubeShader.mat"
-	materialCapture="tube-deformation-material.png"
-	scriptCodeFile="TubeTest.ts"
-	materialCodeFile="TubeTestShader.js"
-	basePath="/assets/visualizing-vector-fields-on-ar-glasses"
-	packagePath="Vector-Fields/exports/TestTubeDeformation.lspkg"
-/>
-
 <Chapter client:load id="chapter-2" number={2} title="Deforming the 3D Lines on the GPU" />
 
 Deforming 3D lines has an added difficulty of preserving the volume of the tube.
@@ -212,7 +255,15 @@ The solution is to compute a moving coordinate frame along the path. At each poi
 - a **Binormal (B)** vector: Cross product of tangent and normal
 
 Each vertex is then positioned using: `p = center + (cos θ · N + sin θ · B) · radius`
-A key node from the material editor to make everything work is the Object to World converter.
+
+<Note client:load type="important" title="Object to World Transform">
+A key node from the material editor to make everything work is the **Object to World** converter. This transforms our computed vertex positions from object space into world space, ensuring the deformed tubes render correctly regardless of the object's transform.
+Since you're here, I might as well recommend you another node: Hue/Saturation. 
+Lens Studio renders low value colors as transparent, so by using this node you can adjust the value color channel independently. 
+It's also useful for making colors pop by raising saturation.
+
+<img src="/assets/visualizing-vector-fields-on-ar-glasses/captures/transform-vector-hue-saturation.png" alt="Material editor showing Transform Vector Object to World node" style={{ width: "60%", borderRadius: "8px", marginTop: "12px" }} />
+</Note>
 
 <ManimVideo
 	client:load
@@ -221,30 +272,53 @@ A key node from the material editor to make everything work is the Object to Wor
 	preload="metadata"
 	maxWidth="100%"
 	noBorder={true}
+	autoPlay={true}
 />
+
+I implemented a test example in Lens Studio and deployed it on Spectacles. Performance was satisfactory, so I continued with this approach.
 <div style={{ display: "flex", gap: "16px", justifyContent: "center" }}>
 	<VideoPlayer
 		client:load
 		src="/assets/visualizing-vector-fields-on-ar-glasses/videos/test-tube-recording.mp4"
 		preload="metadata"
 		maxWidth="100%"
+		autoPlay={true}
+		loop={true}
+		muted={true}
 	/>
 	<VideoPlayer
 		client:load
 		src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeTestDemo.mp4"
 		preload="metadata"
 		maxWidth="100%"
+		autoPlay={true}
+		loop={true}
+		muted={true}
 	/>
 </div>
 
+Here's the workflow for this test example in Lens Studio:
+
+<WorkflowDiagramSimple
+	client:load
+	scriptLabel="TubeTest.ts"
+	materialLabel="TestTubeShader.mat"
+	materialCapture="tube-deformation-material.png"
+	scriptCodeFile="TubeTest.ts"
+	materialCodeFile="TubeTestShader.js"
+	basePath="/assets/visualizing-vector-fields-on-ar-glasses"
+	packagePath="Vector-Fields/exports/TestTubeDeformation.lspkg"
+/>
+
 <Chapter client:load id="chapter-3" number={3} title="Creating and Integrating a Vector Field" />
-Now that we have a solid approach for procedural tube mesh deformation, we can deform the meshes along the vector field.
-A vector field stores vector at each coordinate in space, so for each point of the tube's frame, we can sample that vector to infer the position change to apply.
-If we keep the tubes' origin static, prevent their deformation along the frame but simply change their orientation, we get an actual arrow representation of the vector field.
 
-To trace paths through the field, we integrate: starting from a sample point, we repeatedly query the field and step in that direction: `pos += field(pos) * stepSize`. At each step, we compute a local T/N/B (Tangent, Normal, Binormal) coordinate frame that follows the path curvature.
+With tube generation and deformation working, we can now trace paths through a vector field.
 
-The shader supports several field presets, each with distinct flow characteristics:
+Starting from sample points, we integrate by repeatedly querying the field at the current position and stepping in that direction. 
+
+Each step updates the tube's frame, bending it along the flow. 
+
+Different field patterns produce vastly different flow lines.
 
 <span id="contraction"></span>
 #### 3.1 Contraction
@@ -257,6 +331,7 @@ Vectors spiral inward toward a target point, creating sink-like behavior.
 	preload="metadata"
 	maxWidth="100%"
 	noBorder={true}
+	autoPlay={true}
 	caption="Field visualization showing contraction flow pattern"
 	figureId="Fig 3.1a"
 />
@@ -266,6 +341,9 @@ Vectors spiral inward toward a target point, creating sink-like behavior.
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/contraction-demo.mp4"
 	preload="metadata"
 	maxWidth="100%"
+	autoPlay={true}
+	loop={true}
+	muted={true}
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.1b: Demo on Spectacles</p>
 
@@ -280,6 +358,7 @@ Radial waves emanate outward from the target with 3D oscillation perpendicular t
 	preload="metadata"
 	maxWidth="100%"
 	noBorder={true}
+	autoPlay={true}
 	caption="Field visualization showing expansion flow pattern"
 	figureId="Fig 3.2a"
 />
@@ -289,6 +368,9 @@ Radial waves emanate outward from the target with 3D oscillation perpendicular t
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/expansion-demo.mp4"
 	preload="metadata"
 	maxWidth="100%"
+	autoPlay={true}
+	loop={true}
+	muted={true}
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.2b: Demo on Spectacles</p>
 
@@ -303,6 +385,7 @@ A 3D swirling vortex that mixes rotation in multiple planes around the target.
 	preload="metadata"
 	maxWidth="100%"
 	noBorder={true}
+	autoPlay={true}
 	caption="Field visualization showing circulation flow pattern"
 	figureId="Fig 3.3a"
 />
@@ -312,6 +395,9 @@ A 3D swirling vortex that mixes rotation in multiple planes around the target.
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/circulation-demo.mp4"
 	preload="metadata"
 	maxWidth="100%"
+	autoPlay={true}
+	loop={true}
+	muted={true}
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.3b: Demo on Spectacles</p>
 
@@ -326,6 +412,7 @@ Rotating cellular patterns with an added spin component based on angular positio
 	preload="metadata"
 	maxWidth="100%"
 	noBorder={true}
+	autoPlay={true}
 	caption="Field visualization showing vortex flow pattern"
 	figureId="Fig 3.4a"
 />
@@ -335,6 +422,9 @@ Rotating cellular patterns with an added spin component based on angular positio
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/vortex-demo.mp4"
 	preload="metadata"
 	maxWidth="100%"
+	autoPlay={true}
+	loop={true}
+	muted={true}
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.4b: Demo on Spectacles</p>
 
@@ -349,6 +439,7 @@ Sinusoidal interference patterns where each axis oscillates based on the other t
 	preload="metadata"
 	maxWidth="100%"
 	noBorder={true}
+	autoPlay={true}
 	caption="Field visualization showing wave interference pattern"
 	figureId="Fig 3.5a"
 />
@@ -358,6 +449,9 @@ Sinusoidal interference patterns where each axis oscillates based on the other t
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/waves-demo.mp4"
 	preload="metadata"
 	maxWidth="100%"
+	autoPlay={true}
+	loop={true}
+	muted={true}
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 3.5b: Demo on Spectacles</p>
 
@@ -377,8 +471,23 @@ The complete workflow connects a TypeScript component that generates procedural 
 />
 
 <Chapter client:load id="chapter-4" number={4} title="Magnetic Field Visualization" />
+ 
+The field patterns above are mathematical abstractions. For something more concrete, we can model a magnetic dipole field, the kind you've probably seen with iron filings around bar magnets.
 
-Magnetic fields from dipole magnets follow a specific physical formula. Each dipole creates a field that depends on the magnetic moment and distance: `B = (3(m·r̂)r̂ - m) / r³`. When combining two dipoles, the resulting field creates the characteristic field line patterns seen around bar magnets.
+<div style={{ display: "flex", justifyContent: "center", margin: "24px 0" }}>
+  <iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/j8XNHlV6Qxg"
+    title="Iron filings around bar magnets"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowFullScreen
+    style={{ borderRadius: "8px", maxWidth: "100%" }}
+  />
+</div>
+
+Each dipole creates a field based on its magnetic moment and distance: `B = (3(m·r̂)r̂ - m) / r³`. Combining two dipoles produces the characteristic looping field lines.
 
 <ManimVideo
 	client:load
@@ -387,6 +496,7 @@ Magnetic fields from dipole magnets follow a specific physical formula. Each dip
 	preload="metadata"
 	maxWidth="100%"
 	noBorder={true}
+	autoPlay={true}
 	caption="Magnetic field visualization showing dipole field computation and integration"
 	figureId="Fig 4.1"
 />
@@ -396,8 +506,37 @@ Magnetic fields from dipole magnets follow a specific physical formula. Each dip
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/magnetic-field-demo.mp4"
 	preload="metadata"
 	maxWidth="100%"
+	autoPlay={true}
+	loop={true}
+	muted={true}
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 4.2: Demo on Spectacles with interactive magnet positioning</p>
+
+<details style={{ margin: "16px auto", maxWidth: "800px" }}>
+<summary style={{ cursor: "pointer", color: "#888", fontStyle: "italic" }}>MagnetPhysics.ts: Opposite poles attract, like poles repel. Shake to separate when stuck.</summary>
+
+```typescript
+// Returns alignment: negative = attracting, positive = repelling
+private computeAlignment(): number {
+    const pos1 = this.getPosition(this.magnet1);
+    const pos2 = this.getPosition(this.magnet2);
+    const delta = pos2.sub(pos1);
+    const distance = delta.length;
+
+    if (distance < 0.001) return -1; // Very close = attracting
+
+    const direction = delta.normalize();
+    const m1 = this.getForwardVector(this.magnet1);
+    const m2 = this.getForwardVector(this.magnet2);
+
+    const m1FacingM2 = m1.dot(direction);
+    const m2FacingM1 = m2.dot(direction.uniformScale(-1));
+
+    return m1FacingM2 * m2FacingM1;
+}
+```
+
+</details>
 
 #### 4.1 Implementation Workflow
 
@@ -415,7 +554,7 @@ The magnetic field implementation uses the same tube mesh generation approach bu
 />
 
 
-### Visualization Modes
+#### 4.2 Visualization Modes
 
 This implementation supports three visualization modes that can be toggled at runtime:
 
@@ -428,10 +567,13 @@ This implementation supports three visualization modes that can be toggled at ru
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/vector-field2-tube-mode-demo.mp4"
 	preload="metadata"
 	maxWidth="50%"
+	autoPlay={true}
+	loop={true}
+	muted={true}
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Demo showing the three visualization modes: arrows, flow lines, and particles</p>
 
-## Performance Considerations
+<Chapter client:load id="chapter-5" number={5} title="Performance Considerations" />
 
 To ensure smooth performance on Spectacles and avoid freezes from unintentionally high geometry counts, I've defined a vertex budget (32K vertices per mesh). All procedural geometry settings automatically adapt to fit within this budget.
 
@@ -442,12 +584,9 @@ I've also defined Level of Detail (LOD) presets accessible via the settings pane
 
 Among the three visualization modes, **Trails** is the most expensive due to many length segments per tube, while **Particles** uses minimal geometry (just 2 rings + caps per tube). **Arrows** mode has no flow animation overhead since it's static.
 
-## UX
+<Chapter client:load id="chapter-6" number={6} title="UX" />
 
-I've been exploring ways to make the UX more cohesive by binding data across various scene elements, making UI feel like part of a single multi-modular entity.
-
-Next to the Lens title, I implemented a visual hint for the active vector field preset using a Python script that renders a 2D slice of each vector field. The direction and magnitude of each vector are mapped to color: hue encodes direction (angle), while saturation/brightness encode magnitude.
-The tricky parts were getting the vector field formulas to produce smooth color gradients in time and space. In space this meant no discontinuities in the functions used to generate the 2d vector fields.
+To give users a visual hint of the active preset, I rendered a 2D version of each vector field with color-mapped direction and magnitude: hue encodes angle, saturation/brightness encodes strength.
 
 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxWidth: "500px", margin: "16px auto" }}>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
@@ -465,7 +604,7 @@ The tricky parts were getting the vector field formulas to produce smooth color 
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Examples of fields with color discontinuities at singular points</p>
 
-In time, it translated in a perfect looping animation, which was achieved by composing the vector field function with periodic functions, whose period(looping number) was known in advance.
+Getting smooth gradients required careful attention to continuity in the field functions, both spatially (no jumps in color) and temporally (smooth animation).
 
 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxWidth: "600px", margin: "0 auto" }}>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
@@ -495,8 +634,7 @@ In time, it translated in a perfect looping animation, which was achieved by com
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "8px" }}>2D color-mapped visualizations of each vector field preset</p>
 
-We can't bring these videos into the scene in their raw state. We first need to add some kind of alpha falloff near the borders, and because transparency in videos is poorly supported, this is not particular to Lens Studio actually, as I spent over 2 hours figuring out encoding and video editing software presets to produce Webms that include a transparency channel.
-Now we could use GIFs too which do support transparency. But the most compact way of encoding such animations is sprite sheets: a Python script renders each frame with radial alpha falloff, then combines all frames into a single PNG that the shader samples based on time.
+We can then add an alpha falloff around the borders, and ensure we render in a format that supports transparency such as .png. 
 
 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxWidth: "600px", margin: "16px auto" }}>
 	<div style={{ textAlign: "center" }}>
@@ -528,22 +666,149 @@ Now we could use GIFs too which do support transparency. But the most compact wa
 
 The final sprite sheets pack all frames into a grid:
 
-<div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "12px", maxWidth: "800px", margin: "16px auto" }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", maxWidth: "900px", margin: "16px auto" }}>
 	<div style={{ textAlign: "center" }}>
-		<img src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/contraction_sprite.png" alt="Contraction sprite sheet" style={{ width: "100%", borderRadius: "8px" }} />
+		<ExpandableImage
+			client:load
+			src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/contraction_sprite.png"
+			alt="Contraction sprite sheet"
+			caption="Contraction sprite sheet"
+		/>
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Contraction</p>
 	</div>
 	<div style={{ textAlign: "center" }}>
-		<img src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/expansion_sprite.png" alt="Expansion sprite sheet" style={{ width: "100%", borderRadius: "8px" }} />
+		<ExpandableImage
+			client:load
+			src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/expansion_sprite.png"
+			alt="Expansion sprite sheet"
+			caption="Expansion sprite sheet"
+		/>
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Expansion</p>
 	</div>
 	<div style={{ textAlign: "center" }}>
-		<img src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/vortex_sprite.png" alt="Vortex sprite sheet" style={{ width: "100%", borderRadius: "8px" }} />
+		<ExpandableImage
+			client:load
+			src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/circulation_sprite.png"
+			alt="Circulation sprite sheet"
+			caption="Circulation sprite sheet"
+		/>
+		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Circulation</p>
+	</div>
+	<div style={{ textAlign: "center" }}>
+		<ExpandableImage
+			client:load
+			src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/vortex_sprite.png"
+			alt="Vortex sprite sheet"
+			caption="Vortex sprite sheet"
+		/>
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Vortex</p>
 	</div>
 	<div style={{ textAlign: "center" }}>
-		<img src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/waves_sprite.png" alt="Waves sprite sheet" style={{ width: "100%", borderRadius: "8px" }} />
+		<ExpandableImage
+			client:load
+			src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/waves_sprite.png"
+			alt="Waves sprite sheet"
+			caption="Waves sprite sheet"
+		/>
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Waves</p>
 	</div>
+	<div style={{ textAlign: "center" }}>
+		<ExpandableImage
+			client:load
+			src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/magnetic_sprite.png"
+			alt="Magnetic sprite sheet"
+			caption="Magnetic sprite sheet"
+		/>
+		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Magnetic</p>
+	</div>
 </div>
-<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Sprite sheets - each contains all animation frames in a grid</p>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Click any sprite sheet to expand</p>
+
+The shader samples the correct frame based on elapsed time, computing UV coordinates into the grid. It also supports smooth blending between presets.
+
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/settings-bg-demo-bg.mp4"
+	preload="metadata"
+	maxWidth="70%"
+/>
+
+<details style={{ margin: "24px auto", maxWidth: "800px" }}>
+<summary style={{ cursor: "pointer", color: "#888", fontStyle: "italic" }}>AnimatedSpriteSheet.js</summary>
+
+```glsl
+input_texture_2d expansionSheet;
+input_texture_2d contractionSheet;
+input_texture_2d circulationSheet;
+input_texture_2d wavesSheet;
+input_texture_2d vortexSheet;
+input_texture_2d magneticSheet;
+
+input_int preset;
+input_int prevPreset;
+input_float blendAmount;
+input_int columns;
+input_int rows;
+input_int totalFrames;
+input_float fps;
+
+output_vec4 fragColor;
+
+vec4 samplePreset(int p, vec2 frameUV) {
+    if (p == 0) return expansionSheet.sample(frameUV);
+    if (p == 1) return contractionSheet.sample(frameUV);
+    if (p == 2) return circulationSheet.sample(frameUV);
+    if (p == 3) return wavesSheet.sample(frameUV);
+    if (p == 4) return vortexSheet.sample(frameUV);
+    if (p == 5) return magneticSheet.sample(frameUV);
+    return vec4(0.0);
+}
+
+void main() {
+    vec2 uv = system.getSurfaceUVCoord0();
+    float time = system.getTimeElapsed();
+
+    float frameDuration = 1.0 / fps;
+    float totalDuration = float(totalFrames) * frameDuration;
+    float loopedTime = mod(time, totalDuration);
+    int frameIndex = int(floor(loopedTime / frameDuration));
+
+    int col = frameIndex - (frameIndex / columns) * columns;
+    int row = frameIndex / columns;
+
+    float cellWidth = 1.0 / float(columns);
+    float cellHeight = 1.0 / float(rows);
+
+    vec2 frameUV = vec2(
+        float(col) * cellWidth + uv.x * cellWidth,
+        mix(1.0 - float(row + 1) * cellHeight, 1.0 - float(row) * cellHeight, uv.y)
+    );
+
+    vec4 fromColor = samplePreset(prevPreset, frameUV);
+    vec4 toColor = samplePreset(preset, frameUV);
+    float t = clamp(blendAmount, 0.0, 1.0);
+    t = t * t * (3.0 - 2.0 * t);  // smoothstep
+    fragColor = mix(fromColor, toColor, t);
+}
+```
+
+</details>
+
+<div style={{ display: "flex", justifyContent: "center", margin: "16px 0" }}>
+	<img src="/assets/visualizing-vector-fields-on-ar-glasses/captures/animated-sprite-sheet.png" alt="Animated sprite sheet material graph" style={{ maxWidth: "600px", borderRadius: "8px" }} />
+</div>
+<p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic" }}>Material graph for the animated sprite sheet shader</p>
+
+---
+
+## Final Words
+
+I hope this exploration of vector fields in AR encourages you to leverage them in your projects, or just make something fun with procedural geometry.
+
+Motion is something I'm very passionate about. Having a framework to visualize it in real-time on AR glasses opens up possibilities I hadn't considered before.
+
+What I'm most excited about is using vector fields to manipulate data. Thanks to hand and body tracking input, I have a feeling that vector fields could become a full-fledged UI element category for XR applications.
+
+Before getting into these considerations though, I'll need to conclude my series on AR painting assistants, where I'll use what I've learned from this project to push my experimentation with more fluid and cohesive UI elements.
+
+If you want to try the project yourself, grab the [source code](https://github.com/a-sumo/specs-samples/) or scan the Snapcode at the top to experience it on Spectacles.
