@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 interface Section {
   id: string;
   label: string;
-  type: "chapter" | "subsection" | "challenge";
+  type: "chapter" | "subsection" | "sidequest";
   parent?: string;
 }
 
@@ -53,12 +53,18 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
     }
   };
 
-  // Separate main sections from challenge (branch)
-  const mainSections = sections.filter(s => s.type !== "challenge");
-  const challengeSection = sections.find(s => s.type === "challenge");
-  const challengeParentIndex = challengeSection
-    ? mainSections.findIndex(s => s.id === challengeSection.parent)
-    : -1;
+  // Separate main sections from sidequests (branches)
+  const mainSections = sections.filter(s => s.type !== "sidequest");
+  const sidequestSections = sections.filter(s => s.type === "sidequest");
+
+  // Map parent IDs to their sidequest sections
+  const sidequestsByParent = new Map<string, Section[]>();
+  sidequestSections.forEach(sidequest => {
+    if (sidequest.parent) {
+      const existing = sidequestsByParent.get(sidequest.parent) || [];
+      sidequestsByParent.set(sidequest.parent, [...existing, sidequest]);
+    }
+  });
 
   const getNodePosition = (index: number) => {
     const totalHeight = 200; // Total height of timeline in px
@@ -121,7 +127,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
           const isActive = activeSection === section.id;
           const isPast = sections.findIndex(s => s.id === activeSection) >= sections.findIndex(s => s.id === section.id);
           const isHovered = hoveredSection === section.id;
-          const showBranch = index === challengeParentIndex && challengeSection;
+          const sidequests = sidequestsByParent.get(section.id) || [];
           const nodeY = getNodePosition(index);
           const nodeSize = section.type === "chapter" ? 14 : 10;
 
@@ -180,8 +186,8 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                 </div>
               )}
 
-              {/* Challenge branch */}
-              {showBranch && challengeSection && (
+              {/* Sidequest branch - renders as a single connected branch with multiple nodes */}
+              {sidequests.length > 0 && (
                 <div
                   style={{
                     position: "absolute",
@@ -189,65 +195,78 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                     top: "-4px",
                   }}
                 >
-                  {/* Curved connector using SVG */}
+                  {/* Curved connector from main line to branch */}
                   <svg
                     width="30"
-                    height="36"
+                    height={20 + sidequests.length * 16}
                     style={{ position: "absolute", left: 0, top: 0 }}
                   >
+                    {/* Initial curve */}
                     <path
-                      d="M 0 4 Q 14 4, 14 18 L 14 30"
+                      d="M 0 4 Q 14 4, 14 18"
                       fill="none"
-                      stroke={activeSection === challengeSection.id ? "rgb(255, 180, 50)" : "rgba(140, 140, 140, 0.4)"}
+                      stroke="rgba(140, 140, 140, 0.4)"
                       strokeWidth="2"
-                      style={{ transition: "stroke 0.2s ease" }}
+                    />
+                    {/* Vertical line for branch */}
+                    <line
+                      x1="14"
+                      y1="18"
+                      x2="14"
+                      y2={18 + (sidequests.length - 1) * 16}
+                      stroke="rgba(140, 140, 140, 0.4)"
+                      strokeWidth="2"
                     />
                   </svg>
 
-                  {/* Challenge node */}
-                  <button
-                    onClick={() => scrollToSection(challengeSection.id)}
-                    onMouseEnter={() => setHoveredSection(challengeSection.id)}
-                    onMouseLeave={() => setHoveredSection(null)}
-                    style={{
-                      position: "absolute",
-                      left: "8px",
-                      top: "24px",
-                      width: "12px",
-                      height: "12px",
-                      borderRadius: "3px",
-                      background: activeSection === challengeSection.id ? "rgb(255, 180, 50)" : "rgb(180, 180, 180)",
-                      border: activeSection === challengeSection.id ? "2px solid rgb(255, 220, 100)" : "2px solid white",
-                      cursor: "pointer",
-                      transition: "all 0.2s ease",
-                      boxShadow: activeSection === challengeSection.id ? "0 0 0 3px rgba(255, 180, 50, 0.3)" : "none",
-                      transform: hoveredSection === challengeSection.id ? "scale(1.2)" : "scale(1)",
-                      padding: 0,
-                    }}
-                    title={challengeSection.label}
-                  />
+                  {/* Sidequest nodes along the branch */}
+                  {sidequests.map((sidequest, sidequestIndex) => (
+                    <div key={sidequest.id}>
+                      <button
+                        onClick={() => scrollToSection(sidequest.id)}
+                        onMouseEnter={() => setHoveredSection(sidequest.id)}
+                        onMouseLeave={() => setHoveredSection(null)}
+                        style={{
+                          position: "absolute",
+                          left: "8px",
+                          top: `${14 + sidequestIndex * 16}px`,
+                          width: "10px",
+                          height: "10px",
+                          borderRadius: "3px",
+                          background: activeSection === sidequest.id ? "rgb(255, 180, 50)" : "rgb(180, 180, 180)",
+                          border: activeSection === sidequest.id ? "2px solid rgb(255, 220, 100)" : "2px solid white",
+                          cursor: "pointer",
+                          transition: "all 0.2s ease",
+                          boxShadow: activeSection === sidequest.id ? "0 0 0 3px rgba(255, 180, 50, 0.3)" : "none",
+                          transform: hoveredSection === sidequest.id ? "scale(1.2)" : "scale(1)",
+                          padding: 0,
+                        }}
+                        title={sidequest.label}
+                      />
 
-                  {/* Challenge tooltip */}
-                  {hoveredSection === challengeSection.id && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        left: "28px",
-                        top: "24px",
-                        background: "rgb(40, 39, 40)",
-                        color: "rgb(255, 200, 100)",
-                        padding: "6px 10px",
-                        borderRadius: "4px",
-                        fontSize: "11px",
-                        fontWeight: 500,
-                        whiteSpace: "nowrap",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                        zIndex: 50,
-                      }}
-                    >
-                      {challengeSection.label}
+                      {/* Sidequest tooltip */}
+                      {hoveredSection === sidequest.id && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            left: "28px",
+                            top: `${14 + sidequestIndex * 16}px`,
+                            background: "rgb(40, 39, 40)",
+                            color: "rgb(255, 200, 100)",
+                            padding: "6px 10px",
+                            borderRadius: "4px",
+                            fontSize: "11px",
+                            fontWeight: 500,
+                            whiteSpace: "nowrap",
+                            boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                            zIndex: 50,
+                          }}
+                        >
+                          {sidequest.label}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  ))}
                 </div>
               )}
             </div>
