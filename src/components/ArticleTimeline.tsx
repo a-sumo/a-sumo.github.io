@@ -123,7 +123,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
             top: 0,
             width: "2px",
             height: "100%",
-            background: "rgba(140, 140, 140, 0.3)",
+            background: "rgba(180, 160, 140, 0.4)",
             borderRadius: "1px",
           }}
         />
@@ -172,8 +172,8 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                   width: `${nodeSize}px`,
                   height: `${nodeSize}px`,
                   borderRadius: "50%",
-                  background: isActive ? "rgb(140, 169, 255)" : isPast ? "rgb(140, 169, 255)" : "rgb(180, 180, 180)",
-                  border: isActive ? "3px solid rgb(24, 24, 24)" : "3px solid rgb(24, 24, 24)",
+                  background: isActive ? "rgb(140, 169, 255)" : isPast ? "rgb(140, 169, 255)" : "rgb(200, 180, 160)",
+                  border: "3px solid rgb(255, 250, 240)",
                   cursor: "pointer",
                   transition: "all 0.2s ease",
                   boxShadow: isActive ? "0 0 0 3px rgba(140, 169, 255, 0.3)" : "none",
@@ -232,7 +232,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                       <path
                         d={`M 0 0 Q ${branchX} 0, ${branchX} ${firstNodeY}`}
                         fill="none"
-                        stroke="rgba(140, 140, 140, 0.4)"
+                        stroke="rgba(180, 160, 140, 0.5)"
                         strokeWidth="2"
                       />
                       {/* Vertical line between nodes */}
@@ -242,7 +242,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                           y1={firstNodeY}
                           x2={branchX}
                           y2={lastNodeY}
-                          stroke="rgba(140, 140, 140, 0.4)"
+                          stroke="rgba(180, 160, 140, 0.5)"
                           strokeWidth="2"
                         />
                       )}
@@ -266,8 +266,8 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                               width: `${sqNodeSize}px`,
                               height: `${sqNodeSize}px`,
                               borderRadius: "2px",
-                              background: isSidequestActive ? "rgb(140, 169, 255)" : "rgb(160, 160, 160)",
-                              border: "2px solid rgb(24, 24, 24)",
+                              background: isSidequestActive ? "rgb(140, 169, 255)" : "rgb(190, 170, 150)",
+                              border: "2px solid rgb(255, 250, 240)",
                               cursor: "pointer",
                               transition: "all 0.2s ease",
                               boxShadow: isSidequestActive ? "0 0 0 2px rgba(140, 169, 255, 0.4)" : "none",

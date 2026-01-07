@@ -627,7 +627,7 @@ Getting smooth gradients required careful attention to continuity in the field f
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "8px" }}>2D color-mapped visualizations of each vector field preset</p>
 
-We can then add an alpha falloff around the borders, and ensure we render in a format that supports transparency such as .png. 
+Adding an alpha falloff and exporting as .png:
 
 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxWidth: "600px", margin: "16px auto" }}>
 	<div style={{ textAlign: "center" }}>
@@ -657,7 +657,7 @@ We can then add an alpha falloff around the borders, and ensure we render in a f
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Frame previews with radial alpha falloff applied</p>
 
-The final sprite sheets pack all frames into a grid:
+Finally, I packed all frames into a sprite sheet:
 
 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", maxWidth: "900px", margin: "16px auto" }}>
 	<div style={{ textAlign: "center" }}>
@@ -717,7 +717,7 @@ The final sprite sheets pack all frames into a grid:
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Click any sprite sheet to expand</p>
 
-The shader samples the correct frame based on elapsed time, computing UV coordinates into the grid. It also supports smooth blending between presets.
+The final shader samples the correct frame based on elapsed time, computing UV coordinates into the grid. It also supports smooth blending between presets.
 
 <VideoPlayer
 	client:load
