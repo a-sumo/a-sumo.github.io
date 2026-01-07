@@ -1,7 +1,7 @@
 ---
 title: "Vector Fields in Augmented Reality"
 description: "Visualizing vector fields on Snap Spectacles using procedural tube meshes, GPU deformation with TNB frames, and real-time field integration."
-pubDatetime: 2026-01-05T21:00:00Z
+pubDatetime: 2026-01-07T16:00:00Z
 tags:
   [
     "augmented reality",
@@ -12,7 +12,7 @@ tags:
     "vector fields",
     "procedural geometry",
   ]
-ogImage: /assets/MagneticFieldDemo.gif
+ogImage: /assets/vector-fields-og.gif
 draft: false
 ---
 import WorkflowDiagramSimple from "@components/WorkflowDiagramSimple";
@@ -65,22 +65,15 @@ import ExpandableImage from "@components/ExpandableImage";
 	</a>
 </div>
 
-<div style={{ display: "flex", gap: "8px", justifyContent: "center", alignItems: "center" }}>
-	<VideoPlayer
-		client:load
-		src="/assets/visualizing-vector-fields-on-ar-glasses/videos/Vector-Field-demo.mp4"
-		autoPlay={true}
-		preload="auto"
-		maxWidth="100%"
-	/>
-	<VideoPlayer
-		client:load
-		src="/assets/visualizing-vector-fields-on-ar-glasses/videos/MagneticFieldDemo.mp4"
-		autoPlay={true}
-		preload="auto"
-		maxWidth="100%"
-	/>
-</div>
+<VideoPlayer
+	client:load
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/VectorFieldPreview.mp4"
+	autoPlay={true}
+	loop={true}
+	muted={true}
+	preload="auto"
+	maxWidth="100%"
+/>
 
 To model wind around an aircraft wing, gravitational pull on satellites, or magnetic forces between poles, we use vector fields.
 
