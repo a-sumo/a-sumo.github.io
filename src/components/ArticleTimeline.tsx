@@ -173,12 +173,13 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                   height: `${nodeSize}px`,
                   borderRadius: "50%",
                   background: isActive ? "rgb(140, 169, 255)" : isPast ? "rgb(140, 169, 255)" : "rgb(180, 180, 180)",
-                  border: isActive ? "2px solid rgb(255, 248, 222)" : "2px solid white",
+                  border: isActive ? "3px solid rgb(24, 24, 24)" : "3px solid rgb(24, 24, 24)",
                   cursor: "pointer",
                   transition: "all 0.2s ease",
                   boxShadow: isActive ? "0 0 0 3px rgba(140, 169, 255, 0.3)" : "none",
                   transform: isHovered && !isActive ? "scale(1.2)" : "scale(1)",
                   padding: 0,
+                  zIndex: 2,
                 }}
                 title={section.label}
               />
@@ -266,12 +267,13 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                               height: `${sqNodeSize}px`,
                               borderRadius: "2px",
                               background: isSidequestActive ? "rgb(140, 169, 255)" : "rgb(160, 160, 160)",
-                              border: "none",
+                              border: "2px solid rgb(24, 24, 24)",
                               cursor: "pointer",
                               transition: "all 0.2s ease",
                               boxShadow: isSidequestActive ? "0 0 0 2px rgba(140, 169, 255, 0.4)" : "none",
                               transform: isSidequestHovered ? "scale(1.3)" : "scale(1)",
                               padding: 0,
+                              zIndex: 2,
                             }}
                             title={sidequest.label}
                           />
