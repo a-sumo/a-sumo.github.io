@@ -1,6 +1,6 @@
 ---
 title: "Vector Fields in Augmented Reality"
-description: "Visualizing vector fields on Snap Spectacles using procedural tube meshes, GPU deformation with TNB frames, and real-time field integration."
+description: "Visualizing vector fields on Snap Spectacles as arrows, particles, and trails using procedural tube meshes and real-time field integration."
 pubDatetime: 2026-01-07T16:00:00Z
 tags:
   [
@@ -72,7 +72,7 @@ import ExpandableImage from "@components/ExpandableImage";
 	loop={true}
 	muted={true}
 	preload="auto"
-	maxWidth="100%"
+	maxWidth="50%"
 />
 
 To model wind around an aircraft wing, gravitational pull on satellites, or magnetic forces between poles, we use vector fields.
@@ -82,7 +82,7 @@ In essence, a vector field is a direction and magnitude assigned to every point 
 More practically though, vector fields represent either *motion* itself, or what drives it such as a *force*.
 
 There are three main approaches to visualize motion: 
-1. We can grid space with sample points and show where each point is being pulled and how strongly. This is done with *arrows*. 
+1. We can divide space with sample points and show where each point is being pulled and how strongly. This is done with *arrows*. 
 2. We can also show how an element with a mass moves when carried by the flow, which is done via *particles*. 
 3. Or we can trace the paths a massless particle would follow through the field, with *flow lines*.
 
