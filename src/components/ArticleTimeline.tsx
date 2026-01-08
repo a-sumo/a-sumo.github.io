@@ -509,10 +509,20 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
 
                 // Calculate branch progress based on active sidequest
                 const activeSidequestIndex = sidequests.findIndex(s => s.id === activeSection);
-                const branchProgress = activeSidequestIndex >= 0
-                  ? (activeSidequestIndex + 1) / sidequests.length
-                  : 0;
-                const progressY = firstNodeY + (activeSidequestIndex >= 0 ? activeSidequestIndex * sidequestSpacing : -firstNodeY);
+
+                // Check if we've scrolled past this branch using Y position comparison
+                // The branch ends at nodeY + lastNodeY (parent position + branch length)
+                const branchEndY = nodeY + lastNodeY;
+                const currentScrollY = scrollProgress * totalHeight;
+
+                // Branch is fully past if scroll position is beyond the branch end
+                const isBranchFullyPast = currentScrollY > branchEndY + 10; // Small buffer
+
+                const progressY = activeSidequestIndex >= 0
+                  ? firstNodeY + activeSidequestIndex * sidequestSpacing
+                  : (isBranchFullyPast ? lastNodeY : -firstNodeY);
+
+                const shouldShowBranchProgress = activeSidequestIndex >= 0 || isBranchFullyPast;
 
                 return (
                   <div
@@ -536,7 +546,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                         strokeWidth="2"
                       />
                       {/* Progress curved arch */}
-                      {activeSidequestIndex >= 0 && (
+                      {shouldShowBranchProgress && (
                         <path
                           d={`M 0 0 Q ${branchX} 0, ${branchX} ${firstNodeY}`}
                           fill="none"
@@ -556,7 +566,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                         />
                       )}
                       {/* Progress vertical line */}
-                      {activeSidequestIndex >= 0 && sidequests.length > 1 && (
+                      {shouldShowBranchProgress && sidequests.length > 1 && (
                         <line
                           x1={branchX}
                           y1={firstNodeY}
@@ -573,7 +583,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                     {sidequests.map((sidequest, sidequestIndex) => {
                       const nodeTop = firstNodeY + sidequestIndex * sidequestSpacing;
                       const isSidequestActive = activeSection === sidequest.id;
-                      const isSidequestPast = activeSidequestIndex >= 0 && sidequestIndex <= activeSidequestIndex;
+                      const isSidequestPast = isBranchFullyPast || (activeSidequestIndex >= 0 && sidequestIndex <= activeSidequestIndex);
                       const isSidequestHovered = hoveredSection === sidequest.id;
                       return (
                         <div key={sidequest.id}>
