@@ -241,13 +241,13 @@ private generateSingleTubeCaps(gridX: number, gridY: number, startVertexIndex: n
 Deforming 3D lines has an added difficulty of preserving the volume of the tube.
 If we just offset point positions by the same vector, we end up with wrong endcaps.
 
-<div style={{ display: "flex", gap: "24px", justifyContent: "center", flexWrap: "wrap" }}>
-	<figure style={{ margin: 0, textAlign: "center" }}>
-		<img src="/assets/visualizing-vector-fields-on-ar-glasses/videos/NaiveOffset.gif" alt="Naive offset - rings stay horizontal" loading="lazy" decoding="async" style={{ maxWidth: "280px", borderRadius: "8px" }} />
+<div style={{ display: "flex", gap: "24px", justifyContent: "center", flexWrap: "wrap", padding: "0 16px" }}>
+	<figure style={{ margin: 0, textAlign: "center", flex: "1 1 200px", maxWidth: "280px" }}>
+		<img src="/assets/visualizing-vector-fields-on-ar-glasses/videos/NaiveOffset.gif" alt="Naive offset - rings stay horizontal" loading="lazy" decoding="async" style={{ width: "100%", borderRadius: "8px" }} />
 		<figcaption style={{ color: "#E63946", fontSize: "14px", marginTop: "8px" }}>Naive offset ✗</figcaption>
 	</figure>
-	<figure style={{ margin: 0, textAlign: "center" }}>
-		<img src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TNBFrame.gif" alt="TNB frame - rings perpendicular to tangent" loading="lazy" decoding="async" style={{ maxWidth: "280px", borderRadius: "8px" }} />
+	<figure style={{ margin: 0, textAlign: "center", flex: "1 1 200px", maxWidth: "280px" }}>
+		<img src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TNBFrame.gif" alt="TNB frame - rings perpendicular to tangent" loading="lazy" decoding="async" style={{ width: "100%", borderRadius: "8px" }} />
 		<figcaption style={{ color: "#2A9D8F", fontSize: "14px", marginTop: "8px" }}>TNB frame ✓</figcaption>
 	</figure>
 </div>
@@ -684,7 +684,7 @@ Among the three visualization modes, **Trails** is the most expensive due to man
 
 To give users a visual hint of the active preset, I rendered a 2D version of each vector field with color-mapped direction and magnitude: hue encodes angle, saturation/brightness encodes strength.
 
-<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxWidth: "500px", margin: "16px auto" }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "8px", maxWidth: "500px", margin: "16px auto", padding: "0 16px" }}>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
 		<VideoPlayer client:load src="/assets/visualizing-vector-fields-on-ar-glasses/videos/field_source.mp4" autoPlay={true} loop={true} muted={true} preload="auto" maxWidth="100%" noBorder={true} />
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Source</p>
@@ -702,7 +702,7 @@ To give users a visual hint of the active preset, I rendered a 2D version of eac
 
 Getting smooth gradients required careful attention to continuity in the field functions, both spatially (no jumps in color) and temporally (smooth animation).
 
-<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxWidth: "600px", margin: "0 auto" }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "8px", maxWidth: "600px", margin: "0 auto", padding: "0 16px" }}>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
 		<VideoPlayer client:load src="/assets/visualizing-vector-fields-on-ar-glasses/videos/contraction.mp4" autoPlay={true} loop={true} muted={true} preload="auto" maxWidth="100%" noBorder={true} />
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Contraction</p>
@@ -732,7 +732,7 @@ Getting smooth gradients required careful attention to continuity in the field f
 
 Adding an alpha falloff:
 
-<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxWidth: "600px", margin: "16px auto" }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "8px", maxWidth: "600px", margin: "16px auto", padding: "0 16px" }}>
 	<div style={{ textAlign: "center" }}>
 		<video src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/contraction_animated.webm" poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/contraction_preview.png" autoPlay loop muted playsInline style={{ width: "100%", borderRadius: "8px" }} />
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Contraction</p>
@@ -762,7 +762,7 @@ Adding an alpha falloff:
 
 Finally, I packed all frames into a sprite sheet:
 
-<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", maxWidth: "900px", margin: "16px auto" }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", maxWidth: "900px", margin: "16px auto", padding: "0 16px" }}>
 	<div style={{ textAlign: "center" }}>
 		<ExpandableImage
 			client:load
@@ -845,8 +845,8 @@ The final shader samples the correct frame based on elapsed time, computing UV c
 	maxWidth="800px"
 />
 
-<div style={{ display: "flex", justifyContent: "center", margin: "16px 0" }}>
-	<img src="/assets/visualizing-vector-fields-on-ar-glasses/captures/animated-sprite-sheet.png" alt="Animated sprite sheet material graph" loading="lazy" decoding="async" style={{ maxWidth: "600px", borderRadius: "8px" }} />
+<div style={{ display: "flex", justifyContent: "center", margin: "16px 0", padding: "0 16px" }}>
+	<img src="/assets/visualizing-vector-fields-on-ar-glasses/captures/animated-sprite-sheet.png" alt="Animated sprite sheet material graph" loading="lazy" decoding="async" style={{ maxWidth: "600px", width: "100%", borderRadius: "8px" }} />
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic" }}>Material graph for the animated sprite sheet shader</p>
 

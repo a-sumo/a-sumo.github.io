@@ -151,9 +151,15 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
       className="article-timeline"
     >
       <style>{`
-        @media (min-width: 1200px) {
+        @media (min-width: 900px) {
           .article-timeline {
             display: block !important;
+          }
+        }
+        @media (min-width: 900px) and (max-width: 1199px) {
+          .article-timeline {
+            transform: translateY(-50%) scale(0.8);
+            left: 10px !important;
           }
         }
       `}</style>

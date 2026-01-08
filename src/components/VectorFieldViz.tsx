@@ -683,6 +683,8 @@ export default function VectorFieldViz({
           align-items: center;
           justify-content: center;
           font-family: "SF Mono", "Monaco", "Inconsolata", "Fira Code", monospace;
+          flex-wrap: wrap;
+          padding: 0 8px;
         }
         .vfv-mode-buttons {
           display: flex;
@@ -705,6 +707,29 @@ export default function VectorFieldViz({
           font-family: inherit;
           font-weight: 500;
           letter-spacing: 0.02em;
+        }
+        @media (max-width: 480px) {
+          .vfv-controls {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .vfv-mode-buttons button {
+            padding: 8px 12px;
+            font-size: 11px;
+          }
+          .vfv-carousel-track {
+            width: 130px;
+            height: 80px;
+          }
+          .vfv-carousel-item {
+            font-size: 11px;
+            padding: 2px 10px;
+          }
+          .vfv-carousel-arrow {
+            width: 28px;
+            height: 28px;
+            font-size: 10px;
+          }
         }
         .vfv-mode-buttons button:hover {
           background: rgba(140, 169, 255, 0.15);
