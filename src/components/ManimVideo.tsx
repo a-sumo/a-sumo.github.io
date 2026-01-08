@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useMediaQuality, getMediaPath } from "./MediaQualityToggle";
 
 interface ManimVideoProps {
   src: string;
@@ -37,6 +38,8 @@ export default function ManimVideo({
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const quality = useMediaQuality();
+  const actualSrc = getMediaPath(src, quality);
 
   const copyToClipboard = async () => {
     if (code) {
@@ -109,7 +112,7 @@ export default function ManimVideo({
         {/* Video or GIF */}
         {gif ? (
           <img
-            src={src}
+            src={actualSrc}
             alt={caption || "Animation"}
             loading="lazy"
             decoding="async"
@@ -132,7 +135,7 @@ export default function ManimVideo({
               display: "block",
             }}
           >
-            <source src={src} type="video/mp4" />
+            <source src={actualSrc} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         )}

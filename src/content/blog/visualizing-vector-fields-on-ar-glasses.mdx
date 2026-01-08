@@ -25,6 +25,7 @@ import Note from "@components/Note";
 import VectorFieldViz from "@components/VectorFieldViz";
 import ExpandableImage from "@components/ExpandableImage";
 import CodeSource from "@components/CodeSource";
+import MediaQualityToggle from "@components/MediaQualityToggle";
 
 {/* Hidden image for social media scrapers - must be first img tag */}
 <img
@@ -74,6 +75,8 @@ import CodeSource from "@components/CodeSource";
 	</a>
 </div>
 
+<MediaQualityToggle client:load />
+
 <VideoPlayer
 	client:load
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/VectorFieldPreview.mp4"
@@ -106,6 +109,7 @@ There are three main approaches to visualize motion:
 		{ id: "chapter-1", label: "Rendering 3D Lines", type: "chapter" },
 		{ id: "proc-gen-code", label: "Procedural Code", type: "sidequest", parent: "chapter-1" },
 		{ id: "chapter-2", label: "GPU Deformation", type: "chapter" },
+		{ id: "object-to-world", label: "Object to World", type: "sidequest", parent: "chapter-2" },
 		{ id: "chapter-3", label: "Field Integration", type: "chapter" },
 		{ id: "contraction", label: "Contraction", type: "sidequest", parent: "chapter-3" },
 		{ id: "expansion", label: "Expansion", type: "sidequest", parent: "chapter-3" },
@@ -147,6 +151,8 @@ The animation below illustrates the construction process:
 	maxWidth="100%"
 	noBorder={true}
 	gif={true}
+	caption="Procedural tube mesh construction: vertices, triangles, and end caps"
+	figureId="Fig 1.1"
 />
 
 <span id="proc-gen-code"></span>
@@ -260,13 +266,20 @@ The solution is to compute a moving coordinate frame along the path. At each poi
 
 Each vertex is then positioned using: `p = center + (cos θ · N + sin θ · B) · radius`
 
-<Note client:load type="important" title="Object to World Transform">
+<span id="object-to-world"></span>
+<Note client:load type="important" title="Object to World Transform" collapsible={true} id="object-to-world">
+
 A key node from the material editor to make everything work is the **Object to World** converter. This transforms our computed vertex positions from object space into world space, ensuring the deformed tubes render correctly regardless of the object's transform.
-Since you're here, I might as well recommend you another node: Hue/Saturation. 
-Lens Studio renders low value colors as transparent, so by using this node you can adjust the value color channel independently. 
+
+Since you're here, I might as well recommend you another node: Hue/Saturation.
+Lens Studio renders low value colors as transparent, so by using this node you can adjust the value color channel independently.
 It's also useful for making colors pop by raising saturation.
 
-<img src="/assets/visualizing-vector-fields-on-ar-glasses/captures/transform-vector-hue-saturation.png" alt="Material editor showing Transform Vector Object to World node" loading="lazy" decoding="async" style={{ width: "60%", borderRadius: "8px", marginTop: "12px" }} />
+<figure style={{ margin: "12px 0 0 0", textAlign: "center" }}>
+<img src="/assets/visualizing-vector-fields-on-ar-glasses/captures/transform-vector-hue-saturation.png" alt="Material editor showing Transform Vector Object to World node" loading="lazy" decoding="async" style={{ width: "60%", borderRadius: "8px" }} />
+<figcaption style={{ fontSize: "0.85em", color: "#888", fontStyle: "italic", marginTop: "8px" }}>Transform Vector and Hue/Saturation nodes in the material editor</figcaption>
+</figure>
+
 </Note>
 
 <ManimVideo
@@ -276,6 +289,8 @@ It's also useful for making colors pop by raising saturation.
 	maxWidth="100%"
 	noBorder={true}
 	gif={true}
+	caption="TNB frame deformation preserves tube volume during bending"
+	figureId="Fig 2.1"
 />
 
 I implemented a test example in Lens Studio and deployed it on Spectacles. Performance was satisfactory, so I continued with this approach.

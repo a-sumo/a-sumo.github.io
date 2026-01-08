@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useMediaQuality, getMediaPath } from "./MediaQualityToggle";
 
 interface VideoPlayerProps {
   src: string;
@@ -29,6 +30,8 @@ export default function VideoPlayer({
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
+  const quality = useMediaQuality();
+  const actualSrc = getMediaPath(src, quality);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -84,7 +87,7 @@ export default function VideoPlayer({
           boxShadow: noBorder ? "none" : "0 4px 20px rgba(0,0,0,0.15)",
         }}
       >
-        <source src={src} type="video/mp4" />
+        <source src={actualSrc} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </div>
