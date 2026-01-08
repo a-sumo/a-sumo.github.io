@@ -18,13 +18,31 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [scrollVelocity, setScrollVelocity] = useState(0);
+  const lastScrollY = useState({ current: 0 })[0];
 
   useEffect(() => {
+    let scrollTimeout: ReturnType<typeof setTimeout>;
+
     const handleScroll = () => {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       const progress = docHeight > 0 ? scrollTop / docHeight : 0;
       setScrollProgress(progress);
+
+      // Track scroll velocity
+      const velocity = Math.abs(scrollTop - lastScrollY.current);
+      lastScrollY.current = scrollTop;
+      setScrollVelocity(Math.min(velocity / 10, 1)); // Normalize to 0-1
+      setIsScrolling(true);
+
+      // Reset scrolling state after scroll stops
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        setIsScrolling(false);
+        setScrollVelocity(0);
+      }, 150);
 
       // Show timeline after scrolling past 150px
       setIsVisible(scrollTop > 150);
@@ -45,7 +63,10 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
 
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      clearTimeout(scrollTimeout);
+    };
   }, [sections]);
 
   const scrollToSection = (id: string) => {
@@ -118,24 +139,93 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
         }
       `}</style>
 
-      {/* Toggle button */}
+      {/* Blob toggle button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         style={{
           position: "absolute",
-          top: "-24px",
-          left: "2px",
-          width: "12px",
-          height: "12px",
-          borderRadius: "50%",
-          background: isCollapsed ? "transparent" : "rgb(140, 169, 255)",
-          border: "2px solid rgb(140, 169, 255)",
+          top: "-28px",
+          left: "-2px",
+          width: "20px",
+          height: "20px",
+          background: "transparent",
+          border: "none",
           cursor: "pointer",
-          transition: "all 0.2s ease",
           padding: 0,
         }}
         title={isCollapsed ? "Show timeline" : "Hide timeline"}
-      />
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 20 20"
+          style={{
+            overflow: "visible",
+            filter: isCollapsed ? "none" : "url(#goo)",
+          }}
+        >
+          <defs>
+            <linearGradient id="blobGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgb(140, 169, 255)" />
+              <stop offset="50%" stopColor="rgb(180, 140, 255)" />
+              <stop offset="100%" stopColor="rgb(255, 140, 200)" />
+            </linearGradient>
+            <filter id="goo">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
+              <feColorMatrix
+                in="blur"
+                mode="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
+                result="goo"
+              />
+            </filter>
+          </defs>
+          {isCollapsed ? (
+            <circle
+              cx="10"
+              cy="10"
+              r="6"
+              fill="none"
+              stroke="url(#blobGradient)"
+              strokeWidth="1.5"
+              style={{ transition: "all 0.3s ease" }}
+            />
+          ) : (
+            <>
+              <ellipse
+                cx="10"
+                cy="10"
+                rx={6 + scrollVelocity * 2}
+                ry={6 - scrollVelocity * 1.5}
+                fill="url(#blobGradient)"
+                style={{
+                  transition: isScrolling ? "none" : "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+                  transformOrigin: "center",
+                  transform: `rotate(${scrollVelocity * 15}deg)`,
+                }}
+              />
+              {isScrolling && (
+                <>
+                  <circle
+                    cx={10 + scrollVelocity * 4}
+                    cy={10 - scrollVelocity * 3}
+                    r={2 + scrollVelocity}
+                    fill="url(#blobGradient)"
+                    style={{ opacity: scrollVelocity }}
+                  />
+                  <circle
+                    cx={10 - scrollVelocity * 3}
+                    cy={10 + scrollVelocity * 4}
+                    r={1.5 + scrollVelocity * 0.5}
+                    fill="url(#blobGradient)"
+                    style={{ opacity: scrollVelocity * 0.7 }}
+                  />
+                </>
+              )}
+            </>
+          )}
+        </svg>
+      </button>
 
       <div
         style={{
