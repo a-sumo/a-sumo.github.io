@@ -16,6 +16,10 @@ const experiments = [
   { title: "Flume - Chalk", video: "/assets/artwork/Flume-Chalk-test.mp4", thumbnail: "/assets/artwork/thumbnails/Flume-Chalk-test.jpg" },
   { title: "Flume - I Can't Tell", video: "/assets/artwork/Flume-I-Cant-Tell.mp4", thumbnail: "/assets/artwork/thumbnails/Flume-I-Cant-Tell.jpg" },
 ];
+
+const instagrams = [
+  { postId: "DCSeS6FPHAO" },
+];
 ---
 
 <Layout title="Artwork - Resources">
@@ -90,10 +94,33 @@ const experiments = [
             ))}
           </div>
         </details>
+
+        {instagrams.length > 0 && (
+          <div class="mt-12">
+            <div class="flex flex-wrap justify-center gap-8">
+              {instagrams.map((post) => (
+                <div class="instagram-embed-container">
+                  <blockquote
+                    class="instagram-media"
+                    data-instgrm-captioned
+                    data-instgrm-permalink={`https://www.instagram.com/p/${post.postId}/`}
+                    data-instgrm-version="14"
+                    style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"
+                  >
+                    <a href={`https://www.instagram.com/p/${post.postId}/`} target="_blank" rel="noopener noreferrer">View on Instagram</a>
+                  </blockquote>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   </main>
   <Footer />
+  {instagrams.length > 0 && (
+    <script async src="https://www.instagram.com/embed.js"></script>
+  )}
 </Layout>
 
 <style>
@@ -177,4 +204,13 @@ const experiments = [
 
   // Handle both initial page load and Astro View Transitions
   document.addEventListener('astro:page-load', initVideoThumbnails);
+
+  // Handle Instagram embeds
+  function loadInstagramEmbeds() {
+    if (window.instgrm) {
+      window.instgrm.Embeds.process();
+    }
+  }
+
+  document.addEventListener('astro:after-swap', loadInstagramEmbeds);
 </script>
