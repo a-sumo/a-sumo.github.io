@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface VideoPlayerProps {
   src: string;
+  poster?: string;
   autoPlay?: boolean;
   loop?: boolean;
   muted?: boolean;
@@ -15,6 +16,7 @@ interface VideoPlayerProps {
 
 export default function VideoPlayer({
   src,
+  poster,
   autoPlay = false,
   loop = true,
   muted = true,
@@ -22,23 +24,26 @@ export default function VideoPlayer({
   maxWidth = "300px",
   borderRadius = "12px",
   noBorder = false,
-  preload = "metadata",
+  preload = "none",
   className = "",
 }: VideoPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
-    // Force load the video source (helps with View Transitions)
-    video.load();
 
     // IntersectionObserver for lazy loading and auto-play/pause
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            // Only load video when it comes into view
+            if (!hasLoaded) {
+              video.load();
+              setHasLoaded(true);
+            }
             if (autoPlay) {
               video.play().catch(() => {});
             }
@@ -48,7 +53,7 @@ export default function VideoPlayer({
         });
       },
       {
-        rootMargin: "50px",
+        rootMargin: "100px", // Start loading slightly before visible
         threshold: 0.1,
       }
     );
@@ -58,7 +63,7 @@ export default function VideoPlayer({
     return () => {
       observer.disconnect();
     };
-  }, [autoPlay]);
+  }, [autoPlay, hasLoaded]);
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -70,6 +75,7 @@ export default function VideoPlayer({
         muted={muted}
         playsInline
         preload={preload}
+        poster={poster}
         className={className}
         style={{
           maxWidth,

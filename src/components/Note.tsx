@@ -86,12 +86,11 @@ export default function Note({ type = "note", title, collapsible = false, defaul
           <span
             style={{
               display: "inline-block",
-              transition: "transform 0.2s ease",
-              transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
-              fontSize: "10px",
+              fontSize: "12px",
+              fontWeight: 600,
             }}
           >
-            ▶
+            {isOpen ? "−" : "+"}
           </span>
         )}
         {displayTitle}

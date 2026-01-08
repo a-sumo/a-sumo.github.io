@@ -26,7 +26,7 @@ export default function ManimVideo({
   maxWidth = "100%",
   borderRadius = "12px",
   noBorder = false,
-  preload = "metadata",
+  preload = "none",
   caption,
   figureId,
   gif = false,
@@ -36,6 +36,7 @@ export default function ManimVideo({
   const [code, setCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   const copyToClipboard = async () => {
     if (code) {
@@ -51,12 +52,15 @@ export default function ManimVideo({
     const video = videoRef.current;
     if (!video) return;
 
-    video.load();
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
+            // Only load video when it comes into view
+            if (!hasLoaded) {
+              video.load();
+              setHasLoaded(true);
+            }
             if (autoPlay) {
               video.play().catch(() => {});
             }
@@ -66,7 +70,7 @@ export default function ManimVideo({
         });
       },
       {
-        rootMargin: "50px",
+        rootMargin: "100px", // Start loading slightly before visible
         threshold: 0.1,
       }
     );
@@ -76,7 +80,7 @@ export default function ManimVideo({
     return () => {
       observer.disconnect();
     };
-  }, [autoPlay, gif]);
+  }, [autoPlay, gif, hasLoaded]);
 
   useEffect(() => {
     if (isCodeOpen && !code) {
