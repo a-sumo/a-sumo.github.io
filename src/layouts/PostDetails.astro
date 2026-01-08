@@ -249,7 +249,8 @@ const nextPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null;
     // Create the main container div
     const progressContainer = document.createElement("div");
     progressContainer.className =
-      "progress-container fixed top-0 z-10 w-full bg-skin-fill";
+      "progress-container fixed top-0 w-full bg-skin-fill";
+    progressContainer.style.zIndex = "1001";
     progressContainer.id = "progressContainer";
 
     // Create the progress bar div
