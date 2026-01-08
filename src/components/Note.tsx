@@ -83,13 +83,7 @@ export default function Note({ type = "note", title, collapsible = false, defaul
         }}
       >
         {collapsible && (
-          <span
-            style={{
-              display: "inline-block",
-              fontSize: "12px",
-              fontWeight: 600,
-            }}
-          >
+          <span style={{ fontSize: "12px", fontWeight: 600 }}>
             {isOpen ? "−" : "+"}
           </span>
         )}

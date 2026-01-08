@@ -70,7 +70,7 @@ const articles = [
                       class="pdf-toggle inline-flex items-center gap-2 text-skin-accent hover:text-skin-accent-dark font-medium transition-colors duration-200"
                       data-index={index}
                     >
-                      <span class="toggle-icon">▶</span>
+                      <span class="toggle-icon">+</span>
                       <span class="toggle-text">Show Preview</span>
                     </button>
                     <div class="pdf-embed hidden mt-4" data-index={index} data-pdf-url={article.url}>
@@ -144,12 +144,8 @@ const articles = [
 
   .pdf-toggle .toggle-icon {
     display: inline-block;
-    transition: transform 0.2s ease;
-    font-size: 10px;
-  }
-
-  .pdf-toggle.open .toggle-icon {
-    transform: rotate(90deg);
+    font-size: 12px;
+    font-weight: 600;
   }
 
   .pdf-embed.hidden {
@@ -184,8 +180,12 @@ const articles = [
 
         embed.classList.toggle('hidden');
         toggleBtn?.classList.toggle('open');
+        const toggleIcon = toggleBtn?.querySelector('.toggle-icon');
         if (toggleText) {
           toggleText.textContent = embed.classList.contains('hidden') ? 'Show Preview' : 'Hide Preview';
+        }
+        if (toggleIcon) {
+          toggleIcon.textContent = embed.classList.contains('hidden') ? '+' : '-';
         }
       }
     }

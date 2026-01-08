@@ -110,7 +110,7 @@ export default function CollapsibleCode({ src, trigger, language = "glsl" }: Col
                   padding: "2px 6px",
                 }}
               >
-                ✕
+                x
               </button>
             </div>
           </div>
