@@ -104,6 +104,8 @@ There are three main approaches to visualize motion:
 		{ id: "vortex", label: "Vortex", type: "sidequest", parent: "chapter-3" },
 		{ id: "waves", label: "Waves", type: "sidequest", parent: "chapter-3" },
 		{ id: "chapter-4", label: "Magnetic Field", type: "chapter" },
+		{ id: "gpu-implementation", label: "GPU Implementation", type: "sidequest", parent: "chapter-4" },
+		{ id: "magnet-physics", label: "Magnet Physics", type: "sidequest", parent: "chapter-4" },
 		{ id: "chapter-5", label: "Performance", type: "chapter" },
 		{ id: "chapter-6", label: "UX", type: "chapter" },
 	]}
@@ -485,7 +487,8 @@ $$\mathbf{p}_{n+1} = \mathbf{p}_n + \hat{\mathbf{B}}(\mathbf{p}_n) \cdot \Delta 
 
 where $\hat{\mathbf{B}}$ is the normalized field direction and $\Delta s$ is the step size. Combining two dipoles produces the characteristic looping field lines.
 
-<Note client:load type="note" title="GPU Implementation" collapsible={true} defaultOpen={true}>
+<span id="gpu-implementation"></span>
+<Note client:load type="note" title="GPU Implementation" collapsible={true} defaultOpen={true} id="gpu-implementation">
 
 The dipole formula translates directly to GPU code:
 
@@ -540,7 +543,8 @@ for (int i = 0; i < 64; i++) {
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 4.2: Demo on Spectacles with interactive magnet positioning</p>
 
-<Note client:load type="tip" title="Magnet Physics Script" collapsible={true}>
+<span id="magnet-physics"></span>
+<Note client:load type="tip" title="Magnet Physics Script" collapsible={true} id="magnet-physics">
 
 A separate script applies physical interactions between the two magnet scene objects.
 

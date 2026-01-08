@@ -5,6 +5,7 @@ interface Section {
   label: string;
   type: "chapter" | "subsection" | "sidequest";
   parent?: string;
+  preview?: string; // Optional preview image path
 }
 
 interface ArticleTimelineProps {
@@ -50,6 +51,8 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Dispatch event to expand any collapsible Note with this ID
+      window.dispatchEvent(new CustomEvent("expandNote", { detail: { noteId: id } }));
     }
   };
 
@@ -191,18 +194,31 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                     position: "absolute",
                     left: "28px",
                     top: `${-nodeSize / 2}px`,
-                    transform: "translateY(0)",
+                    transform: section.preview ? "translateY(-30%)" : "translateY(0)",
                     background: "rgb(40, 39, 40)",
                     color: "rgb(255, 248, 222)",
-                    padding: "6px 10px",
-                    borderRadius: "4px",
+                    padding: section.preview ? "8px" : "6px 10px",
+                    borderRadius: "6px",
                     fontSize: "11px",
                     fontWeight: 500,
                     whiteSpace: "nowrap",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
                     zIndex: 50,
                   }}
                 >
+                  {section.preview && (
+                    <img
+                      src={section.preview}
+                      alt={section.label}
+                      style={{
+                        width: "140px",
+                        height: "auto",
+                        borderRadius: "4px",
+                        marginBottom: "6px",
+                        display: "block",
+                      }}
+                    />
+                  )}
                   {section.label}
                 </div>
               )}
@@ -285,17 +301,31 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                                 position: "absolute",
                                 left: `${branchX + sqNodeSize / 2 + 10}px`,
                                 top: `${nodeTop - sqNodeSize / 2}px`,
+                                transform: sidequest.preview ? "translateY(-30%)" : "translateY(0)",
                                 background: "rgb(40, 39, 40)",
                                 color: "rgb(200, 200, 200)",
-                                padding: "5px 9px",
-                                borderRadius: "4px",
+                                padding: sidequest.preview ? "8px" : "5px 9px",
+                                borderRadius: "5px",
                                 fontSize: "10px",
                                 fontWeight: 500,
                                 whiteSpace: "nowrap",
-                                boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                                boxShadow: "0 4px 16px rgba(0,0,0,0.3)",
                                 zIndex: 50,
                               }}
                             >
+                              {sidequest.preview && (
+                                <img
+                                  src={sidequest.preview}
+                                  alt={sidequest.label}
+                                  style={{
+                                    width: "120px",
+                                    height: "auto",
+                                    borderRadius: "3px",
+                                    marginBottom: "5px",
+                                    display: "block",
+                                  }}
+                                />
+                              )}
                               {sidequest.label}
                             </div>
                           )}

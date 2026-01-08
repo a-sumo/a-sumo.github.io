@@ -1,10 +1,11 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 
 interface NoteProps {
   type?: "note" | "tip" | "important" | "warning";
   title?: string;
   collapsible?: boolean;
   defaultOpen?: boolean;
+  id?: string; // Optional ID for timeline linking
   children: ReactNode;
 }
 
@@ -35,10 +36,24 @@ const typeConfig = {
   },
 };
 
-export default function Note({ type = "note", title, collapsible = false, defaultOpen = false, children }: NoteProps) {
+export default function Note({ type = "note", title, collapsible = false, defaultOpen = false, id, children }: NoteProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const config = typeConfig[type];
   const displayTitle = title ?? config.defaultTitle;
+
+  // Listen for timeline navigation events to auto-expand
+  useEffect(() => {
+    if (!id || !collapsible) return;
+
+    const handleNoteExpand = (event: CustomEvent<{ noteId: string }>) => {
+      if (event.detail.noteId === id) {
+        setIsOpen(true);
+      }
+    };
+
+    window.addEventListener("expandNote", handleNoteExpand as EventListener);
+    return () => window.removeEventListener("expandNote", handleNoteExpand as EventListener);
+  }, [id, collapsible]);
 
   return (
     <div
