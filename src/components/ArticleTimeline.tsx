@@ -20,7 +20,25 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const [scrollVelocity, setScrollVelocity] = useState(0);
+  const [smoothVelocity, setSmoothVelocity] = useState(0);
+  const [blobPhase, setBlobPhase] = useState(0);
+  const [frozenBlobPos, setFrozenBlobPos] = useState<{x: number, y: number} | null>(null);
   const lastScrollY = useState({ current: 0 })[0];
+
+  // Smooth velocity interpolation - only animate phase when scrolling
+  useEffect(() => {
+    let animationFrame: number;
+    const animate = () => {
+      setSmoothVelocity(prev => prev + (scrollVelocity - prev) * 0.08);
+      // Only increment phase when there's velocity (scrolling) - slower rate
+      if (scrollVelocity > 0.01 || smoothVelocity > 0.01) {
+        setBlobPhase(prev => prev + 0.015);
+      }
+      animationFrame = requestAnimationFrame(animate);
+    };
+    animationFrame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrame);
+  }, [scrollVelocity, smoothVelocity]);
 
   useEffect(() => {
     let scrollTimeout: ReturnType<typeof setTimeout>;
@@ -34,7 +52,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
       // Track scroll velocity
       const velocity = Math.abs(scrollTop - lastScrollY.current);
       lastScrollY.current = scrollTop;
-      setScrollVelocity(Math.min(velocity / 10, 1)); // Normalize to 0-1
+      setScrollVelocity(Math.min(velocity / 15, 1)); // Normalize to 0-1
       setIsScrolling(true);
 
       // Reset scrolling state after scroll stops
@@ -42,18 +60,19 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
       scrollTimeout = setTimeout(() => {
         setIsScrolling(false);
         setScrollVelocity(0);
-      }, 150);
+      }, 200);
 
       // Show timeline after scrolling past 150px
       setIsVisible(scrollTop > 150);
 
-      // Find active section
+      // Find active section - use tighter threshold to avoid anticipation
       let currentSection: string | null = null;
       for (const section of sections) {
         const element = document.getElementById(section.id);
         if (element) {
           const rect = element.getBoundingClientRect();
-          if (rect.top <= window.innerHeight / 3) {
+          // Section becomes active when it reaches top 15% of viewport
+          if (rect.top <= window.innerHeight * 0.15) {
             currentSection = section.id;
           }
         }
@@ -139,93 +158,225 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
         }
       `}</style>
 
-      {/* Blob toggle button */}
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        style={{
-          position: "absolute",
-          top: "-28px",
-          left: "-2px",
-          width: "20px",
-          height: "20px",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          padding: 0,
-        }}
-        title={isCollapsed ? "Show timeline" : "Hide timeline"}
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          style={{
-            overflow: "visible",
-            filter: isCollapsed ? "none" : "url(#goo)",
-          }}
-        >
-          <defs>
-            <linearGradient id="blobGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="rgb(140, 169, 255)" />
-              <stop offset="50%" stopColor="rgb(180, 140, 255)" />
-              <stop offset="100%" stopColor="rgb(255, 140, 200)" />
-            </linearGradient>
-            <filter id="goo">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="1" result="blur" />
-              <feColorMatrix
-                in="blur"
-                mode="matrix"
-                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7"
-                result="goo"
-              />
-            </filter>
-          </defs>
-          {isCollapsed ? (
-            <circle
-              cx="10"
-              cy="10"
-              r="6"
-              fill="none"
-              stroke="url(#blobGradient)"
-              strokeWidth="1.5"
-              style={{ transition: "all 0.3s ease" }}
-            />
-          ) : (
-            <>
-              <ellipse
-                cx="10"
-                cy="10"
-                rx={6 + scrollVelocity * 2}
-                ry={6 - scrollVelocity * 1.5}
-                fill="url(#blobGradient)"
-                style={{
-                  transition: isScrolling ? "none" : "all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                  transformOrigin: "center",
-                  transform: `rotate(${scrollVelocity * 15}deg)`,
-                }}
-              />
-              {isScrolling && (
-                <>
-                  <circle
-                    cx={10 + scrollVelocity * 4}
-                    cy={10 - scrollVelocity * 3}
-                    r={2 + scrollVelocity}
-                    fill="url(#blobGradient)"
-                    style={{ opacity: scrollVelocity }}
+      {/* Blob that follows the timeline path */}
+      {(() => {
+        const v = smoothVelocity;
+        const p = blobPhase;
+        // Subtle deformation - keep it blobby
+        const deform1 = Math.sin(p * 0.4) * v * 0.8;
+        const deform2 = Math.sin(p * 0.6 + 1) * v * 0.6;
+        const deform3 = Math.cos(p * 0.3 + 2) * v * 0.5;
+        const baseRadius = 9;
+
+        // If collapsed, use frozen position
+        if (isCollapsed && frozenBlobPos) {
+          const floatY = 0;
+          const floatX = 0;
+          return (
+            <button
+              onClick={() => {
+                setIsCollapsed(false);
+                setFrozenBlobPos(null);
+              }}
+              style={{
+                position: "absolute",
+                top: `${frozenBlobPos.y - 14}px`,
+                left: `${frozenBlobPos.x - 14}px`,
+                width: "28px",
+                height: "28px",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+                zIndex: 10,
+              }}
+              title="Show timeline"
+            >
+              <svg width="28" height="28" viewBox="0 0 28 28" style={{ overflow: "visible" }}>
+                <defs>
+                  <radialGradient id="blobGradientStrokeStatic" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="rgba(255, 120, 200, 0.8)" />
+                    <stop offset="50%" stopColor="rgba(140, 100, 240, 0.6)" />
+                    <stop offset="100%" stopColor="rgba(100, 180, 255, 0.4)" />
+                  </radialGradient>
+                </defs>
+                <circle
+                  cx="14"
+                  cy="14"
+                  r="8"
+                  fill="none"
+                  stroke="url(#blobGradientStrokeStatic)"
+                  strokeWidth="1.5"
+                />
+              </svg>
+            </button>
+          );
+        }
+
+        // Blob follows scroll progress along the timeline path
+        let blobX = 8; // Default: centered on main line
+        let blobY = scrollProgress * totalHeight;
+
+        // Check if we're in a sidequest section to potentially move to branch
+        const activeSidequest = sidequestSections.find(s => s.id === activeSection);
+
+        if (activeSidequest?.parent) {
+          // Find where we are on the branch
+          const parentIndex = mainSections.findIndex(s => s.id === activeSidequest.parent);
+          if (parentIndex !== -1) {
+            const parentY = getNodePosition(parentIndex, activeSidequest.parent);
+            const sidequests = sidequestsByParent.get(activeSidequest.parent) || [];
+            const sidequestIndex = sidequests.findIndex(s => s.id === activeSection);
+            const branchX = 24;
+            const firstNodeY = 18;
+            const nodeTop = firstNodeY + sidequestIndex * sidequestSpacing;
+
+            // Smoothly interpolate onto the branch based on how far into the sidequest we are
+            // Use scroll position relative to this section
+            const element = document.getElementById(activeSection);
+            if (element) {
+              const rect = element.getBoundingClientRect();
+              const sectionProgress = Math.max(0, Math.min(1, -rect.top / (rect.height || 1)));
+
+              // Interpolate position along curved path
+              const targetNodeY = nodeTop;
+              const curveLength = firstNodeY;
+
+              if (targetNodeY <= curveLength) {
+                // On curve portion - use quadratic bezier
+                const curveT = Math.min(1, targetNodeY / curveLength);
+                const bezX = 2 * (1 - curveT) * curveT * branchX + curveT * curveT * branchX;
+                const bezY = curveT * curveT * curveLength;
+                blobX = 8 + bezX;
+                blobY = parentY + bezY;
+              } else {
+                // On straight portion
+                blobX = 8 + branchX;
+                blobY = parentY + targetNodeY;
+              }
+            }
+          }
+        }
+
+        // Floating animation only when scrolling
+        const floatY = v > 0.01 ? Math.sin(p * 0.5) * 2 * v : 0;
+        const floatX = v > 0.01 ? Math.cos(p * 0.3) * 1.5 * v : 0;
+
+        return (
+          <button
+            onClick={() => {
+              if (!isCollapsed) {
+                // Freeze position when collapsing
+                setFrozenBlobPos({ x: blobX, y: blobY });
+              }
+              setIsCollapsed(!isCollapsed);
+            }}
+            style={{
+              position: "absolute",
+              top: `${blobY - 14}px`,
+              left: `${blobX - 14}px`,
+              width: "28px",
+              height: "28px",
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              perspective: "100px",
+              transition: "top 0.3s ease-out, left 0.3s ease-out",
+              zIndex: 10,
+            }}
+            title="Hide timeline"
+          >
+            <svg
+              width="28"
+              height="28"
+              viewBox="0 0 28 28"
+              style={{
+                overflow: "visible",
+                filter: isCollapsed ? "none" : "drop-shadow(0 3px 8px rgba(140, 100, 240, 0.4))",
+                transform: isCollapsed
+                  ? "translateZ(0) rotateX(0) rotateY(0)"
+                  : `translateZ(8px) translateX(${floatX}px) translateY(${floatY}px) rotateX(${deform1 * 5}deg) rotateY(${deform2 * 8}deg)`,
+                transformStyle: "preserve-3d",
+                transition: isCollapsed ? "all 0.4s ease" : "none",
+              }}
+            >
+              <defs>
+                {/* Animated gradient - aurora green colors */}
+                <radialGradient
+                  id="blobGradient"
+                  cx={`${50 + deform1 * 8}%`}
+                  cy={`${50 + deform2 * 8}%`}
+                  r="55%"
+                >
+                  <stop offset="0%" stopColor="rgba(150, 255, 200, 1)" />
+                  <stop offset="25%" stopColor="rgba(100, 230, 180, 0.95)" />
+                  <stop offset="50%" stopColor="rgba(80, 200, 220, 0.7)" />
+                  <stop offset="75%" stopColor="rgba(100, 220, 200, 0.35)" />
+                  <stop offset="100%" stopColor="rgba(120, 230, 210, 0)" />
+                </radialGradient>
+                <radialGradient id="blobGradientStroke" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="rgba(150, 255, 200, 0.8)" />
+                  <stop offset="50%" stopColor="rgba(100, 230, 180, 0.6)" />
+                  <stop offset="100%" stopColor="rgba(80, 200, 220, 0.4)" />
+                </radialGradient>
+                <filter id="goo">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="0.8" result="blur" />
+                  <feColorMatrix
+                    in="blur"
+                    mode="matrix"
+                    values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 12 -5"
+                    result="goo"
                   />
+                </filter>
+                <filter id="softGlow">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              {isCollapsed ? (
+                <circle
+                  cx="14"
+                  cy="14"
+                  r="8"
+                  fill="none"
+                  stroke="url(#blobGradientStroke)"
+                  strokeWidth="1.5"
+                  style={{ transition: "all 0.3s ease", filter: "url(#softGlow)" }}
+                />
+              ) : (
+                <>
+                  {/* Dark border ring for clickability hint */}
                   <circle
-                    cx={10 - scrollVelocity * 3}
-                    cy={10 + scrollVelocity * 4}
-                    r={1.5 + scrollVelocity * 0.5}
+                    cx="14"
+                    cy="14"
+                    r={baseRadius + 2}
+                    fill="none"
+                    stroke="rgba(30, 30, 40, 0.3)"
+                    strokeWidth="1"
+                    style={{ transition: "all 0.2s ease" }}
+                  />
+                  {/* Main blob with subtle deformation and animated gradient */}
+                  <ellipse
+                    cx={14 + deform3 * 0.3}
+                    cy={14 + deform1 * 0.2}
+                    rx={baseRadius + deform1 * 0.5}
+                    ry={baseRadius + deform2 * 0.4}
                     fill="url(#blobGradient)"
-                    style={{ opacity: scrollVelocity * 0.7 }}
+                    style={{
+                      transformOrigin: "center",
+                      transform: `rotate(${deform2 * 5}deg)`,
+                    }}
                   />
                 </>
               )}
-            </>
-          )}
-        </svg>
-      </button>
+            </svg>
+          </button>
+        );
+      })()}
 
       <div
         style={{
@@ -350,6 +501,13 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                 const firstNodeY = 18; // Where first node appears
                 const lastNodeY = firstNodeY + (sidequests.length - 1) * sidequestSpacing;
 
+                // Calculate branch progress based on active sidequest
+                const activeSidequestIndex = sidequests.findIndex(s => s.id === activeSection);
+                const branchProgress = activeSidequestIndex >= 0
+                  ? (activeSidequestIndex + 1) / sidequests.length
+                  : 0;
+                const progressY = firstNodeY + (activeSidequestIndex >= 0 ? activeSidequestIndex * sidequestSpacing : -firstNodeY);
+
                 return (
                   <div
                     style={{
@@ -364,22 +522,43 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                       height={lastNodeY + 10}
                       style={{ position: "absolute", left: 0, top: 0, overflow: "visible" }}
                     >
-                      {/* Curved arch from main line (0,0) to first node position */}
+                      {/* Background curved arch */}
                       <path
                         d={`M 0 0 Q ${branchX} 0, ${branchX} ${firstNodeY}`}
                         fill="none"
-                        stroke="rgba(180, 160, 140, 0.5)"
+                        stroke="rgba(180, 160, 140, 0.4)"
                         strokeWidth="2"
                       />
-                      {/* Vertical line between nodes */}
+                      {/* Progress curved arch */}
+                      {activeSidequestIndex >= 0 && (
+                        <path
+                          d={`M 0 0 Q ${branchX} 0, ${branchX} ${firstNodeY}`}
+                          fill="none"
+                          stroke="rgb(140, 169, 255)"
+                          strokeWidth="2"
+                        />
+                      )}
+                      {/* Background vertical line between nodes */}
                       {sidequests.length > 1 && (
                         <line
                           x1={branchX}
                           y1={firstNodeY}
                           x2={branchX}
                           y2={lastNodeY}
-                          stroke="rgba(180, 160, 140, 0.5)"
+                          stroke="rgba(180, 160, 140, 0.4)"
                           strokeWidth="2"
+                        />
+                      )}
+                      {/* Progress vertical line */}
+                      {activeSidequestIndex >= 0 && sidequests.length > 1 && (
+                        <line
+                          x1={branchX}
+                          y1={firstNodeY}
+                          x2={branchX}
+                          y2={Math.min(progressY, lastNodeY)}
+                          stroke="rgb(140, 169, 255)"
+                          strokeWidth="2"
+                          style={{ transition: "all 0.15s ease-out" }}
                         />
                       )}
                     </svg>
@@ -388,6 +567,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                     {sidequests.map((sidequest, sidequestIndex) => {
                       const nodeTop = firstNodeY + sidequestIndex * sidequestSpacing;
                       const isSidequestActive = activeSection === sidequest.id;
+                      const isSidequestPast = activeSidequestIndex >= 0 && sidequestIndex <= activeSidequestIndex;
                       const isSidequestHovered = hoveredSection === sidequest.id;
                       return (
                         <div key={sidequest.id}>
@@ -402,7 +582,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
                               width: `${sqNodeSize}px`,
                               height: `${sqNodeSize}px`,
                               borderRadius: "2px",
-                              background: isSidequestActive ? "rgb(140, 169, 255)" : "rgb(190, 170, 150)",
+                              background: isSidequestActive || isSidequestPast ? "rgb(140, 169, 255)" : "rgb(190, 170, 150)",
                               border: "2px solid rgb(255, 250, 240)",
                               cursor: "pointer",
                               transition: "all 0.2s ease",

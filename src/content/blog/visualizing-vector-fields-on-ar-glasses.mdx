@@ -24,6 +24,7 @@ import ManimVideo from "@components/ManimVideo";
 import Note from "@components/Note";
 import VectorFieldViz from "@components/VectorFieldViz";
 import ExpandableImage from "@components/ExpandableImage";
+import PythonSource from "@components/PythonSource";
 
 {/* Hidden image for social media scrapers - must be first img tag */}
 <img
@@ -101,21 +102,22 @@ There are three main approaches to visualize motion:
 <ArticleTimeline
 	client:load
 	sections={[
-		{ id: "vector-field-viz", label: "Interactive Demo", type: "sidequest", parent: "chapter-1" },
 		{ id: "chapter-1", label: "Rendering 3D Lines", type: "chapter" },
 		{ id: "proc-gen-code", label: "Procedural Code", type: "sidequest", parent: "chapter-1" },
-		{ id: "chapter-2", label: "Deforming Lines on GPU", type: "chapter" },
-		{ id: "chapter-3", label: "Vector Field Integration", type: "chapter" },
+		{ id: "chapter-2", label: "GPU Deformation", type: "chapter" },
+		{ id: "chapter-3", label: "Field Integration", type: "chapter" },
 		{ id: "contraction", label: "Contraction", type: "sidequest", parent: "chapter-3" },
 		{ id: "expansion", label: "Expansion", type: "sidequest", parent: "chapter-3" },
 		{ id: "circulation", label: "Circulation", type: "sidequest", parent: "chapter-3" },
 		{ id: "vortex", label: "Vortex", type: "sidequest", parent: "chapter-3" },
 		{ id: "waves", label: "Waves", type: "sidequest", parent: "chapter-3" },
 		{ id: "chapter-4", label: "Magnetic Field", type: "chapter" },
+		{ id: "math-derivation", label: "Math Derivation", type: "sidequest", parent: "chapter-4" },
 		{ id: "gpu-implementation", label: "GPU Implementation", type: "sidequest", parent: "chapter-4" },
 		{ id: "magnet-physics", label: "Magnet Physics", type: "sidequest", parent: "chapter-4" },
 		{ id: "chapter-5", label: "Performance", type: "chapter" },
 		{ id: "chapter-6", label: "UX", type: "chapter" },
+		{ id: "final-words", label: "Final Words", type: "chapter" },
 	]}
 />
 
@@ -482,6 +484,9 @@ The field patterns above are mathematical abstractions. For something more concr
   />
 </div>
 
+<span id="math-derivation"></span>
+<Note client:load type="note" title="Math: Dipole Field & Integration" collapsible={true} defaultOpen={true} id="math-derivation">
+
 Each dipole creates a vector field based on its magnetic moment $\mathbf{m}$ and the displacement $\mathbf{r}$ from the dipole:
 
 $$\mathbf{B}(\mathbf{r}) = \frac{3(\mathbf{m} \cdot \hat{\mathbf{r}})\hat{\mathbf{r}} - \mathbf{m}}{r^3}$$
@@ -493,6 +498,8 @@ To trace flow lines through this field, we use Euler integration: starting from 
 $$\mathbf{p}_{n+1} = \mathbf{p}_n + \hat{\mathbf{B}}(\mathbf{p}_n) \cdot \Delta s$$
 
 where $\hat{\mathbf{B}}$ is the normalized field direction and $\Delta s$ is the step size. Combining two dipoles produces the characteristic looping field lines.
+
+</Note>
 
 <span id="gpu-implementation"></span>
 <Note client:load type="note" title="GPU Implementation" collapsible={true} defaultOpen={true} id="gpu-implementation">
@@ -813,6 +820,13 @@ Finally, I packed all frames into a sprite sheet:
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Click any sprite sheet to expand</p>
 
+<PythonSource
+	client:load
+	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/scripts/render_field_sprites.py"
+	label="Sprite Rendering Script"
+	maxWidth="600px"
+/>
+
 The final shader samples the correct frame based on elapsed time, computing UV coordinates into the grid. It also supports smooth blending between presets.
 
 <VideoPlayer
@@ -823,7 +837,12 @@ The final shader samples the correct frame based on elapsed time, computing UV c
 />
 
 <details style={{ margin: "24px auto", maxWidth: "800px" }}>
-<summary style={{ cursor: "pointer", color: "#888", fontStyle: "italic" }}>AnimatedSpriteSheet.js</summary>
+<summary style={{ cursor: "pointer", color: "#888", fontStyle: "italic" }}>
+	AnimatedSpriteSheet.js
+</summary>
+<div style={{ marginTop: "8px", marginBottom: "16px" }}>
+	<a href="/assets/visualizing-vector-fields-on-ar-glasses/scripts/AnimatedSpriteSheet.js" target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.9em", color: "#8ca9ff" }}>View custom code node source</a>
+</div>
 
 ```glsl
 input_texture_2d expansionSheet;
@@ -890,6 +909,7 @@ void main() {
 
 ---
 
+<span id="final-words"></span>
 ## Final Words
 
 I hope this exploration of vector fields in AR encourages you to leverage them in your projects, or just make something fun with procedural geometry.
