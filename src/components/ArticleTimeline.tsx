@@ -124,36 +124,18 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
         style={{
           position: "absolute",
           top: "-24px",
-          left: "0px",
-          width: "16px",
-          height: "16px",
-          borderRadius: "3px",
-          background: "rgba(140, 169, 255, 0.8)",
-          border: "none",
+          left: "2px",
+          width: "12px",
+          height: "12px",
+          borderRadius: "50%",
+          background: isCollapsed ? "transparent" : "rgb(140, 169, 255)",
+          border: "2px solid rgb(140, 169, 255)",
           cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
           transition: "all 0.2s ease",
-          opacity: 0.6,
+          padding: 0,
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-        onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.6")}
         title={isCollapsed ? "Show timeline" : "Hide timeline"}
-      >
-        <svg
-          width="10"
-          height="10"
-          viewBox="0 0 10 10"
-          fill="white"
-          style={{
-            transform: isCollapsed ? "rotate(180deg)" : "rotate(0deg)",
-            transition: "transform 0.2s ease",
-          }}
-        >
-          <path d="M2 3.5L5 6.5L8 3.5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-        </svg>
-      </button>
+      />
 
       <div
         style={{
