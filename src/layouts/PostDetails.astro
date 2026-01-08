@@ -126,7 +126,7 @@ const nextPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null;
       {
         prevPost && (
           <a
-            href={`/posts/${prevPost.slug}`}
+            href={`/posts/${prevPost.slug}/`}
             class="flex w-full gap-1 hover:opacity-75"
           >
             <svg
@@ -156,7 +156,7 @@ const nextPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null;
       {
         nextPost && (
           <a
-            href={`/posts/${nextPost.slug}`}
+            href={`/posts/${nextPost.slug}/`}
             class="flex w-full justify-end gap-1 text-right hover:opacity-75 sm:col-start-2"
           >
             <div>
