@@ -18,7 +18,7 @@ const experiments = [
 ];
 
 const instagrams = [
-  { postId: "DCSeS6FPHAO" },
+  { postId: "DCSeS6FPHAO", comment: "2024 - Made with Unity" },
 ];
 ---
 
@@ -99,7 +99,7 @@ const instagrams = [
           <div class="mt-12">
             <div class="flex flex-wrap justify-center gap-8">
               {instagrams.map((post) => (
-                <div class="instagram-embed-container">
+                <div class="instagram-embed-container flex flex-col items-center">
                   <blockquote
                     class="instagram-media"
                     data-instgrm-captioned
@@ -109,6 +109,9 @@ const instagrams = [
                   >
                     <a href={`https://www.instagram.com/p/${post.postId}/`} target="_blank" rel="noopener noreferrer">View on Instagram</a>
                   </blockquote>
+                  {post.comment && (
+                    <p class="text-sm text-skin-base leading-relaxed mt-2">{post.comment}</p>
+                  )}
                 </div>
               ))}
             </div>
