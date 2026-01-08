@@ -115,12 +115,11 @@ Rendering vector fields in 2D is fairly straightforward.
 
 In 3D on AR glasses, however, we need to satisfy a few constraints:
 
-The geometry must look consistent from all viewing angles. A volumetric line shouldn't look flat from certain directions.
+1. The geometry must look consistent from all viewing angles. A volumetric line shouldn't look flat from certain directions.
 
-Also, the geometry must adapt to its spatial context, which in this case is the direction and magnitude sampled at a spatial location.
-Importing static or pre-animated 3D objects wouldn't allow this kind of adaptivity, which means we must generate the geometry procedurally.  
+2. The geometry must adapt to its spatial context, which in this case is the direction and magnitude sampled at a spatial location. Importing static or pre-animated 3D objects wouldn't allow this kind of adaptivity, which means we must generate the geometry procedurally.  
 
-Finally, it must run smoothly in real time, while looking believable, so we need a minimal rendering procedure.
+3. It must run smoothly in real time, while looking believable, so we need a minimal rendering procedure.
 
 The most straightforward approach to render 3D lines is to generate tubes with capped ends. In Lens Studio, we can do this via the MeshBuilder API, which we first explored in our [article on color spaces](/posts/visualizing-color-spaces-in-ar-glasses). 
 
@@ -486,8 +485,7 @@ $$\mathbf{p}_{n+1} = \mathbf{p}_n + \hat{\mathbf{B}}(\mathbf{p}_n) \cdot \Delta 
 
 where $\hat{\mathbf{B}}$ is the normalized field direction and $\Delta s$ is the step size. Combining two dipoles produces the characteristic looping field lines.
 
-<details style={{ margin: "16px auto", maxWidth: "800px" }}>
-<summary style={{ cursor: "pointer", color: "#888", fontStyle: "italic" }}>GPU Implementation</summary>
+<Note client:load type="note" title="GPU Implementation" collapsible={true} defaultOpen={true}>
 
 The dipole formula translates directly to GPU code:
 
@@ -518,7 +516,7 @@ for (int i = 0; i < 64; i++) {
 }
 ```
 
-</details>
+</Note>
 
 <ManimVideo
 	client:load
@@ -542,7 +540,7 @@ for (int i = 0; i < 64; i++) {
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 4.2: Demo on Spectacles with interactive magnet positioning</p>
 
-<Note client:load type="tip" title="Magnet Physics Script">
+<Note client:load type="tip" title="Magnet Physics Script" collapsible={true}>
 
 A separate script applies physical interactions between the two magnet scene objects.
 

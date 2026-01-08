@@ -1,8 +1,10 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 interface NoteProps {
   type?: "note" | "tip" | "important" | "warning";
   title?: string;
+  collapsible?: boolean;
+  defaultOpen?: boolean;
   children: ReactNode;
 }
 
@@ -33,7 +35,8 @@ const typeConfig = {
   },
 };
 
-export default function Note({ type = "note", title, children }: NoteProps) {
+export default function Note({ type = "note", title, collapsible = false, defaultOpen = false, children }: NoteProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   const config = typeConfig[type];
   const displayTitle = title ?? config.defaultTitle;
 
@@ -48,16 +51,34 @@ export default function Note({ type = "note", title, children }: NoteProps) {
       }}
     >
       <div
+        onClick={collapsible ? () => setIsOpen(!isOpen) : undefined}
         style={{
-          marginBottom: "8px",
+          marginBottom: collapsible && !isOpen ? "0" : "8px",
           fontFamily: "Roboto, sans-serif",
           fontWeight: 500,
           fontSize: "12px",
           color: config.accentColor,
           textTransform: "uppercase",
           letterSpacing: "0.8px",
+          cursor: collapsible ? "pointer" : "default",
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          userSelect: collapsible ? "none" : "auto",
         }}
       >
+        {collapsible && (
+          <span
+            style={{
+              display: "inline-block",
+              transition: "transform 0.2s ease",
+              transform: isOpen ? "rotate(90deg)" : "rotate(0deg)",
+              fontSize: "10px",
+            }}
+          >
+            ▶
+          </span>
+        )}
         {displayTitle}
       </div>
       <div
@@ -65,6 +86,7 @@ export default function Note({ type = "note", title, children }: NoteProps) {
           fontSize: "13px",
           lineHeight: 1.55,
           color: "rgb(170, 170, 170)",
+          display: collapsible && !isOpen ? "none" : "block",
         }}
       >
         {children}
