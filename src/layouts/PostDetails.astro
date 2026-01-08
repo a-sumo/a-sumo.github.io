@@ -249,13 +249,26 @@ const nextPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null;
     // Create the main container div
     const progressContainer = document.createElement("div");
     progressContainer.className =
-      "progress-container fixed top-0 z-10 h-[6px] w-full bg-skin-fill";
+      "progress-container fixed top-0 z-10 w-full bg-skin-fill";
+    progressContainer.id = "progressContainer";
 
     // Create the progress bar div
     const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar h-[6px] bg-skin-accent transition-[width] duration-100 ease-out";
+    progressBar.className = "progress-bar bg-skin-accent transition-[width] duration-100 ease-out";
     progressBar.id = "myBar";
     progressBar.style.width = "0%";
+
+    // Add responsive styles
+    const style = document.createElement("style");
+    style.textContent = `
+      #progressContainer { height: 4px; }
+      #myBar { height: 4px; }
+      @media (max-width: 899px) {
+        #progressContainer { height: 6px; }
+        #myBar { height: 6px; }
+      }
+    `;
+    document.head.appendChild(style);
 
     // Append the progress bar to the progress container
     progressContainer.appendChild(progressBar);
