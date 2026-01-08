@@ -17,6 +17,7 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -117,7 +118,54 @@ export default function ArticleTimeline({ sections }: ArticleTimelineProps) {
         }
       `}</style>
 
-      <div style={{ position: "relative", height: `${totalHeight}px`, width: "60px" }}>
+      {/* Toggle button */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        style={{
+          position: "absolute",
+          top: "-24px",
+          left: "0px",
+          width: "16px",
+          height: "16px",
+          borderRadius: "3px",
+          background: "rgba(140, 169, 255, 0.8)",
+          border: "none",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "all 0.2s ease",
+          opacity: 0.6,
+        }}
+        onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+        onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.6")}
+        title={isCollapsed ? "Show timeline" : "Hide timeline"}
+      >
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="white"
+          style={{
+            transform: isCollapsed ? "rotate(180deg)" : "rotate(0deg)",
+            transition: "transform 0.2s ease",
+          }}
+        >
+          <path d="M2 3.5L5 6.5L8 3.5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        </svg>
+      </button>
+
+      <div
+        style={{
+          position: "relative",
+          height: `${totalHeight}px`,
+          width: "60px",
+          opacity: isCollapsed ? 0 : 1,
+          transform: isCollapsed ? "translateX(-10px)" : "translateX(0)",
+          transition: "opacity 0.2s ease, transform 0.2s ease",
+          pointerEvents: isCollapsed ? "none" : "auto",
+        }}
+      >
         {/* Background line - centered at x=7 */}
         <div
           style={{
