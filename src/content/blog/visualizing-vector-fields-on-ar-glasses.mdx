@@ -24,7 +24,7 @@ import ManimVideo from "@components/ManimVideo";
 import Note from "@components/Note";
 import VectorFieldViz from "@components/VectorFieldViz";
 import ExpandableImage from "@components/ExpandableImage";
-import PythonSource from "@components/PythonSource";
+import CodeSource from "@components/CodeSource";
 
 {/* Hidden image for social media scrapers - must be first img tag */}
 <img
@@ -820,10 +820,11 @@ Finally, I packed all frames into a sprite sheet:
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Click any sprite sheet to expand</p>
 
-<PythonSource
+<CodeSource
 	client:load
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/scripts/render_field_sprites.py"
 	label="Sprite Rendering Script"
+	language="python"
 	maxWidth="600px"
 />
 
@@ -836,71 +837,13 @@ The final shader samples the correct frame based on elapsed time, computing UV c
 	maxWidth="70%"
 />
 
-<details style={{ margin: "24px auto", maxWidth: "800px" }}>
-<summary style={{ cursor: "pointer", color: "#888", fontStyle: "italic" }}>
-	AnimatedSpriteSheet.js
-</summary>
-<div style={{ marginTop: "8px", marginBottom: "16px" }}>
-	<a href="/assets/visualizing-vector-fields-on-ar-glasses/scripts/AnimatedSpriteSheet.js" target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.9em", color: "#8ca9ff" }}>View custom code node source</a>
-</div>
-
-```glsl
-input_texture_2d expansionSheet;
-input_texture_2d contractionSheet;
-input_texture_2d circulationSheet;
-input_texture_2d wavesSheet;
-input_texture_2d vortexSheet;
-input_texture_2d magneticSheet;
-
-input_int preset;
-input_int prevPreset;
-input_float blendAmount;
-input_int columns;
-input_int rows;
-input_int totalFrames;
-input_float fps;
-
-output_vec4 fragColor;
-
-vec4 samplePreset(int p, vec2 frameUV) {
-    if (p == 0) return expansionSheet.sample(frameUV);
-    if (p == 1) return contractionSheet.sample(frameUV);
-    if (p == 2) return circulationSheet.sample(frameUV);
-    if (p == 3) return wavesSheet.sample(frameUV);
-    if (p == 4) return vortexSheet.sample(frameUV);
-    if (p == 5) return magneticSheet.sample(frameUV);
-    return vec4(0.0);
-}
-
-void main() {
-    vec2 uv = system.getSurfaceUVCoord0();
-    float time = system.getTimeElapsed();
-
-    float frameDuration = 1.0 / fps;
-    float totalDuration = float(totalFrames) * frameDuration;
-    float loopedTime = mod(time, totalDuration);
-    int frameIndex = int(floor(loopedTime / frameDuration));
-
-    int col = frameIndex - (frameIndex / columns) * columns;
-    int row = frameIndex / columns;
-
-    float cellWidth = 1.0 / float(columns);
-    float cellHeight = 1.0 / float(rows);
-
-    vec2 frameUV = vec2(
-        float(col) * cellWidth + uv.x * cellWidth,
-        mix(1.0 - float(row + 1) * cellHeight, 1.0 - float(row) * cellHeight, uv.y)
-    );
-
-    vec4 fromColor = samplePreset(prevPreset, frameUV);
-    vec4 toColor = samplePreset(preset, frameUV);
-    float t = clamp(blendAmount, 0.0, 1.0);
-    t = t * t * (3.0 - 2.0 * t);  // smoothstep
-    fragColor = mix(fromColor, toColor, t);
-}
-```
-
-</details>
+<CodeSource
+	client:load
+	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/scripts/AnimatedSpriteSheet.js"
+	label="Animated Sprite Sheet Shader"
+	language="glsl"
+	maxWidth="800px"
+/>
 
 <div style={{ display: "flex", justifyContent: "center", margin: "16px 0" }}>
 	<img src="/assets/visualizing-vector-fields-on-ar-glasses/captures/animated-sprite-sheet.png" alt="Animated sprite sheet material graph" loading="lazy" decoding="async" style={{ maxWidth: "600px", borderRadius: "8px" }} />

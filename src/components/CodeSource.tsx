@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 
-interface PythonSourceProps {
+interface CodeSourceProps {
   codeSrc: string;
   label?: string;
+  language?: string;
   maxWidth?: string;
 }
 
-export default function PythonSource({
+export default function CodeSource({
   codeSrc,
-  label = "Python Source",
+  label = "Source Code",
+  language = "code",
   maxWidth = "100%",
-}: PythonSourceProps) {
+}: CodeSourceProps) {
   const [isCodeOpen, setIsCodeOpen] = useState(false);
   const [code, setCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -134,7 +136,7 @@ export default function PythonSource({
                   fontFamily: "monospace",
                 }}
               >
-                python
+                {language}
               </span>
               <button
                 onClick={(e) => {
