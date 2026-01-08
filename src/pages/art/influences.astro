@@ -10,6 +10,9 @@ const influences = [
   { type: "video", title: "The Game Awards (Process / Making Of)", author: "Simon Holmedal", youtubeId: "1HYmBuG5E1c", comment: "" },
   { type: "video", title: "Elements", author: "Maxim Zhestkov", youtubeId: "_MbGLoHcokU", comment: "" },
 
+  // Instagram posts - use postId (the code after /p/ in the URL)
+  { type: "instagram", postId: "C4aodKHyYGG" },
+
   // Artists/Channels - use url for external links
   // { type: "artist", name: "Artist Name", url: "https://example.com", description: "Brief description" },
 ];
@@ -34,6 +37,7 @@ function getVideoEmbedUrl(item) {
 
 const videos = influences.filter(i => i.type === "video");
 const artists = influences.filter(i => i.type === "artist");
+const instagrams = influences.filter(i => i.type === "instagram");
 ---
 
 <Layout title="Artistic Influences - Resources">
@@ -109,6 +113,26 @@ const artists = influences.filter(i => i.type === "artist");
           </div>
         )}
 
+        {instagrams.length > 0 && (
+          <div class="mt-12">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+              {instagrams.map((post) => (
+                <div class="instagram-embed-container">
+                  <blockquote
+                    class="instagram-media"
+                    data-instgrm-captioned
+                    data-instgrm-permalink={`https://www.instagram.com/p/${post.postId}/`}
+                    data-instgrm-version="14"
+                    style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin: 1px; max-width:540px; min-width:326px; padding:0; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"
+                  >
+                    <a href={`https://www.instagram.com/p/${post.postId}/`} target="_blank" rel="noopener noreferrer">View on Instagram</a>
+                  </blockquote>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {influences.length === 0 && (
           <div class="text-center py-12">
             <p class="text-skin-base opacity-60">Coming soon...</p>
@@ -119,6 +143,9 @@ const artists = influences.filter(i => i.type === "artist");
     </section>
   </main>
   <Footer />
+  {instagrams.length > 0 && (
+    <script async src="https://www.instagram.com/embed.js"></script>
+  )}
 </Layout>
 
 <style>
@@ -188,4 +215,13 @@ const artists = influences.filter(i => i.type === "artist");
   }
 
   document.addEventListener('astro:after-swap', handleVideoLoading);
+
+  // Handle Instagram embeds
+  function loadInstagramEmbeds() {
+    if (window.instgrm) {
+      window.instgrm.Embeds.process();
+    }
+  }
+
+  document.addEventListener('astro:after-swap', loadInstagramEmbeds);
 </script>
