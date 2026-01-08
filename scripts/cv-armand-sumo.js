@@ -54,7 +54,7 @@ const doc = new Document({
       
       // IMAIOS
       new Paragraph({ style: "JobTitle", children: [new TextRun("IMAIOS , Front-End Developer (2D & 3D)")] }),
-      new Paragraph({ children: [new TextRun({ text: "March 2025 – September 2025 | Lyon, France", italics: true })] }),
+      new Paragraph({ children: [new TextRun({ text: "March 2025 – September 2025 | Montpellier, France", italics: true })] }),
       new Paragraph({ numbering: { reference: "bullet-imaios", level: 0 }, children: [new TextRun("Implemented interactive annotation tools for the IMAIOS DICOM Viewer with optimized SVG rendering and Cornerstone.js, improving user interactions and responsiveness")] }),
       new Paragraph({ numbering: { reference: "bullet-imaios", level: 0 }, children: [new TextRun("Deployed a 3D anatomical model viewer on the web platform, enabling browser access to high-quality 3D medical educational content")] }),
       new Paragraph({ numbering: { reference: "bullet-imaios", level: 0 }, children: [new TextRun("Developed enhanced features for the e-anatomy web application using Vue 3, TypeScript, Godot, and AWS")] }),
