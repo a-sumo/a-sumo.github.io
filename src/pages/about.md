@@ -19,7 +19,7 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 
 <div class="resume-section">
   <button class="resume-toggle" aria-expanded="false">
-    <span class="resume-text">Resume</span> <span class="resume-arrow">▼</span>
+    <span class="resume-text">Resume</span> <span class="resume-arrow">+</span>
   </button>
   <div class="resume-options">
     <a href="https://docs.google.com/viewer?url=https://a-sumo.github.io/assets/Armand_Sumo_AR_Engineer_CV.pdf" target="_blank">View</a>
@@ -51,15 +51,10 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
   color: rgb(var(--color-accent));
 }
 .resume-arrow {
-  font-size: 0.6em;
-  transition: transform 0.2s ease;
+  font-size: 0.8em;
+  font-weight: 600;
   text-decoration: none;
   display: inline-block;
-  position: relative;
-  top: 0.2em;
-}
-.resume-section.open .resume-arrow {
-  transform: rotate(180deg);
 }
 .resume-options {
   display: grid;
@@ -95,7 +90,10 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
     toggle.addEventListener('click', (e) => {
       e.preventDefault();
       section.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', section.classList.contains('open'));
+      const isOpen = section.classList.contains('open');
+      toggle.setAttribute('aria-expanded', isOpen);
+      const arrow = toggle.querySelector('.resume-arrow');
+      if (arrow) arrow.textContent = isOpen ? '-' : '+';
     });
   }
 
