@@ -5,6 +5,13 @@ import Footer from "@components/Footer.astro";
 import Breadcrumbs from "@components/Breadcrumbs.astro";
 
 const articles = [
+  {
+    title: "The Problem of Increasing Human Energy",
+    author: "Nikola Tesla",
+    date: "1900",
+    url: "/assets/articles/the-problem-of-increasing-human-energy-tesla.pdf",
+    description: "Tesla's visionary essay on humanity's energy future, originally published in The Century Magazine. He explores the physics of human progress, renewable energy sources, and his ideas for wireless power transmission to increase the total energy available to civilization."
+  },
 ];
 ---
 
@@ -21,14 +28,23 @@ const articles = [
                 <!-- Title and Author -->
                 <div>
                   <h2 class="text-2xl sm:text-3xl font-bold text-skin-accent mb-2 leading-tight">
-                    <a 
-                      href={article.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      class="hover:underline transition-all duration-200"
-                    >
-                      {article.title}
-                    </a>
+                    {article.url.endsWith('.pdf') ? (
+                      <button
+                        class="pdf-title-toggle text-left hover:underline transition-all duration-200"
+                        data-index={index}
+                      >
+                        {article.title}
+                      </button>
+                    ) : (
+                      <a
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="hover:underline transition-all duration-200"
+                      >
+                        {article.title}
+                      </a>
+                    )}
                   </h2>
                   <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-skin-base">
                     <p class="text-lg font-medium">
@@ -46,18 +62,45 @@ const articles = [
                 <p class="text-base text-skin-base leading-relaxed max-w-3xl">
                   {article.description}
                 </p>
-                
-                <!-- Read Link -->
-                <div class="pt-2">
-                  <a 
-                    href={article.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center text-skin-accent hover:text-skin-accent-dark font-medium transition-colors duration-200"
-                  >
-                    Read Article
-                  </a>
-                </div>
+
+                <!-- PDF Preview (if URL ends with .pdf) -->
+                {article.url.endsWith('.pdf') && (
+                  <div class="pdf-preview-container mt-4">
+                    <button
+                      class="pdf-toggle inline-flex items-center gap-2 text-skin-accent hover:text-skin-accent-dark font-medium transition-colors duration-200"
+                      data-index={index}
+                    >
+                      <span class="toggle-icon">▶</span>
+                      <span class="toggle-text">Show Preview</span>
+                    </button>
+                    <div class="pdf-embed hidden mt-4" data-index={index} data-pdf-url={article.url}>
+                      <object
+                        class="w-full rounded-lg border border-skin-border pdf-object"
+                        style="height: 700px;"
+                        type="application/pdf"
+                      >
+                        <p class="p-4 text-center text-skin-muted">
+                          Your browser doesn't support embedded PDFs.
+                          <a href={article.url} target="_blank" rel="noopener noreferrer" class="underline text-skin-accent">Open PDF in new tab</a>
+                        </p>
+                      </object>
+                    </div>
+                  </div>
+                )}
+
+                <!-- Read Link (for non-PDF) -->
+                {!article.url.endsWith('.pdf') && (
+                  <div class="pt-2">
+                    <a
+                      href={article.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center text-skin-accent hover:text-skin-accent-dark font-medium transition-colors duration-200"
+                    >
+                      Read Article
+                    </a>
+                  </div>
+                )}
               </div>
             </article>
           ))}
@@ -73,21 +116,96 @@ const articles = [
   article {
     transition: transform 0.2s ease;
   }
-  
+
   article:hover {
     transform: translateY(-2px);
   }
-  
+
   /* Ensure consistent spacing and typography */
   h2 a:hover {
     text-decoration-thickness: 2px;
     text-underline-offset: 4px;
   }
-  
+
   /* Focus states for accessibility */
   a:focus {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
     border-radius: 2px;
   }
+
+  /* PDF toggle */
+  .pdf-toggle {
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .pdf-toggle .toggle-icon {
+    display: inline-block;
+    transition: transform 0.2s ease;
+    font-size: 10px;
+  }
+
+  .pdf-toggle.open .toggle-icon {
+    transform: rotate(90deg);
+  }
+
+  .pdf-embed.hidden {
+    display: none;
+  }
+
+  .pdf-title-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    padding: 0;
+  }
 </style>
+
+<script>
+  function initPdfToggles() {
+    function togglePdf(index) {
+      const embed = document.querySelector(`.pdf-embed[data-index="${index}"]`);
+      const toggleBtn = document.querySelector(`.pdf-toggle[data-index="${index}"]`);
+      const toggleText = toggleBtn?.querySelector('.toggle-text');
+      const pdfObject = embed?.querySelector('.pdf-object');
+
+      if (embed) {
+        const isHidden = embed.classList.contains('hidden');
+
+        // Only load PDF when opening for the first time
+        if (isHidden && pdfObject && !pdfObject.data && embed.dataset.pdfUrl) {
+          pdfObject.data = embed.dataset.pdfUrl;
+        }
+
+        embed.classList.toggle('hidden');
+        toggleBtn?.classList.toggle('open');
+        if (toggleText) {
+          toggleText.textContent = embed.classList.contains('hidden') ? 'Show Preview' : 'Hide Preview';
+        }
+      }
+    }
+
+    // Toggle button clicks
+    document.querySelectorAll('.pdf-toggle').forEach(button => {
+      button.addEventListener('click', () => togglePdf(button.dataset.index));
+    });
+
+    // Title clicks also toggle preview
+    document.querySelectorAll('.pdf-title-toggle').forEach(button => {
+      button.addEventListener('click', () => togglePdf(button.dataset.index));
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPdfToggles);
+  } else {
+    initPdfToggles();
+  }
+
+  document.addEventListener('astro:after-swap', initPdfToggles);
+</script>
