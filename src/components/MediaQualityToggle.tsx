@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 
-type MediaQuality = "medium" | "high";
+type MediaQuality = "low" | "medium" | "high";
 const STORAGE_KEY = "media-quality";
 const QUALITY_CHANGE_EVENT = "media-quality-change";
 
 export function getStoredQuality(): MediaQuality {
   if (typeof window === "undefined") return "high";
   const stored = localStorage.getItem(STORAGE_KEY);
-  return stored === "medium" ? "medium" : "high";
+  if (stored === "low") return "low";
+  if (stored === "medium") return "medium";
+  return "high";
 }
 
 export function setStoredQuality(quality: MediaQuality) {
@@ -106,6 +108,24 @@ export function getMediaPath(originalPath: string, quality: MediaQuality): strin
   if (!originalPath.includes(BASE_PATH)) return originalPath;
 
   const relativePath = originalPath.replace(BASE_PATH, "");
+
+  if (quality === "low") {
+    // In low quality, ALL videos become GIFs
+    if (relativePath.endsWith(".mp4")) {
+      return `${BASE_PATH}low/${relativePath.replace(".mp4", ".gif")}`;
+    }
+    // GIFs stay as GIFs but use low quality version
+    if (relativePath.endsWith(".gif")) {
+      return `${BASE_PATH}low/${relativePath}`;
+    }
+    // PNGs become JPGs in low quality
+    if (relativePath.endsWith(".png")) {
+      return `${BASE_PATH}low/${relativePath.replace(".png", ".jpg")}`;
+    }
+    return originalPath;
+  }
+
+  // Medium quality
   if (!HAS_MEDIUM[relativePath]) return originalPath;
 
   // PNGs become JPGs in medium quality
@@ -117,13 +137,14 @@ export function getMediaPath(originalPath: string, quality: MediaQuality): strin
 }
 
 const qualityLabels: Record<MediaQuality, string> = {
+  low: "Low",
   medium: "Medium",
   high: "High",
 };
 
 export default function MediaQualityToggle() {
   const quality = useMediaQuality();
-  const qualities: MediaQuality[] = ["medium", "high"];
+  const qualities: MediaQuality[] = ["low", "medium", "high"];
 
   return (
     <div className="mq-toggle-container">

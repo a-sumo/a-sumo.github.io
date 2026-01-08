@@ -40,6 +40,7 @@ export default function ManimVideo({
   const [hasLoaded, setHasLoaded] = useState(false);
   const quality = useMediaQuality();
   const actualSrc = getMediaPath(src, quality);
+  const isGif = gif || actualSrc.endsWith(".gif");
 
   const copyToClipboard = async () => {
     if (code) {
@@ -50,7 +51,7 @@ export default function ManimVideo({
   };
 
   useEffect(() => {
-    if (gif) return;
+    if (isGif) return;
 
     const video = videoRef.current;
     if (!video) return;
@@ -83,7 +84,7 @@ export default function ManimVideo({
     return () => {
       observer.disconnect();
     };
-  }, [autoPlay, gif, hasLoaded]);
+  }, [autoPlay, isGif, hasLoaded]);
 
   useEffect(() => {
     if (isCodeOpen && !code) {
@@ -110,7 +111,7 @@ export default function ManimVideo({
         }}
       >
         {/* Video or GIF */}
-        {gif ? (
+        {isGif ? (
           <img
             src={actualSrc}
             alt={caption || "Animation"}

@@ -32,8 +32,11 @@ export default function VideoPlayer({
   const [hasLoaded, setHasLoaded] = useState(false);
   const quality = useMediaQuality();
   const actualSrc = getMediaPath(src, quality);
+  const isGif = actualSrc.endsWith(".gif");
 
   useEffect(() => {
+    if (isGif) return;
+
     const video = videoRef.current;
     if (!video) return;
 
@@ -66,30 +69,43 @@ export default function VideoPlayer({
     return () => {
       observer.disconnect();
     };
-  }, [autoPlay, hasLoaded]);
+  }, [autoPlay, hasLoaded, isGif]);
+
+  const sharedStyles = {
+    maxWidth,
+    width: "100%",
+    borderRadius: noBorder ? "0" : borderRadius,
+    boxShadow: noBorder ? "none" : "0 4px 20px rgba(0,0,0,0.15)",
+  };
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
-      <video
-        ref={videoRef}
-        controls={controls}
-        autoPlay={autoPlay}
-        loop={loop}
-        muted={muted}
-        playsInline
-        preload={preload}
-        poster={poster}
-        className={className}
-        style={{
-          maxWidth,
-          width: "100%",
-          borderRadius: noBorder ? "0" : borderRadius,
-          boxShadow: noBorder ? "none" : "0 4px 20px rgba(0,0,0,0.15)",
-        }}
-      >
-        <source src={actualSrc} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      {isGif ? (
+        <img
+          src={actualSrc}
+          alt="Animation"
+          loading="lazy"
+          decoding="async"
+          className={className}
+          style={sharedStyles}
+        />
+      ) : (
+        <video
+          ref={videoRef}
+          controls={controls}
+          autoPlay={autoPlay}
+          loop={loop}
+          muted={muted}
+          playsInline
+          preload={preload}
+          poster={poster}
+          className={className}
+          style={sharedStyles}
+        >
+          <source src={actualSrc} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      )}
     </div>
   );
 }
