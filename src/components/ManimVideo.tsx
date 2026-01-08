@@ -13,6 +13,7 @@ interface ManimVideoProps {
   preload?: "auto" | "metadata" | "none";
   caption?: string;
   figureId?: string;
+  gif?: boolean;
 }
 
 export default function ManimVideo({
@@ -28,6 +29,7 @@ export default function ManimVideo({
   preload = "metadata",
   caption,
   figureId,
+  gif = false,
 }: ManimVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isCodeOpen, setIsCodeOpen] = useState(false);
@@ -44,6 +46,8 @@ export default function ManimVideo({
   };
 
   useEffect(() => {
+    if (gif) return;
+
     const video = videoRef.current;
     if (!video) return;
 
@@ -72,7 +76,7 @@ export default function ManimVideo({
     return () => {
       observer.disconnect();
     };
-  }, [autoPlay]);
+  }, [autoPlay, gif]);
 
   useEffect(() => {
     if (isCodeOpen && !code) {
@@ -98,23 +102,36 @@ export default function ManimVideo({
           background: "rgb(30, 30, 30)",
         }}
       >
-        {/* Video */}
-        <video
-          ref={videoRef}
-          controls={controls}
-          autoPlay={autoPlay}
-          loop={loop}
-          muted={muted}
-          playsInline
-          preload={preload}
-          style={{
-            width: "100%",
-            display: "block",
-          }}
-        >
-          <source src={src} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        {/* Video or GIF */}
+        {gif ? (
+          <img
+            src={src}
+            alt={caption || "Animation"}
+            loading="lazy"
+            decoding="async"
+            style={{
+              width: "100%",
+              display: "block",
+            }}
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            controls={controls}
+            autoPlay={autoPlay}
+            loop={loop}
+            muted={muted}
+            playsInline
+            preload={preload}
+            style={{
+              width: "100%",
+              display: "block",
+            }}
+          >
+            <source src={src} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        )}
 
         {/* Source Code Toggle Bar */}
         <div

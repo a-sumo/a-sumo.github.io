@@ -126,16 +126,15 @@ The most straightforward approach to render 3D lines is to generate tubes with c
 
 If the normals are encoded correctly (which requires having proper vertex ordering), GPU interpolation provides smooth color transitions across the tube surface and endcaps, which yields a believable look with minimal geometry.
 
-The video below illustrates the construction process:
+The animation below illustrates the construction process:
 
 <ManimVideo
 	client:load
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction.webm"
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction.gif"
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/manim/tube_construction.py"
-	preload="metadata"
 	maxWidth="100%"
 	noBorder={true}
-	autoPlay={true}
+	gif={true}
 />
 
 <span id="proc-gen-code"></span>
