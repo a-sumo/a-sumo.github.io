@@ -113,7 +113,7 @@ function DownloadPackageButton({ packageUrl, packageName }: DownloadPackageButto
     <a
       href={packageUrl}
       download={packageName}
-      className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all duration-200 border-2 border-black bg-white text-black hover:border-[#8CA9FF] hover:text-[#8CA9FF]"
+      className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-xs font-medium transition-all duration-200 border-2 border-black bg-white text-black hover:border-[#8CA9FF] hover:text-[#8CA9FF] no-underline hover:no-underline"
       title={`Download ${packageName} - Import into Lens Studio`}
     >
       Download Package
@@ -327,7 +327,7 @@ export default function WorkflowDiagramSimple({
           <div className="animate-slideDown mx-auto max-w-3xl rounded-lg border-2 border-black bg-skin-card p-2 sm:p-4 overflow-hidden">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm sm:text-base font-semibold">
-                {materialLabel} (GLSL)
+                {materialLabel} (Lens Studio Code Node)
               </h4>
               {packageUrl && packageName && (
                 <DownloadPackageButton packageUrl={packageUrl} packageName={packageName} />

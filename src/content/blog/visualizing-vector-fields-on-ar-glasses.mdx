@@ -474,7 +474,17 @@ The field patterns above are mathematical abstractions. For something more concr
   />
 </div>
 
-Each dipole creates a field based on its magnetic moment and distance: `B = (3(m·r̂)r̂ - m) / r³`. Combining two dipoles produces the characteristic looping field lines.
+Each dipole creates a vector field based on its magnetic moment $\mathbf{m}$ and the displacement $\mathbf{r}$ from the dipole:
+
+$$\mathbf{B}(\mathbf{r}) = \frac{3(\mathbf{m} \cdot \hat{\mathbf{r}})\hat{\mathbf{r}} - \mathbf{m}}{r^3}$$
+
+The field magnitude falls off as the inverse cube of distance: $|\mathbf{B}| \propto \frac{1}{r^3}$.
+
+To trace flow lines through this field, we use Euler integration: starting from a sample point $\mathbf{p}_0$, we repeatedly query the field and step in its direction:
+
+$$\mathbf{p}_{n+1} = \mathbf{p}_n + \hat{\mathbf{B}}(\mathbf{p}_n) \cdot \Delta s$$
+
+where $\hat{\mathbf{B}}$ is the normalized field direction and $\Delta s$ is the step size. Combining two dipoles produces the characteristic looping field lines.
 
 <ManimVideo
 	client:load
