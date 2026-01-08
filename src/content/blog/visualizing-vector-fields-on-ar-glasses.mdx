@@ -486,6 +486,40 @@ $$\mathbf{p}_{n+1} = \mathbf{p}_n + \hat{\mathbf{B}}(\mathbf{p}_n) \cdot \Delta 
 
 where $\hat{\mathbf{B}}$ is the normalized field direction and $\Delta s$ is the step size. Combining two dipoles produces the characteristic looping field lines.
 
+<details style={{ margin: "16px auto", maxWidth: "800px" }}>
+<summary style={{ cursor: "pointer", color: "#888", fontStyle: "italic" }}>GPU Implementation</summary>
+
+The dipole formula translates directly to GPU code:
+
+```javascript
+vec3 dipoleMagneticField(vec3 point, vec3 dipolePos, vec3 moment) {
+    vec3 r = point - dipolePos;
+    float dist = length(r);
+
+    if (dist < 0.1) {
+        return moment * FieldStrength * 2.0;  // Inside dipole
+    } else {
+        vec3 rHat = r / dist;                           // r̂ = r/|r|
+        float dist3 = dist * dist * dist;               // r³
+        float mDotR = dot(moment, rHat);                // m · r̂
+        vec3 B = (3.0 * mDotR * rHat - moment) / dist3; // B = (3(m·r̂)r̂ - m) / r³
+        return B * FieldStrength;
+    }
+}
+```
+
+Euler integration runs in the vertex shader, stepping each vertex along the field:
+
+```javascript
+for (int i = 0; i < 64; i++) {
+    if (i >= clampedStepIndex) break;
+    prevPos = pos;
+    pos += getMagneticField(pos) * StepSize;  // p_{n+1} = p_n + B(p_n) · Δs
+}
+```
+
+</details>
+
 <ManimVideo
 	client:load
 	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/MagneticField.gif"
@@ -508,31 +542,81 @@ where $\hat{\mathbf{B}}$ is the normalized field direction and $\Delta s$ is the
 />
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Fig 4.2: Demo on Spectacles with interactive magnet positioning</p>
 
-<details style={{ margin: "16px auto", maxWidth: "800px" }}>
-<summary style={{ cursor: "pointer", color: "#888", fontStyle: "italic" }}>MagnetPhysics.ts: Opposite poles attract, like poles repel. Shake to separate when stuck.</summary>
+<Note client:load type="tip" title="Magnet Physics Script">
+
+A separate script applies physical interactions between the two magnet scene objects.
+
+Here are some of its key sections:
+
+**Pole alignment** that determines whether magnets attract or repel:
 
 ```typescript
 // Returns alignment: negative = attracting, positive = repelling
 private computeAlignment(): number {
-    const pos1 = this.getPosition(this.magnet1);
-    const pos2 = this.getPosition(this.magnet2);
-    const delta = pos2.sub(pos1);
-    const distance = delta.length;
-
-    if (distance < 0.001) return -1; // Very close = attracting
-
     const direction = delta.normalize();
-    const m1 = this.getForwardVector(this.magnet1);
+    const m1 = this.getForwardVector(this.magnet1);  // +X points from S to N pole
     const m2 = this.getForwardVector(this.magnet2);
 
-    const m1FacingM2 = m1.dot(direction);
-    const m2FacingM1 = m2.dot(direction.uniformScale(-1));
-
-    return m1FacingM2 * m2FacingM1;
+    const m1FacingM2 = m1.dot(direction);            // Is magnet1's north pointing toward magnet2?
+    const m2FacingM1 = m2.dot(direction.uniformScale(-1)); // Is magnet2's north pointing toward magnet1?
+    return m1FacingM2 * m2FacingM1;                  // Negative when opposite poles face each other
 }
 ```
 
-</details>
+**Force computation** with inverse cube falloff (matching the dipole field formula) and reference distance normalization for intuitive parameter tuning:
+
+```typescript
+const effectiveDistance = Math.max(distance, this.minDistance);
+// Normalize by reference distance (≈ magnet diameter) so force = 1 at that distance
+const normalizedDist = effectiveDistance / this.referenceDistance;
+const distanceFactor = normalizedDist * normalizedDist * normalizedDist; // r³ falloff
+
+// Boost attraction at close range for satisfying "snap" behavior
+const isAttracting = alignment < 0;
+const proximityFactor = Math.max(0, 1.0 - effectiveDistance / 2.0);
+const closeRangeBoost = isAttracting ? (1.0 + 8.0 * proximityFactor * proximityFactor) : 1.0;
+
+const forceMagnitude = this.forceStrength * alignmentFactor * closeRangeBoost / distanceFactor;
+return direction.uniformScale(forceMagnitude * alignment);
+```
+
+**Sticking behavior** where attracting magnets stick together and move as one until shaken apart:
+
+```typescript
+if (attracting && distance < contactDist) {
+    if (!this.isStuck) {
+        this.stickOffset = pos2.sub(pos1);  // Record relative position
+    }
+    this.isStuck = true;
+
+    // When stuck, moving one magnet moves both
+    if (manipulating1 && !manipulating2) {
+        this.setPosition(this.magnet2, pos1.add(this.stickOffset));
+    } else if (manipulating2 && !manipulating1) {
+        this.setPosition(this.magnet1, pos2.sub(this.stickOffset));
+    }
+}
+```
+
+**Shake to separate** that detects rapid hand acceleration to break stuck magnets apart:
+
+```typescript
+private checkShakeSeparation(currentVel: vec3, lastVel: vec3, isManipulating: boolean): boolean {
+    if (!isManipulating) return false;
+
+    const acceleration = currentVel.sub(lastVel).length / dt;
+    if (acceleration > this.shakeThreshold) {
+        this.isStuck = false;
+        // Apply impulse in opposite directions
+        this.velocity1 = direction.uniformScale(-this.separationImpulse);
+        this.velocity2 = direction.uniformScale(this.separationImpulse);
+        return true;
+    }
+    return false;
+}
+```
+
+</Note>
 
 #### 4.1 Implementation Workflow
 
