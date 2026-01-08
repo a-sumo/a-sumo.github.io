@@ -58,9 +58,11 @@ const allPosts = posts.map(({ data: { title }, slug }) => ({
 
 const currentPostIndex = allPosts.findIndex(a => a.slug === post.slug);
 
-const prevPost = currentPostIndex !== 0 ? allPosts[currentPostIndex - 1] : null;
-const nextPost =
-  currentPostIndex !== allPosts.length ? allPosts[currentPostIndex + 1] : null;
+// Posts are sorted newest-first, so:
+// - prevPost = older post (higher index in array)
+// - nextPost = newer post (lower index in array)
+const prevPost = currentPostIndex < allPosts.length - 1 ? allPosts[currentPostIndex + 1] : null;
+const nextPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null;
 ---
 
 <Layout {...layoutProps}>
