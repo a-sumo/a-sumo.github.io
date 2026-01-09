@@ -1,0 +1,25 @@
+---
+/**
+ * PDF-optimized article page
+ * Playwright visits this URL to generate PDF exports
+ */
+import { type CollectionEntry, getCollection } from "astro:content";
+import PostDetailsPDF from "@layouts/PostDetailsPDF.astro";
+
+export interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+---
+
+<PostDetailsPDF post={post} />

@@ -1,0 +1,160 @@
+{
+  "visualizing-color-spaces-in-ar-glasses": {
+    "videos": {
+      "/assets/visualizing-color-spaces-in-ar-glasses/full_demo.mp4": {
+        "timestamps": [0, 4, 27],
+        "caption": "Color Space Explorer showing different color space projections and the interactive UI"
+      },
+      "/assets/visualizing-color-spaces-in-ar-glasses/videos/bonne_chance_franco-succession.mp4": {
+        "remove": true,
+        "removeAssociatedText": true
+      },
+      "/assets/visualizing-color-spaces-in-ar-glasses/demo_vfx_particles.mp4": {
+        "timestamps": [0, 2, 3],
+        "caption": "VFX particle system visualizing color transformations in real time"
+      },
+      "/assets/visualizing-color-spaces-in-ar-glasses/videos/line-rendering-color-spaces.MP4": {
+        "timestamps": [1, 2, 5, 8],
+        "caption": "Line rendering technique for displaying color space boundaries"
+      },
+      "/assets/visualizing-color-spaces-in-ar-glasses/videos/in_editor_demo.mp4": {
+        "timestamps": [1, 3, 5, 12],
+        "caption": "In editor demonstration of the color space visualization system"
+      }
+    },
+    "manimGifs": {},
+    "removeElements": ["ColorMixingChallenge", "challenge-intro"]
+  },
+  "visualizing-vector-fields-on-ar-glasses": {
+    "videos": {
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/VectorFieldPreview.mp4": {
+        "timestamps": [1, 4, 8, 10],
+        "caption": "Vector field visualization with multiple rendering modes"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/test-tube-recording.mp4": {
+        "timestamps": [1, 2],
+        "caption": "Testing tube rendering on AR glasses"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeTestDemo.mp4": {
+        "timestamps": [1, 3, 5, 7],
+        "caption": "Tube geometry following vector field flow lines"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/contraction-demo.mp4": {
+        "timestamps": [3, 4, 5, 7],
+        "caption": "Contraction field demonstration showing particles converging"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/expansion-demo.mp4": {
+        "timestamps": [1, 2, 4, 10],
+        "caption": "Expansion field demonstration showing particles diverging"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/circulation-demo.mp4": {
+        "timestamps": [1, 2, 4, 7],
+        "caption": "Circulation field with particles following circular paths"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/vortex-demo.mp4": {
+        "timestamps": [1, 3, 5, 11],
+        "caption": "Vortex field creating spiral particle motion"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/waves-demo.mp4": {
+        "timestamps": [3, 4, 6, 7],
+        "caption": "Wave field producing oscillating particle behavior"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/magnetic-field-demo.mp4": {
+        "timestamps": [1, 8, 17, 20],
+        "caption": "Magnetic field visualization with field lines and particle traces"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/vector-field2-tube-mode-demo.mp4": {
+        "timestamps": [1, 3, 8, 15],
+        "caption": "Tube rendering mode showing flow direction"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/field_source.mp4": {
+        "timestamps": [0],
+        "caption": "Source field"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/field_saddle.mp4": {
+        "timestamps": [0],
+        "caption": "Saddle field"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/field_double_vortex.mp4": {
+        "timestamps": [0],
+        "caption": "Double vortex field"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/contraction.mp4": {
+        "timestamps": [0],
+        "caption": "Contraction"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/expansion.mp4": {
+        "timestamps": [0],
+        "caption": "Expansion"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/circulation.mp4": {
+        "timestamps": [0],
+        "caption": "Circulation"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/vortex.mp4": {
+        "timestamps": [0],
+        "caption": "Vortex"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/waves.mp4": {
+        "timestamps": [0],
+        "caption": "Waves"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/magnetic.mp4": {
+        "timestamps": [0],
+        "caption": "Magnetic"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/settings-bg-demo-bg.mp4": {
+        "timestamps": [2, 4, 6, 9],
+        "caption": "Settings panel and background customization options"
+      }
+    },
+    "manimGifs": {
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction.gif": {
+        "sourceVideo": "/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction.mp4",
+        "timestamps": [3, 4, 6, 10],
+        "caption": "Tube construction process building geometry along field lines"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeDeformation.gif": {
+        "sourceVideo": "/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeDeformation.mp4",
+        "timestamps": [1, 3, 6, 8],
+        "caption": "Tube deformation showing how geometry adapts to field changes"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldContraction.gif": {
+        "sourceVideo": "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldContraction.webm",
+        "timestamps": [2, 4, 9, 13],
+        "caption": "Contraction field mathematical visualization"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldExpansion.gif": {
+        "sourceVideo": "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldExpansion.webm",
+        "timestamps": [2, 4, 9, 13],
+        "caption": "Expansion field mathematical visualization"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldCirculation.gif": {
+        "sourceVideo": "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldCirculation.webm",
+        "timestamps": [2, 4, 9, 13],
+        "caption": "Circulation field mathematical visualization"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldVortex.gif": {
+        "sourceVideo": "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldVortex.webm",
+        "timestamps": [2, 4, 9, 13],
+        "caption": "Vortex field mathematical visualization"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldWaves.gif": {
+        "sourceVideo": "/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldWaves.webm",
+        "timestamps": [2, 4, 9, 13],
+        "caption": "Waves field mathematical visualization"
+      },
+      "/assets/visualizing-vector-fields-on-ar-glasses/videos/MagneticField.gif": {
+        "sourceVideo": "/assets/visualizing-vector-fields-on-ar-glasses/videos/MagneticField.webm",
+        "timestamps": [1, 4, 12, 16],
+        "caption": "Magnetic field mathematical visualization"
+      }
+    },
+    "removeElements": ["VectorFieldViz"]
+  },
+  "eyedropper-for-spectacles-ar-glasses": {
+    "videos": {},
+    "manimGifs": {},
+    "removeElements": []
+  }
+}

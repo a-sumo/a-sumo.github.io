@@ -1,0 +1,476 @@
+---
+/**
+ * PDF optimized article layout
+ * Renders video frames inline, hides interactive elements
+ */
+import type { CollectionEntry } from "astro:content";
+import { SITE } from "@config";
+import fs from "node:fs";
+import path from "node:path";
+
+export interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+
+const {
+  title,
+  author,
+  description,
+  pubDatetime,
+  modDatetime,
+} = post.data;
+
+const { Content } = await post.render();
+
+const formattedDate = pubDatetime.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+
+const siteUrl = SITE.website.replace(/\/$/, '');
+const articleUrl = `${siteUrl}/posts/${post.slug}/`;
+
+// Load manifest for this article
+let manifest = { videos: [], manimGifs: [], interactives: [] };
+try {
+  const manifestPath = path.join(process.cwd(), 'public/assets/pdf-frames', post.slug, 'manifest.json');
+  if (fs.existsSync(manifestPath)) {
+    manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  }
+} catch (e) {
+  console.log('No manifest for', post.slug);
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        font-size: 11pt;
+        line-height: 1.6;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #1a1a1a;
+        background: #fff;
+        padding: 20px;
+        margin: 0;
+      }
+
+      .pdf-header {
+        border-bottom: 2px solid #1a1a1a;
+        padding-bottom: 16px;
+        margin-bottom: 24px;
+      }
+
+      .pdf-title {
+        font-size: 24pt;
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 8px;
+        color: #1a1a1a;
+      }
+
+      .pdf-meta {
+        font-size: 10pt;
+        color: #666;
+      }
+
+      .pdf-url {
+        font-size: 9pt;
+        color: #888;
+        margin-top: 8px;
+        word-break: break-all;
+      }
+
+      .pdf-content {
+        max-width: 100%;
+      }
+
+      .pdf-content h1 {
+        font-size: 20pt;
+        font-weight: 700;
+        margin: 24px 0 12px;
+        page-break-after: avoid;
+      }
+
+      .pdf-content h2 {
+        font-size: 16pt;
+        font-weight: 700;
+        margin: 20px 0 10px;
+        page-break-after: avoid;
+      }
+
+      .pdf-content h3 {
+        font-size: 13pt;
+        font-weight: 600;
+        margin: 16px 0 8px;
+        page-break-after: avoid;
+      }
+
+      .pdf-content p {
+        margin: 10px 0;
+      }
+
+      .pdf-content a {
+        color: #2563eb;
+        text-decoration: underline;
+      }
+
+      .pdf-content ul, .pdf-content ol {
+        margin: 10px 0;
+        padding-left: 24px;
+      }
+
+      .pdf-content li {
+        margin: 4px 0;
+      }
+
+      .pdf-content blockquote {
+        border-left: 3px solid #ddd;
+        padding-left: 16px;
+        margin: 16px 0;
+        color: #555;
+        font-style: italic;
+      }
+
+      .pdf-content pre {
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 12px;
+        font-size: 9pt;
+        line-height: 1.4;
+        overflow-wrap: break-word;
+        white-space: pre-wrap;
+        page-break-inside: avoid;
+        margin: 12px 0;
+      }
+
+      .pdf-content code {
+        font-family: "SF Mono", Monaco, monospace;
+        font-size: 9pt;
+        background: #f5f5f5;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+
+      .pdf-content pre code {
+        background: none;
+        padding: 0;
+      }
+
+      .pdf-content img {
+        max-width: 100%;
+        height: auto;
+        margin: 12px 0;
+      }
+
+      .pdf-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font-size: 10pt;
+      }
+
+      .pdf-content th, .pdf-content td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      .pdf-content th {
+        background: #f5f5f5;
+        font-weight: 600;
+      }
+
+      /* HIDE all interactive elements */
+      video,
+      canvas,
+      .series-nav,
+      .ant-toggle-wrap,
+      .ant-sidebar,
+      .ant-outline,
+      .ant-inline-wrap,
+      .media-quality-toggle,
+      .article-timeline,
+      [class*="vector-field"],
+      [class*="VectorField"],
+      [data-component],
+      button,
+      .progress-bar {
+        display: none !important;
+      }
+
+
+      /* Show workflow content - expand everything */
+      details {
+        display: block !important;
+      }
+      details[open] summary ~ * {
+        display: block !important;
+      }
+      details summary {
+        display: block !important;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      /* Frame strip styling */
+      .frame-strip {
+        margin: 20px 0;
+        page-break-inside: avoid;
+      }
+
+      .frame-strip-images {
+        display: flex;
+        gap: 8px;
+        flex-wrap: nowrap;
+      }
+
+      .frame-strip-images img {
+        flex: 1;
+        min-width: 0;
+        max-height: 180px;
+        object-fit: contain;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin: 0;
+      }
+
+      .frame-strip-caption {
+        font-size: 9pt;
+        color: #666;
+        font-style: italic;
+        margin-top: 8px;
+      }
+
+      .frame-strip-caption a {
+        color: #2563eb;
+      }
+
+      .pdf-footer {
+        margin-top: 40px;
+        padding-top: 16px;
+        border-top: 1px solid #ddd;
+        font-size: 9pt;
+        color: #888;
+      }
+
+      /* KaTeX */
+      .katex {
+        font-size: 1em;
+      }
+
+      .katex-display {
+        margin: 12px 0;
+        overflow-x: auto;
+      }
+
+      /* GIF images - hide them, we'll show frame strips instead */
+      img[src$=".gif"] {
+        display: none !important;
+      }
+
+      @media print {
+        body { padding: 0; }
+        a[href]::after { content: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="pdf-header">
+      <h1 class="pdf-title">{title}</h1>
+      <div class="pdf-meta">
+        By {author || SITE.author} | {formattedDate}
+      </div>
+      <div class="pdf-url">
+        Online version: {articleUrl}
+      </div>
+    </div>
+
+    <!-- Pre-rendered frame strips for videos -->
+    {manifest.videos && manifest.videos.length > 0 && (
+      <div id="pdf-frame-strips" style="display:none;">
+        {manifest.videos.map((video: any) => (
+          <div class="frame-strip" data-video-src={video.src}>
+            <div class="frame-strip-images">
+              {video.frames.map((frame: any) => (
+                <img src={frame.path} alt={video.caption || 'Video frame'} />
+              ))}
+            </div>
+            {video.caption && (
+              <div class="frame-strip-caption">{video.caption}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    <!-- Pre-rendered frame strips for Manim GIFs -->
+    {manifest.manimGifs && manifest.manimGifs.length > 0 && (
+      <div id="pdf-manim-strips" style="display:none;">
+        {manifest.manimGifs.map((gif: any) => (
+          <div class="frame-strip" data-gif-src={gif.src}>
+            <div class="frame-strip-images">
+              {gif.frames.map((frame: any) => (
+                <img src={frame.path} alt={gif.caption || 'Animation frame'} />
+              ))}
+            </div>
+            {gif.caption && (
+              <div class="frame-strip-caption">{gif.caption}</div>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    <!-- Pre-rendered interactive frames -->
+    {manifest.interactives && manifest.interactives.length > 0 && (
+      <div id="pdf-interactive-strips" style="display:none;">
+        {manifest.interactives.map((item: any) => (
+          <div class="frame-strip" data-component={item.component}>
+            <div class="frame-strip-images">
+              {item.frames.map((frame: any) => (
+                <a href={`${articleUrl}#${item.sectionId || ''}`}>
+                  <img src={frame.path} alt={item.caption || 'Interactive'} />
+                </a>
+              ))}
+            </div>
+            {item.caption && (
+              <div class="frame-strip-caption">
+                {item.caption} <a href={`${articleUrl}#${item.sectionId || ''}`}>Try it online</a>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    <article class="pdf-content">
+      <Content />
+    </article>
+
+    <div class="pdf-footer">
+      <p>This PDF was generated from {articleUrl}</p>
+      <p>For interactive content, visit the online version.</p>
+    </div>
+
+    <script define:vars={{ manifest, articleUrl }}>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Replace videos with frame strips
+        const videoStrips = document.getElementById('pdf-frame-strips');
+        if (videoStrips) {
+          document.querySelectorAll('video').forEach(video => {
+            const source = video.querySelector('source');
+            const src = source?.getAttribute('src') || video.getAttribute('src');
+            if (!src) return;
+
+            const normalizedSrc = src.startsWith('/') ? src : '/' + src;
+            const strip = videoStrips.querySelector(`[data-video-src="${normalizedSrc}"]`);
+            if (strip) {
+              const clone = strip.cloneNode(true);
+              clone.style.display = 'block';
+              video.parentElement.replaceChild(clone, video);
+            } else {
+              video.remove();
+            }
+          });
+          videoStrips.remove();
+        }
+
+        // Replace GIFs with frame strips
+        const manimStrips = document.getElementById('pdf-manim-strips');
+        if (manimStrips) {
+          document.querySelectorAll('img[src$=".gif"]').forEach(img => {
+            const src = img.getAttribute('src');
+            if (!src) return;
+
+            const normalizedSrc = src.startsWith('/') ? src : '/' + src;
+            const strip = manimStrips.querySelector(`[data-gif-src="${normalizedSrc}"]`);
+            if (strip) {
+              const clone = strip.cloneNode(true);
+              clone.style.display = 'block';
+              img.parentElement.replaceChild(clone, img);
+            } else {
+              img.style.display = 'none';
+            }
+          });
+          manimStrips.remove();
+        }
+
+        // Replace interactive components
+        const interactiveStrips = document.getElementById('pdf-interactive-strips');
+        if (interactiveStrips) {
+          // Find color mixing challenge
+          const challengeSelectors = [
+            '[class*="color-mixing"]',
+            '[class*="ColorMixing"]',
+            '[data-component="ColorMixingChallenge"]'
+          ];
+
+          challengeSelectors.forEach(sel => {
+            document.querySelectorAll(sel).forEach(el => {
+              const strip = interactiveStrips.querySelector('[data-component="ColorMixingChallenge"]');
+              if (strip) {
+                const clone = strip.cloneNode(true);
+                clone.style.display = 'block';
+                el.replaceWith(clone);
+              } else {
+                el.remove();
+              }
+            });
+          });
+          interactiveStrips.remove();
+        }
+
+        // Remove series nav
+        document.querySelectorAll('.series-nav, [class*="SeriesNav"]').forEach(el => el.remove());
+
+        // Remove "Up next" section and everything after it
+        const upNextHeading = document.querySelector('h2[id*="up-next"]');
+        if (upNextHeading) {
+          let el = upNextHeading;
+          while (el) {
+            const next = el.nextElementSibling;
+            el.remove();
+            el = next;
+          }
+        }
+
+        // Expand all details
+        document.querySelectorAll('details').forEach(d => d.open = true);
+
+        // Expand workflow content
+        document.querySelectorAll('[class*="workflow"]').forEach(w => {
+          w.querySelectorAll('[class*="content"], [class*="code"]').forEach(el => {
+            el.style.display = 'block';
+            el.style.maxHeight = 'none';
+            el.style.opacity = '1';
+          });
+        });
+
+        // Remove canvas elements
+        document.querySelectorAll('canvas').forEach(c => c.remove());
+
+        // Signal ready
+        window.pdfTransformComplete = true;
+      });
+    </script>
+  </body>
+</html>
