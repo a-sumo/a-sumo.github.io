@@ -7,7 +7,10 @@ title: ""
 
 ## Armand Sumo
 
-<img src="/assets/armand_pic.jpg" alt="Armand" width="200" height="200" loading="eager" fetchpriority="high" decoding="async" style="border-radius: 8px;" />
+<div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+<img src="/assets/armand_pic.jpg" alt="Armand" width="270" loading="eager" fetchpriority="high" decoding="async" style="border-radius: 8px;" />
+<img src="/assets/armand-sumo-waterfall-cropped.jpg" alt="Armand at waterfall" width="270" loading="eager" decoding="async" style="border-radius: 8px;" />
+</div>
 
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 24px auto; width: 60%;" />
 
