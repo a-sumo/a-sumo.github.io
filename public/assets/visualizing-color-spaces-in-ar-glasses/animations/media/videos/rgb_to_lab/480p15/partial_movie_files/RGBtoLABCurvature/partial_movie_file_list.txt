@@ -1,8 +1,0 @@
-# This file is used internally by FFMPEG.
-file 'file:/Users/armand/Documents/a-sumo.github.io/public/assets/visualizing-color-spaces-in-ar-glasses/animations/media/videos/rgb_to_lab/480p15/partial_movie_files/RGBtoLABCurvature/1185818338_61032548_223132457.mp4'
-file 'file:/Users/armand/Documents/a-sumo.github.io/public/assets/visualizing-color-spaces-in-ar-glasses/animations/media/videos/rgb_to_lab/480p15/partial_movie_files/RGBtoLABCurvature/624642324_3903592653_4129254529.mp4'
-file 'file:/Users/armand/Documents/a-sumo.github.io/public/assets/visualizing-color-spaces-in-ar-glasses/animations/media/videos/rgb_to_lab/480p15/partial_movie_files/RGBtoLABCurvature/624642324_2569161387_1829829498.mp4'
-file 'file:/Users/armand/Documents/a-sumo.github.io/public/assets/visualizing-color-spaces-in-ar-glasses/animations/media/videos/rgb_to_lab/480p15/partial_movie_files/RGBtoLABCurvature/624642324_2906645547_1026873112.mp4'
-file 'file:/Users/armand/Documents/a-sumo.github.io/public/assets/visualizing-color-spaces-in-ar-glasses/animations/media/videos/rgb_to_lab/480p15/partial_movie_files/RGBtoLABCurvature/624642324_1374557918_550329125.mp4'
-file 'file:/Users/armand/Documents/a-sumo.github.io/public/assets/visualizing-color-spaces-in-ar-glasses/animations/media/videos/rgb_to_lab/480p15/partial_movie_files/RGBtoLABCurvature/624642324_784179552_1795210219.mp4'
-file 'file:/Users/armand/Documents/a-sumo.github.io/public/assets/visualizing-color-spaces-in-ar-glasses/animations/media/videos/rgb_to_lab/480p15/partial_movie_files/RGBtoLABCurvature/624642324_234318444_379131979.mp4'

@@ -148,7 +148,7 @@ import SeriesNav from "@components/SeriesNav";
 	preload="auto"
 />
 
-<Chapter client:load id="chapter-1" number={1} title="The Challenge of Color Mixing">
+<Chapter client:visible id="chapter-1" number={1} title="The Challenge of Color Mixing">
 
 One of the first steps a painter takes is that of assembling together the colors that will be laid on the canvas.
 This involves selecting a set of pigments, laying them out on a palette and mixing them.
@@ -186,7 +186,7 @@ Wanna try? Here: I'll give you a color and you need to find out which mix achiev
 
 <div style={{ textAlign: "center" }}>
 	<CollapsibleVideo
-		client:load
+		client:visible
 		src="/assets/visualizing-color-spaces-in-ar-glasses/videos/bonne_chance_franco-succession.mp4"
 		preText=""
 		trigger="Bonne chance!"
@@ -196,7 +196,7 @@ Wanna try? Here: I'll give you a color and you need to find out which mix achiev
 </div>
 
 <div id="color-mixing-challenge" style={{ scrollMarginTop: "80px" }}>
-	<ColorMixingChallenge client:load targetColor="#8B4513" />
+	<ColorMixingChallenge client:visible targetColor="#8B4513" />
 </div>
 
 Now, it should be no surprise to you that mastering the pigment mixing process takes years of practice.
@@ -227,9 +227,9 @@ These challenges are well-suited to what Bret Victor calls [Seeing Spaces](https
 
 </Chapter>
 
-<Chapter client:load id="chapter-2" number={2} title="Building Color Spaces">
+<Chapter client:visible id="chapter-2" number={2} title="Building Color Spaces">
 
-For color mixing, this means visualizing all three color dimensions simultaneously as you work. The tool for this is a color space: a 3D coordinate system where every possible color occupies a unique position. For a comprehensive introduction to <ReferencePreview client:load trigger="color spaces, models and gamuts" href="https://www.makingsoftware.com/chapters/color-spaces-models-and-gamuts" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/captures/dan-hollick-col-spaces.png" imageAlt="Color Spaces, Models, and Gamuts by Dan Hollick" refNumber={1} />, I highly recommend Dan Hollick's excellent article.
+For color mixing, this means visualizing all three color dimensions simultaneously as you work. The tool for this is a color space: a 3D coordinate system where every possible color occupies a unique position. For a comprehensive introduction to <ReferencePreview client:visible trigger="color spaces, models and gamuts" href="https://www.makingsoftware.com/chapters/color-spaces-models-and-gamuts" imageSrc="/assets/visualizing-color-spaces-in-ar-glasses/captures/dan-hollick-col-spaces.png" imageAlt="Color Spaces, Models, and Gamuts by Dan Hollick" refNumber={1} />, I highly recommend Dan Hollick's excellent article.
 
 There are a wide variety of color spaces, but the ones that matter for painting are those that are perceptually accurate.
 That's because transitions between colors end up informing mixing decisions.
@@ -262,7 +262,7 @@ Next, I needed to figure out how to render this space. Solid meshes only show th
 
 </Chapter>
 
-<Chapter client:load id="chapter-3" number={3} title="VFX Particles">
+<Chapter client:visible id="chapter-3" number={3} title="VFX Particles">
 
 I'll tell you one thing: Lens Studio's VFX Editor is fun to use. It's like a stylish combo of Unity's Visual Effects Graph and Blender's GeoNode Editor with some sparks of [Houdini VOP](https://tokeru.com/cgwiki/Houdini_Vops.html) brilliance.
 
@@ -278,12 +278,12 @@ This was painful to debug, but eventually I settled on a suitable workflow.
 The encoder material writes position and color data into render textures. The script orchestrates the pipeline, creating render targets and connecting the material output to the VFX input.
 Finally, the VFX decoder spawns particles, sampling the render textures to set each particle's position and color.
 
-<WorkflowDiagram client:load />
+<WorkflowDiagram client:visible />
 
 Here's the result:
 
 <VideoPlayer
-	client:load
+	client:visible
 	src="/assets/visualizing-color-spaces-in-ar-glasses/demo_vfx_particles.mp4"
 	preload="metadata"
 />
@@ -307,7 +307,7 @@ Here's a [manim](https://github.com/3b1b/manim) visualization that showcases thi
 </div>
 
 <CollapsibleCode
-	client:load
+	client:visible
 	src="/assets/visualizing-color-spaces-in-ar-glasses/animations/color_space_transforms.py"
 	trigger="View manim source"
 	language="python"
@@ -318,7 +318,7 @@ I could simply define one layout and deform it to achieve the others.
 
 </Chapter>
 
-<Chapter client:load id="chapter-4" number={4} title="Procedural Meshes">
+<Chapter client:visible id="chapter-4" number={4} title="Procedural Meshes">
 
 In Lens Studio, you can [create meshes procedurally](https://developers.snap.com/lens-studio/lens-studio-workflow/scene-set-up/3d/procedural-mesh).
 Using the [MeshBuilder](https://developers.snap.com/lens-studio/api/lens-scripting/classes/Built-In.MeshBuilder.html) API, you can specify vertex positions and store any attribute you like.
@@ -328,12 +328,12 @@ When I tried this, I was mindblown by the performance improvement.
 Though the procedural mesh generation was quite delicate, once done I could essentially let my imagination run wild.
 And since vertices are looped over in the GPU via vertex shaders, I didn't have to worry about their count.
 
-To make the process of low-level geometry construction and manipulation more, let's say... humane, I used a coding agent supplemented with a <CollapsibleCode client:load src="/assets/visualizing-color-spaces-in-ar-glasses/scripts/custom_code_node_spec.md" trigger="Custom Code Node specification" language="glsl" />.
+To make the process of low-level geometry construction and manipulation more, let's say... humane, I used a coding agent supplemented with a <CollapsibleCode client:visible src="/assets/visualizing-color-spaces-in-ar-glasses/scripts/custom_code_node_spec.md" trigger="Custom Code Node specification" language="glsl" />.
 
 I initially went for lines. It came up as a good balance of volumetric space-filling and low polycount.
 
 <VideoPlayer
-	client:load
+	client:visible
 	src="/assets/visualizing-color-spaces-in-ar-glasses/videos/line-rendering-color-spaces.MP4"
 	preload="metadata"
 />
@@ -352,7 +352,7 @@ Having cleared a path towards seamless rendering of color spaces, I could now ta
 		<p style={{ fontSize: "15px", lineHeight: 1.6 }}>The complete CIELAB color space, rendered as a grid of cubes. We can now see the full range of perceivable colors and where any given color sits within it. Solves <a href="#q-color-range">Problem 1</a>.</p>
 		<div style={{ marginTop: "auto" }}>
 			<WorkflowDiagramSimple
-				client:load
+				client:visible
 				scriptLabel="Script"
 				materialLabel="Material"
 				materialCapture="full_color_space.png"
@@ -368,7 +368,7 @@ Having cleared a path towards seamless rendering of color spaces, I could now ta
 		<p style={{ fontSize: "15px", lineHeight: 1.6 }}>This workflow computes the gamut of a set of pigments via three-way subtractive mixing. With it, we can see which colors are achievable with a given palette. Solves <a href="#q-gamut">Problem 2</a>.</p>
 		<div style={{ marginTop: "auto" }}>
 			<WorkflowDiagramSimple
-				client:load
+				client:visible
 				scriptLabel="Script"
 				materialLabel="Material"
 				materialCapture="full_color_space.png"
@@ -384,7 +384,7 @@ Having cleared a path towards seamless rendering of color spaces, I could now ta
 		<p style={{ fontSize: "15px", lineHeight: 1.6 }}>This workflow projects a color onto the gamut boundary. Given a set of pigments and a target color, we now know in advance which achievable color is closest. Solves <a href="#q-projection">Problem 3</a>.</p>
 		<div style={{ marginTop: "auto" }}>
 			<WorkflowDiagramSimple
-				client:load
+				client:visible
 				scriptLabel="Script"
 				materialLabel="Material"
 				materialCapture="projector.png"
@@ -398,7 +398,7 @@ Having cleared a path towards seamless rendering of color spaces, I could now ta
 And one final demo in-editor!
 
 <VideoPlayer
-	client:load
+	client:visible
 	src="/assets/visualizing-color-spaces-in-ar-glasses/videos/in_editor_demo.mp4"
 	preload="metadata"
 />

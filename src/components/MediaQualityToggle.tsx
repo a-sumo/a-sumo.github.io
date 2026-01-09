@@ -104,36 +104,8 @@ const HAS_MEDIUM: Record<string, boolean> = {
 const BASE_PATH = "/assets/visualizing-vector-fields-on-ar-glasses/";
 
 export function getMediaPath(originalPath: string, quality: MediaQuality): string {
-  if (quality === "high") return originalPath;
-  if (!originalPath.includes(BASE_PATH)) return originalPath;
-
-  const relativePath = originalPath.replace(BASE_PATH, "");
-
-  if (quality === "low") {
-    // In low quality, ALL videos become GIFs
-    if (relativePath.endsWith(".mp4")) {
-      return `${BASE_PATH}low/${relativePath.replace(".mp4", ".gif")}`;
-    }
-    // GIFs stay as GIFs but use low quality version
-    if (relativePath.endsWith(".gif")) {
-      return `${BASE_PATH}low/${relativePath}`;
-    }
-    // PNGs become JPGs in low quality
-    if (relativePath.endsWith(".png")) {
-      return `${BASE_PATH}low/${relativePath.replace(".png", ".jpg")}`;
-    }
-    return originalPath;
-  }
-
-  // Medium quality
-  if (!HAS_MEDIUM[relativePath]) return originalPath;
-
-  // PNGs become JPGs in medium quality
-  if (relativePath.endsWith(".png")) {
-    return `${BASE_PATH}medium/${relativePath.replace(".png", ".jpg")}`;
-  }
-
-  return `${BASE_PATH}medium/${relativePath}`;
+  // Videos are now compressed, no need for quality variants
+  return originalPath;
 }
 
 const qualityLabels: Record<MediaQuality, string> = {
@@ -143,6 +115,9 @@ const qualityLabels: Record<MediaQuality, string> = {
 };
 
 export default function MediaQualityToggle() {
+  // Videos are now compressed, quality toggle disabled
+  return null;
+
   const quality = useMediaQuality();
   const qualities: MediaQuality[] = ["low", "medium", "high"];
 

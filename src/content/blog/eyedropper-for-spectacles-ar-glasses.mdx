@@ -13,6 +13,7 @@ import SeriesNav from "@components/SeriesNav";
 import ConditionalLink from "@components/ConditionalLink";
 import CollapsibleCode from "@components/CollapsibleCode";
 import ArticleNavToggle from "@components/ArticleNavToggle";
+import VideoPlayer from "@components/VideoPlayer";
 
 <ArticleNavToggle
   client:load
@@ -96,7 +97,14 @@ import ArticleNavToggle from "@components/ArticleNavToggle";
 />
 
 <div style={{ textAlign: "center", marginBottom: "8px" }}>
-<img src="/assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.gif" width="300" alt="Eyedropper Test" />
+<VideoPlayer
+  client:load
+  src="/assets/eyedropper-for-spectacles-ar-glasses/color_palette_editor_test.mp4"
+  autoPlay={true}
+  loop={true}
+  muted={true}
+  maxWidth="300px"
+/>
 </div>
 
 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "24px", flexWrap: "wrap", fontFamily: '"Roboto Mono", monospace', fontSize: "13px" }}>
@@ -112,7 +120,7 @@ import ArticleNavToggle from "@components/ArticleNavToggle";
 	</a>
 </div>
 
-<Chapter client:load id="chapter-1" number={1} title="Why an Eyedropper?">
+<Chapter client:visible id="chapter-1" number={1} title="Why an Eyedropper?">
 
 For the past two weeks, I've been working on an augmented reality assistant for traditional painting; a project that fuses my passions for oil painting and XR.
 At some point, I needed a way to sample exact colors from my physical palette and bring them into the AR glasses.
@@ -120,7 +128,7 @@ On desktop, this is handled by the eyedropper, [a tool](https://en.wikipedia.org
 
 </Chapter>
 
-<Chapter client:load id="chapter-2" number={2} title="Implementation">
+<Chapter client:visible id="chapter-2" number={2} title="Implementation">
 
 The color data is read from the user's camera feed. Because this feed is quite large, and I was planning to sample a single pixel from it, I needed to crop it down. Fortunately, the Spectacles Samples provide a project that implements a cropping functionality that I reused here. 
 
@@ -132,7 +140,7 @@ Both update in real-time, as the user hovers on the crop area's surface.
 
 </Chapter>
 
-<Chapter client:load id="chapter-3" number={3} title="UI and Materials">
+<Chapter client:visible id="chapter-3" number={3} title="UI and Materials">
 
 The recently released Spectacles UI Kit took care of many of the key UI elements. This allowed me to focus my attention on bespoke materials for rectangle corners and grids.
 My prior 3D development experience involves lots of Three.js, where you'll usually write shaders inline with JavaScript or TypeScript code. As a result, when using Lens Studio I find myself leaning towards writing shader code rather than wrangling material graph nodes. 
@@ -145,7 +153,7 @@ The logic for reading and displaying colors is handled by a CropAreaSelector cla
 
 </Chapter>
 
-<Chapter client:load id="chapter-4" number={4} title="Security Considerations">
+<Chapter client:visible id="chapter-4" number={4} title="Security Considerations">
 
 Note that the getPixels API is [restricted](https://developers.snap.com/lens-studio/features/remote-apis/remote-service-module) when using the Remote Service Module.
 As a result, it might prompt a user authorization screen when launching the lens. 
@@ -157,7 +165,7 @@ The rationale, as best I can understand it is that if you can read pixels locall
 
 </Chapter>
 
-<Chapter client:load id="chapter-5" number={5} title="Comfort and Ease of Use">
+<Chapter client:visible id="chapter-5" number={5} title="Comfort and Ease of Use">
 
 When testing the Eyedropper on Spectacles, I noticed that mid-air and fine-grained movements don't really go hand in hand.
 Something I've taken for granted from desktop use is that tactile interaction, where the user applies pressure on a surface, results in a tangent friction force. This friction force stabilizes their hand trajectories, both in position and speed.
@@ -184,17 +192,17 @@ In the end, I will make both interaction modes available for the user to choose:
 
 </Chapter>
 
-<Chapter client:load id="chapter-6" number={6} title="Code Snippets and References">
+<Chapter client:visible id="chapter-6" number={6} title="Code Snippets and References">
 
 <CollapsibleCode
-  client:load
+  client:visible
   src="/assets/eyedropper-for-spectacles-ar-glasses/scripts/procedural_grid.glsl"
   trigger="Procedural Grid Custom Code Node"
   language="glsl"
 />
 
 <CollapsibleCode
-  client:load
+  client:visible
   src="/assets/eyedropper-for-spectacles-ar-glasses/scripts/crop_area_selector.ts"
   trigger="CropAreaSelector Methods"
   language="typescript"
@@ -205,7 +213,7 @@ In the end, I will make both interaction modes available for the user to choose:
 ## Up next
 
 <ConditionalLink
-  client:load
+  client:visible
   href="/posts/visualizing-color-spaces-in-ar-glasses"
 >
   Visualizing Color Spaces in Augmented Reality with Spectacles
