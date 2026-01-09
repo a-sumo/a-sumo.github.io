@@ -158,7 +158,7 @@ export const SOCIALS: SocialObjects = [
     name: "Snapchat",
     href: "https://www.snapchat.com/add/rmandsum",
     linkTitle: `${SITE.title} on Snapchat`,
-    active: true,
+    active: false,
   },
   {
     name: "Mail",
