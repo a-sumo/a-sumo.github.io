@@ -12,7 +12,10 @@
     "format:check": "prettier --check . --plugin=prettier-plugin-astro",
     "format": "prettier --write . --plugin=prettier-plugin-astro",
     "lint": "eslint .",
-    "fetch:scripts": "node scripts/fetch-color-space-scripts.js"
+    "fetch:scripts": "node scripts/fetch-color-space-scripts.js",
+    "pdf:frames": "node scripts/extract-video-frames.js",
+    "pdf:generate": "node scripts/generate-pdfs.js",
+    "build:pdf": "npm run pdf:frames && npm run build && npm run pdf:generate"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.3",
@@ -48,6 +51,7 @@
     "eslint": "^9.10.0",
     "eslint-plugin-astro": "^1.2.4",
     "globals": "^15.9.0",
+    "playwright": "^1.57.0",
     "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.6.6",

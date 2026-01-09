@@ -40,23 +40,16 @@ export const SOCIALS: SocialObjects = [
     active: true,
   },
   {
+    name: "Instagram",
+    href: "https://www.instagram.com/curvilinearr/",
+    linkTitle: `${SITE.title} on Instagram`,
+    active: true,
+  },
+  {
     name: "LinkedIn",
     href: "https://www.linkedin.com/in/armand-sumo/",
     linkTitle: `${SITE.title} on LinkedIn`,
     active: true,
-  },
-  {
-    name: "Mail",
-    href: "mailto:sumovero@proton.me",
-    linkTitle: `Send an email to ${SITE.title}`,
-    active: true,
-  },
-  // Row 2: Social/Content
-  {
-    name: "Instagram",
-    href: "https://www.instagram.com/plasma_holographics/",
-    linkTitle: `Plasma Holographics on Instagram`,
-    active: false,
   },
   {
     name: "X",
@@ -87,12 +80,6 @@ export const SOCIALS: SocialObjects = [
     name: "WhatsApp",
     href: "",
     linkTitle: `${SITE.title} on WhatsApp`,
-    active: false,
-  },
-  {
-    name: "Snapchat",
-    href: "",
-    linkTitle: `${SITE.title} on Snapchat`,
     active: false,
   },
   {
@@ -165,6 +152,18 @@ export const SOCIALS: SocialObjects = [
     name: "kofi-icon",
     href: "https://ko-fi.com/a_sumo",
     linkTitle: `Support ${SITE.title} on Ko-fi`,
+    active: true,
+  },
+  {
+    name: "Snapchat",
+    href: "https://www.snapchat.com/add/rmandsum",
+    linkTitle: `${SITE.title} on Snapchat`,
+    active: true,
+  },
+  {
+    name: "Mail",
+    href: "mailto:sumovero@proton.me",
+    linkTitle: `Send an email to ${SITE.title}`,
     active: true,
   },
 ];

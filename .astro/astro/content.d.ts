@@ -159,6 +159,13 @@ declare module 'astro:content' {
   collection: "blog";
   data: InferEntrySchema<"blog">
 } & { render(): Render[".mdx"] };
+"feel-the-music.mdx": {
+	id: "feel-the-music.mdx";
+  slug: "feel-the-music";
+  body: string;
+  collection: "blog";
+  data: InferEntrySchema<"blog">
+} & { render(): Render[".mdx"] };
 "playfulness-and-functionality-fluid-ui.mdx": {
 	id: "playfulness-and-functionality-fluid-ui.mdx";
   slug: "playfulness-and-functionality-fluid-ui";

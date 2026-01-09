@@ -33,7 +33,7 @@ export default function CollapsibleCode({ src, trigger, language = "glsl" }: Col
   }, [isOpen, src, code]);
 
   return (
-    <span style={{ display: "inline" }}>
+    <span style={{ display: "inline-block", marginRight: "16px", marginBottom: "8px" }}>
       <span
         onClick={() => setIsOpen(!isOpen)}
         style={{
