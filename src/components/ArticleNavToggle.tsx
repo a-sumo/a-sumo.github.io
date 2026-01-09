@@ -123,40 +123,31 @@ export default function ArticleNavToggle({ chapters, defaultView = "outline", us
           }}
         >
           {mainChapters.map((chapter, idx) => {
-            const isExpanded = expandedChapters.has(chapter.id);
-            const isHovered = hoveredChapter === chapter.id;
             const title = chapter.title || chapter.label;
             const summary = chapter.summary || [];
 
             return (
               <div key={chapter.id} className="ant-chapter">
                 <div
-                  className={`ant-chapter-header ${isHovered ? "hovered" : ""}`}
-                  onClick={() => summary.length > 0 ? toggleChapter(chapter.id) : scrollToSection(chapter.id)}
-                  onMouseEnter={() => setHoveredChapter(chapter.id)}
-                  onMouseLeave={() => setHoveredChapter(null)}
+                  className="ant-chapter-header"
+                  onClick={() => scrollToSection(chapter.id)}
                 >
                   <span className="ant-chapter-num">{idx + 1}.</span>
                   <span className="ant-chapter-title">{title}</span>
-
                 </div>
 
+                {/* Only show summary in inline outline, sidequests only in sidebar */}
                 {summary.length > 0 && (
-                  <div
-                    className="ant-summary"
-                    style={{
-                      maxHeight: isExpanded ? `${summary.length * 36 + 16}px` : "0px",
-                      opacity: isExpanded ? 1 : 0,
-                      marginTop: isExpanded ? "4px" : "0px",
-                    }}
-                  >
-                    <ul>
-                      {summary.map((item, i) => (
-                        <li key={i} onClick={() => scrollToSection(chapter.id)}>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="ant-inline-sidequests">
+                    {summary.map((item, i) => (
+                      <div
+                        key={i}
+                        className="ant-inline-sidequest"
+                        onClick={() => scrollToSection(chapter.id)}
+                      >
+                        {item}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -417,20 +408,23 @@ export default function ArticleNavToggle({ chapters, defaultView = "outline", us
       <style>{`
         /* Inline section */
         .ant-inline-wrap {
-          margin-bottom: 32px;
+          margin-bottom: 24px;
           position: relative;
           z-index: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
         }
 
         .ant-inline-header {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 6px;
           background: none;
           border: none;
           cursor: pointer;
           font-family: "Roboto Mono", monospace;
-          font-size: 12px;
+          font-size: 11px;
           font-weight: 500;
           color: rgb(140, 140, 140);
           padding: 0;
@@ -443,40 +437,40 @@ export default function ArticleNavToggle({ chapters, defaultView = "outline", us
         }
 
         .ant-inline-toggle {
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 400;
-          width: 16px;
+          width: 14px;
           text-align: center;
         }
 
         /* Outline */
         .ant-outline {
           font-family: "Roboto Mono", monospace;
-          font-size: 14px;
-          line-height: 1.9;
+          font-size: 12px;
+          line-height: 1.6;
           overflow: hidden;
         }
 
         .ant-chapter {
-          margin-bottom: 20px;
+          margin-bottom: 12px;
           position: relative;
         }
 
         .ant-chapter-header {
           display: flex;
           align-items: baseline;
-          gap: 8px;
+          gap: 6px;
           cursor: pointer;
           position: relative;
         }
 
         .ant-chapter-num {
-          min-width: 24px;
+          min-width: 20px;
         }
 
         .ant-chapter-title {
           text-transform: uppercase;
-          letter-spacing: 0.08em;
+          letter-spacing: 0.06em;
           font-weight: 500;
           transition: color 0.15s ease;
         }
@@ -485,24 +479,24 @@ export default function ArticleNavToggle({ chapters, defaultView = "outline", us
           color: rgb(140, 169, 255);
         }
 
-        .ant-summary {
-          overflow: hidden;
-          transition: max-height 0.3s ease, opacity 0.2s ease, margin-top 0.2s ease;
+        /* Inline sidequests (tree structure) */
+        .ant-inline-sidequests {
+          margin-left: 20px;
+          padding-left: 10px;
+          border-left: 1px solid rgba(140, 140, 140, 0.3);
+          margin-top: 4px;
+          margin-bottom: 8px;
         }
 
-        .ant-summary ul {
-          margin: 0;
-          padding-left: 52px;
-          list-style-type: disc;
-        }
-
-        .ant-summary li {
-          padding: 1px 0;
+        .ant-inline-sidequest {
+          padding: 2px 0;
           cursor: pointer;
+          color: rgb(160, 160, 160);
+          font-size: 11px;
           transition: color 0.15s ease;
         }
 
-        .ant-summary li:hover {
+        .ant-inline-sidequest:hover {
           color: rgb(140, 169, 255);
         }
 
@@ -787,15 +781,20 @@ export default function ArticleNavToggle({ chapters, defaultView = "outline", us
 
         @media (max-width: 480px) {
           .ant-outline {
-            font-size: 13px;
+            font-size: 11px;
           }
 
           .ant-chapter {
-            margin-bottom: 16px;
+            margin-bottom: 8px;
           }
 
-          .ant-summary ul {
-            padding-left: 32px;
+          .ant-inline-sidequests {
+            margin-left: 16px;
+            padding-left: 8px;
+          }
+
+          .ant-inline-sidequest {
+            font-size: 10px;
           }
         }
 
@@ -1120,6 +1119,11 @@ export default function ArticleNavToggle({ chapters, defaultView = "outline", us
         @media (max-width: 899px) {
           .ant-mobile-fab {
             display: flex;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            background: rgba(var(--color-fill), 0.95);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
           }
 
           .ant-sheet-backdrop {

@@ -240,6 +240,17 @@ const nextPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null;
   .post-title {
     @apply text-2xl font-semibold text-skin-accent;
   }
+  /* Add left margin on desktop to avoid sidebar overlap */
+  @media (min-width: 900px) and (max-width: 1399px) {
+    main {
+      margin-left: calc(50% - 384px + 100px);
+    }
+  }
+  @media (min-width: 1400px) {
+    main {
+      margin-left: auto;
+    }
+  }
 </style>
 
 <script is:inline data-astro-rerun>
