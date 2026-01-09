@@ -26,7 +26,7 @@ import HoverReveal from "@components/HoverReveal";
 import CollapsibleCode from "@components/CollapsibleCode";
 import ReferencePreview from "@components/ReferencePreview";
 import Chapter from "@components/Chapter";
-import ArticleTimeline from "@components/ArticleTimeline";
+import ArticleNavToggle from "@components/ArticleNavToggle";
 import VideoPlayer from "@components/VideoPlayer";
 import SeriesNav from "@components/SeriesNav";
 
@@ -53,26 +53,49 @@ import SeriesNav from "@components/SeriesNav";
 	]}
 />
 
-<ArticleTimeline
+<ArticleNavToggle
 	client:load
-	sections={[
+	defaultView="outline"
+	chapters={[
 		{
 			id: "chapter-1",
 			label: "The Challenge of Color Mixing",
 			type: "chapter",
+			summary: [
+				"Why pigment mixing is harder than digital.",
+				"Interactive color mixing challenge.",
+			],
+			preview: "/assets/visualizing-color-spaces-in-ar-glasses/sc-color-spaces-chapter-1.png",
 		},
 		{
-			id: "color-mixing-challenge",
-			label: "Color Mixing Challenge",
-			type: "sidequest",
-			parent: "chapter-1",
+			id: "chapter-2",
+			label: "Building Color Spaces",
+			type: "chapter",
+			summary: [
+				"Why AR glasses for seeing spaces.",
+				"CIELAB vs RGB for perceptual accuracy.",
+			],
+			preview: "/assets/visualizing-color-spaces-in-ar-glasses/sc-color-spaces-chapter-2.png",
 		},
-		{ id: "chapter-2", label: "Building Color Spaces", type: "chapter" },
-		{ id: "vfx-particles", label: "VFX Particles", type: "subsection" },
 		{
-			id: "4-procedural-meshes",
+			id: "chapter-3",
+			label: "VFX Particles",
+			type: "chapter",
+			summary: [
+				"Encoding color data for particles.",
+				"Performance limitations.",
+			],
+			preview: "/assets/visualizing-color-spaces-in-ar-glasses/sc-color-spaces-chapter-3.png",
+		},
+		{
+			id: "chapter-4",
 			label: "Procedural Meshes",
-			type: "subsection",
+			type: "chapter",
+			summary: [
+				"High-performance rendering solution.",
+				"Full color space, gamut, and projection.",
+			],
+			preview: "/assets/visualizing-color-spaces-in-ar-glasses/sc-color-spaces-chapter-4.png",
 		},
 	]}
 />
@@ -237,11 +260,9 @@ This is also an intuitive choice for painters who are generally familiar with [M
 
 Next, I needed to figure out how to render this space. Solid meshes only show the surface, and volume raymarching is too expensive for AR (which renders stereo at 1.5x normal framerates). So I turned to particles.
 
-<div id="vfx-particles" style={{ scrollMarginTop: "80px" }}>
+</Chapter>
 
-### VFX Particles
-
-</div>
+<Chapter client:load id="chapter-3" number={3} title="VFX Particles">
 
 I'll tell you one thing: Lens Studio's VFX Editor is fun to use. It's like a stylish combo of Unity's Visual Effects Graph and Blender's GeoNode Editor with some sparks of [Houdini VOP](https://tokeru.com/cgwiki/Houdini_Vops.html) brilliance.
 
@@ -295,11 +316,9 @@ Here's a [manim](https://github.com/3b1b/manim) visualization that showcases thi
 It was clear then that I didn't need a system as flexible as VFX particles to accommodate any arbitrary spatial layout.
 I could simply define one layout and deform it to achieve the others.
 
-<div id="4-procedural-meshes" style={{ scrollMarginTop: "80px" }}>
+</Chapter>
 
-### Procedural Meshes
-
-</div>
+<Chapter client:load id="chapter-4" number={4} title="Procedural Meshes">
 
 In Lens Studio, you can [create meshes procedurally](https://developers.snap.com/lens-studio/lens-studio-workflow/scene-set-up/3d/procedural-mesh).
 Using the [MeshBuilder](https://developers.snap.com/lens-studio/api/lens-scripting/classes/Built-In.MeshBuilder.html) API, you can specify vertex positions and store any attribute you like.

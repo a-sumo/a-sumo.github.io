@@ -12,17 +12,76 @@ import Chapter from "@components/Chapter";
 import SeriesNav from "@components/SeriesNav";
 import ConditionalLink from "@components/ConditionalLink";
 import CollapsibleCode from "@components/CollapsibleCode";
-import ArticleTimeline from "@components/ArticleTimeline";
+import ArticleNavToggle from "@components/ArticleNavToggle";
 
-<ArticleTimeline
+<ArticleNavToggle
   client:load
-  sections={[
-    { id: "chapter-1", label: "Why an Eyedropper?", type: "chapter" },
-    { id: "chapter-2", label: "Implementation", type: "chapter" },
-    { id: "chapter-3", label: "UI and Materials", type: "chapter" },
-    { id: "chapter-4", label: "Security Considerations", type: "chapter" },
-    { id: "chapter-5", label: "Comfort and Ease of Use", type: "chapter" },
-    { id: "chapter-6", label: "Code Snippets", type: "chapter" },
+  defaultView="outline"
+  chapters={[
+    {
+      id: "chapter-1",
+      label: "Why an Eyedropper?",
+      type: "chapter",
+      summary: [
+        "Sampling colors from physical palettes.",
+        "Translating desktop interactions to AR.",
+      ],
+      preview: "/assets/eyedropper-for-spectacles-ar-glasses/sc-eyedropper-chapter-1.png",
+    },
+    {
+      id: "chapter-2",
+      label: "Implementation",
+      type: "chapter",
+      summary: [
+        "Reading color data from camera feed.",
+        "Cropping functionality from Spectacles Samples.",
+        "Figma-inspired magnified view with grid.",
+      ],
+      preview: "/assets/eyedropper-for-spectacles-ar-glasses/sc-eyedropper-chapter-2.png",
+    },
+    {
+      id: "chapter-3",
+      label: "UI and Materials",
+      type: "chapter",
+      summary: [
+        "Spectacles UI Kit for key elements.",
+        "Custom Code Nodes for shaders.",
+        "Procedural grid material graph.",
+      ],
+      preview: "/assets/eyedropper-for-spectacles-ar-glasses/sc-eyedropper-chapter-3.png",
+    },
+    {
+      id: "chapter-4",
+      label: "Security Considerations",
+      type: "chapter",
+      summary: [
+        "getPixels API restrictions.",
+        "Remote Service Module authorization.",
+        "Preventing sensitive data exfiltration.",
+      ],
+      preview: "/assets/eyedropper-for-spectacles-ar-glasses/sc-eyedropper-chapter-4.png",
+    },
+    {
+      id: "chapter-5",
+      label: "Comfort and Ease of Use",
+      type: "chapter",
+      summary: [
+        "Mid-air vs tactile interaction.",
+        "Friction and trajectory stabilization.",
+        "Multimodal AI as an alternative.",
+      ],
+      preview: "/assets/eyedropper-for-spectacles-ar-glasses/sc-eyedropper-chapter-5.png",
+    },
+    {
+      id: "chapter-6",
+      label: "Code Snippets",
+      type: "chapter",
+      summary: [
+        "Procedural Grid shader code.",
+        "CropAreaSelector methods.",
+      ],
+      preview: "/assets/eyedropper-for-spectacles-ar-glasses/sc-eyedropper-chapter-6.png",
+    },
   ]}
 />
 

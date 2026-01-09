@@ -18,7 +18,7 @@ draft: false
 ---
 import WorkflowDiagramSimple from "@components/WorkflowDiagramSimple";
 import Chapter from "@components/Chapter";
-import ArticleTimeline from "@components/ArticleTimeline";
+import ArticleNavToggle from "@components/ArticleNavToggle";
 import VideoPlayer from "@components/VideoPlayer";
 import ManimVideo from "@components/ManimVideo";
 import Note from "@components/Note";
@@ -103,26 +103,28 @@ There are three main approaches to visualize motion:
 <VectorFieldViz client:load fieldType="dipole" />
 </div>
 
-<ArticleTimeline
+<ArticleNavToggle
 	client:load
-	sections={[
-		{ id: "chapter-1", label: "Rendering 3D Lines", type: "chapter" },
-		{ id: "proc-gen-code", label: "Procedural Code", type: "sidequest", parent: "chapter-1" },
-		{ id: "chapter-2", label: "GPU Deformation", type: "chapter" },
-		{ id: "object-to-world", label: "Object to World", type: "sidequest", parent: "chapter-2" },
-		{ id: "chapter-3", label: "Field Integration", type: "chapter" },
-		{ id: "contraction", label: "Contraction", type: "sidequest", parent: "chapter-3" },
-		{ id: "expansion", label: "Expansion", type: "sidequest", parent: "chapter-3" },
-		{ id: "circulation", label: "Circulation", type: "sidequest", parent: "chapter-3" },
-		{ id: "vortex", label: "Vortex", type: "sidequest", parent: "chapter-3" },
-		{ id: "waves", label: "Waves", type: "sidequest", parent: "chapter-3" },
-		{ id: "chapter-4", label: "Magnetic Field", type: "chapter" },
-		{ id: "math-derivation", label: "Math Derivation", type: "sidequest", parent: "chapter-4" },
-		{ id: "gpu-implementation", label: "GPU Implementation", type: "sidequest", parent: "chapter-4" },
-		{ id: "magnet-physics", label: "Magnet Physics", type: "sidequest", parent: "chapter-4" },
-		{ id: "chapter-5", label: "Performance", type: "chapter" },
-		{ id: "chapter-6", label: "UX", type: "chapter" },
-		{ id: "final-words", label: "Final Words", type: "chapter" },
+	defaultView="timeline"
+	useAdvancedTimeline={true}
+	chapters={[
+		{ id: "chapter-1", label: "Rendering 3D Lines", type: "chapter", summary: ["Procedural tube meshes.", "Vertex normals and GPU interpolation."], preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-manim-procedural-tube-mesh.png" },
+		{ id: "proc-gen-code", label: "Procedural Code", type: "sidequest", parent: "chapter-1", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-procedural-generation-code.png" },
+		{ id: "chapter-2", label: "GPU Deformation", type: "chapter", summary: ["Object to world space transforms.", "Vertex shader deformation."], preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-chapter-2.png" },
+		{ id: "object-to-world", label: "Object to World", type: "sidequest", parent: "chapter-2", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-manim-3d-line-deformation.png" },
+		{ id: "chapter-3", label: "Field Integration", type: "chapter", summary: ["Euler integration for flow lines.", "Field demos."], preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-chapter-3.png" },
+		{ id: "contraction", label: "Contraction", type: "sidequest", parent: "chapter-3", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-demo-contraction.png" },
+		{ id: "expansion", label: "Expansion", type: "sidequest", parent: "chapter-3", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-demo-expansion.png" },
+		{ id: "circulation", label: "Circulation", type: "sidequest", parent: "chapter-3", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-demo-circulation.png" },
+		{ id: "vortex", label: "Vortex", type: "sidequest", parent: "chapter-3", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-demo-vortex.png" },
+		{ id: "waves", label: "Waves", type: "sidequest", parent: "chapter-3", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-demo-waves.png" },
+		{ id: "chapter-4", label: "Magnetic Field", type: "chapter", summary: ["Dipole field derivation.", "GPU implementation."], preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-chapter-4.png" },
+		{ id: "math-derivation", label: "Math Derivation", type: "sidequest", parent: "chapter-4", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-math-dipole-integration.png" },
+		{ id: "gpu-implementation", label: "GPU Implementation", type: "sidequest", parent: "chapter-4", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-gpu-implementation.png" },
+		{ id: "magnet-physics", label: "Magnet Physics", type: "sidequest", parent: "chapter-4", preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-magnetic-field-demo.png" },
+		{ id: "chapter-5", label: "Performance", type: "chapter", summary: ["Optimization strategies.", "Profiling results."], preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-chapter-5.png" },
+		{ id: "chapter-6", label: "UX", type: "chapter", summary: ["Interaction design.", "User feedback."], preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-chapter-6.png" },
+		{ id: "final-words", label: "Final Words", type: "chapter", summary: ["Summary and next steps."], preview: "/assets/visualizing-vector-fields-on-ar-glasses/captures/sc-vector-fields-final-words.png" },
 	]}
 />
 
