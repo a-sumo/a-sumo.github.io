@@ -1,10 +1,13 @@
+import type { ReactNode } from "react";
+
 interface ChapterProps {
   id?: string;
   number: number;
   title: string;
+  children?: ReactNode;
 }
 
-export default function Chapter({ id, number, title }: ChapterProps) {
+export default function Chapter({ id, number, title, children }: ChapterProps) {
   return (
     <section id={id} style={{ margin: "40px 0", scrollMarginTop: "80px" }}>
       <div
@@ -15,6 +18,7 @@ export default function Chapter({ id, number, title }: ChapterProps) {
           width: "100%",
           padding: "0 0 16px 0",
           borderBottom: "2px solid rgb(40, 39, 40)",
+          marginBottom: children ? "24px" : "0",
         }}
       >
         <span style={{
@@ -42,6 +46,7 @@ export default function Chapter({ id, number, title }: ChapterProps) {
           {title}
         </span>
       </div>
+      {children}
     </section>
   );
 }
