@@ -152,4 +152,6 @@ public/assets/visualizing-vector-fields-on-ar-glasses/__pycache__/
 public/assets/visualizing-vector-fields-on-ar-glasses/*.py
 # Allow .py files in scripts folder
 !public/assets/visualizing-vector-fields-on-ar-glasses/scripts/*.py
+# Allow .py files in manim folder
+!public/assets/visualizing-vector-fields-on-ar-glasses/manim/*.py
 CLAUDE.md
