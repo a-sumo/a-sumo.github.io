@@ -120,7 +120,6 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 .inspiration-card {
   text-align: center;
   min-width: 0;
-  overflow: hidden;
 }
 .inspiration-card img {
   width: 100%;
