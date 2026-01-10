@@ -7,9 +7,9 @@ title: ""
 
 ## Armand Sumo
 
-<div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-<img src="/assets/armand_pic.jpg" alt="Armand" width="270" loading="eager" fetchpriority="high" decoding="async" style="border-radius: 8px;" />
-<img src="/assets/armand-sumo-waterfall-cropped.jpg" alt="Armand at waterfall" width="270" loading="eager" decoding="async" style="border-radius: 8px;" />
+<div class="about-images">
+<img src="/assets/armand_pic.jpg" alt="Armand" width="270" loading="eager" fetchpriority="high" decoding="async" />
+<img src="/assets/armand-sumo-waterfall-cropped.jpg" alt="Armand at waterfall" width="270" loading="eager" decoding="async" />
 </div>
 
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 24px auto; width: 60%;" />
@@ -31,6 +31,20 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 </div>
 
 <style>
+.about-images {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+.about-images img {
+  border-radius: 8px;
+}
+@media (max-width: 600px) {
+  .about-images img {
+    width: 140px;
+  }
+}
 .resume-section {
   display: inline-block;
   margin-top: 16px;
