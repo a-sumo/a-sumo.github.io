@@ -111,7 +111,7 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 }
 .inspirations-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
 }
 .inspirations-grid .inspiration-card:last-child:nth-child(3n + 1) {
@@ -119,6 +119,8 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 }
 .inspiration-card {
   text-align: center;
+  min-width: 0;
+  overflow: hidden;
 }
 .inspiration-card img {
   width: 100%;
@@ -137,8 +139,13 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 }
 @media (max-width: 600px) {
   .inspirations-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+  }
+  .inspirations-grid .inspiration-card:last-child:nth-child(2n + 1) {
+    grid-column: 1 / -1;
+    max-width: 50%;
+    margin: 0 auto;
   }
 }
 </style>
