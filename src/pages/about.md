@@ -175,7 +175,7 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 32px 0;" />
 
 <div class="inspirations-section">
-  <h3 class="inspirations-title">People whose example pushes me to attempt the impossible and persevere, and who showed me that clear mindedness serves the act of creation.</h3>
+  <h3 class="inspirations-title">People whose example pushes me to attempt the impossible and persevere, and who showed me that clear mindedness is the foundation of purposeful creation.</h3>
   <p class="inspirations-disclaimer">This is one path among many, and everyone must find their own beacons.</p>
   <div class="inspirations-grid" id="inspirations-grid"></div>
 </div>
