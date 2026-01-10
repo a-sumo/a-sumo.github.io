@@ -702,16 +702,16 @@ Among the three visualization modes, **Trails** is the most expensive due to man
 
 To give users a visual hint of the active preset, I rendered a 2D version of each vector field with color-mapped direction and magnitude: hue encodes angle, saturation/brightness encodes strength.
 
-<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "8px", maxWidth: "500px", margin: "16px auto", padding: "0 16px" }}>
-	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "8px", maxWidth: "500px", margin: "16px auto", padding: "0 16px", justifyItems: "center" }}>
+	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden", width: "100%", maxWidth: "200px" }}>
 		<VideoPlayer client:visible src="/assets/visualizing-vector-fields-on-ar-glasses/videos/field_source.mp4" autoPlay={true} loop={true} muted={true} maxWidth="100%" noBorder={true} />
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Source</p>
 	</div>
-	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
+	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden", width: "100%", maxWidth: "200px" }}>
 		<VideoPlayer client:visible src="/assets/visualizing-vector-fields-on-ar-glasses/videos/field_saddle.mp4" autoPlay={true} loop={true} muted={true} maxWidth="100%" noBorder={true} />
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Saddle</p>
 	</div>
-	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
+	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden", width: "100%", maxWidth: "200px" }}>
 		<VideoPlayer client:visible src="/assets/visualizing-vector-fields-on-ar-glasses/videos/field_double_vortex.mp4" autoPlay={true} loop={true} muted={true} maxWidth="100%" noBorder={true} />
 		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Double Vortex</p>
 	</div>
@@ -720,60 +720,72 @@ To give users a visual hint of the active preset, I rendered a 2D version of eac
 
 Getting smooth gradients required careful attention to continuity in the field functions, both spatially (no jumps in color) and temporally (smooth animation).
 
-<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "8px", maxWidth: "600px", margin: "0 auto", padding: "0 16px" }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxWidth: "500px", margin: "0 auto", padding: "0 16px" }}>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
 		<VideoPlayer client:visible src="/assets/visualizing-vector-fields-on-ar-glasses/videos/contraction.mp4" autoPlay={true} loop={true} muted={true} maxWidth="100%" noBorder={true} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Contraction</p>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Contraction</p>
 	</div>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
 		<VideoPlayer client:visible src="/assets/visualizing-vector-fields-on-ar-glasses/videos/expansion.mp4" autoPlay={true} loop={true} muted={true} maxWidth="100%" noBorder={true} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Expansion</p>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Expansion</p>
 	</div>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
 		<VideoPlayer client:visible src="/assets/visualizing-vector-fields-on-ar-glasses/videos/circulation.mp4" autoPlay={true} loop={true} muted={true} maxWidth="100%" noBorder={true} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Circulation</p>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Circulation</p>
 	</div>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
 		<VideoPlayer client:visible src="/assets/visualizing-vector-fields-on-ar-glasses/videos/vortex.mp4" autoPlay={true} loop={true} muted={true} maxWidth="100%" noBorder={true} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Vortex</p>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Vortex</p>
 	</div>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
 		<VideoPlayer client:visible src="/assets/visualizing-vector-fields-on-ar-glasses/videos/waves.mp4" autoPlay={true} loop={true} muted={true} maxWidth="100%" noBorder={true} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Waves</p>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Waves</p>
 	</div>
 	<div style={{ textAlign: "center", borderRadius: "8px", overflow: "hidden" }}>
 		<VideoPlayer client:visible src="/assets/visualizing-vector-fields-on-ar-glasses/videos/magnetic.mp4" autoPlay={true} loop={true} muted={true} maxWidth="100%" noBorder={true} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Magnetic</p>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Magnetic</p>
 	</div>
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "8px" }}>2D color-mapped visualizations of each vector field preset</p>
 
 Adding an alpha falloff:
 
-<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "8px", maxWidth: "600px", margin: "16px auto", padding: "0 16px" }}>
+<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", maxWidth: "500px", margin: "16px auto", padding: "0 16px" }}>
 	<div style={{ textAlign: "center" }}>
-		<video src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/contraction_animated.webm" poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/contraction_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px" }} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Contraction</p>
+		<video poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/contraction_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px", background: "transparent" }}>
+			<source src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/contraction_animated.webm" type="video/webm" />
+		</video>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Contraction</p>
 	</div>
 	<div style={{ textAlign: "center" }}>
-		<video src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/expansion_animated.webm" poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/expansion_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px" }} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Expansion</p>
+		<video poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/expansion_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px", background: "transparent" }}>
+			<source src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/expansion_animated.webm" type="video/webm" />
+		</video>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Expansion</p>
 	</div>
 	<div style={{ textAlign: "center" }}>
-		<video src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/circulation_animated.webm" poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/circulation_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px" }} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Circulation</p>
+		<video poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/circulation_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px", background: "transparent" }}>
+			<source src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/circulation_animated.webm" type="video/webm" />
+		</video>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Circulation</p>
 	</div>
 	<div style={{ textAlign: "center" }}>
-		<video src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/vortex_animated.webm" poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/vortex_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px" }} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Vortex</p>
+		<video poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/vortex_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px", background: "transparent" }}>
+			<source src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/vortex_animated.webm" type="video/webm" />
+		</video>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Vortex</p>
 	</div>
 	<div style={{ textAlign: "center" }}>
-		<video src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/waves_animated.webm" poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/waves_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px" }} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Waves</p>
+		<video poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/waves_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px", background: "transparent" }}>
+			<source src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/waves_animated.webm" type="video/webm" />
+		</video>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Waves</p>
 	</div>
 	<div style={{ textAlign: "center" }}>
-		<video src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/magnetic_animated.webm" poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/magnetic_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px" }} />
-		<p style={{ fontSize: "0.75em", color: "#888", margin: "4px 0" }}>Magnetic</p>
+		<video poster="/assets/visualizing-vector-fields-on-ar-glasses/sprites/magnetic_preview.png" autoPlay loop muted playsInline preload="none" style={{ width: "100%", borderRadius: "8px", background: "transparent" }}>
+			<source src="/assets/visualizing-vector-fields-on-ar-glasses/sprites/magnetic_animated.webm" type="video/webm" />
+		</video>
+		<p style={{ fontSize: "0.7em", color: "#888", margin: "4px 0" }}>Magnetic</p>
 	</div>
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic", marginTop: "4px" }}>Animated previews with radial alpha falloff</p>

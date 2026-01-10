@@ -643,6 +643,7 @@ export default function VectorFieldViz({
         }
         .canvas-container canvas {
           display: block;
+          margin: 0 auto;
         }
         .vfv-fade {
           position: absolute;
