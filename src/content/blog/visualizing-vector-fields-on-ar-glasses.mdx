@@ -148,11 +148,12 @@ The animation below illustrates the construction process:
 
 <ManimVideo
 	client:visible
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction.gif"
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeConstruction_alpha.webm"
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/manim/tube_construction.py"
-	maxWidth="100%"
+	maxWidth="600px"
 	noBorder={true}
-	gif={true}
+	transparent={true}
+	autoPlay={true}
 	caption="Procedural tube mesh construction: vertices, triangles, and end caps"
 	figureId="Fig 1.1"
 />
@@ -252,11 +253,11 @@ If we just offset point positions by the same vector, we end up with wrong endca
 
 <div style={{ display: "flex", gap: "24px", justifyContent: "center", flexWrap: "wrap", padding: "0 16px" }}>
 	<figure style={{ margin: 0, textAlign: "center", flex: "1 1 200px", maxWidth: "280px" }}>
-		<img src="/assets/visualizing-vector-fields-on-ar-glasses/videos/NaiveOffset.gif" alt="Naive offset - rings stay horizontal" loading="lazy" decoding="async" style={{ width: "100%", borderRadius: "8px" }} />
+		<video src="/assets/visualizing-vector-fields-on-ar-glasses/videos/NaiveOffset_alpha.webm" autoPlay loop muted playsInline controls style={{ width: "100%", borderRadius: "8px" }} />
 		<figcaption style={{ color: "#E63946", fontSize: "14px", marginTop: "8px" }}>Naive offset</figcaption>
 	</figure>
 	<figure style={{ margin: 0, textAlign: "center", flex: "1 1 200px", maxWidth: "280px" }}>
-		<img src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TNBFrame.gif" alt="TNB frame - rings perpendicular to tangent" loading="lazy" decoding="async" style={{ width: "100%", borderRadius: "8px" }} />
+		<video src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TNBFrame_alpha.webm" autoPlay loop muted playsInline controls style={{ width: "100%", borderRadius: "8px" }} />
 		<figcaption style={{ color: "#2A9D8F", fontSize: "14px", marginTop: "8px" }}>TNB frame</figcaption>
 	</figure>
 </div>
@@ -286,11 +287,13 @@ It's also useful for making colors pop by raising saturation.
 
 <ManimVideo
 	client:visible
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeDeformation.gif"
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TubeDeformation_alpha.webm"
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/manim/tube_deformation.py"
-	maxWidth="100%"
+	maxWidth="600px"
 	noBorder={true}
-	gif={true}
+	transparent={true}
+	autoPlay={true}
+	loop={true}
 	caption="TNB frame deformation preserves tube volume during bending"
 	figureId="Fig 2.1"
 />
@@ -344,11 +347,12 @@ Vectors spiral inward toward a target point, creating sink-like behavior.
 
 <ManimVideo
 	client:visible
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldContraction.gif"
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldContraction_alpha.webm"
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/manim/vector_field_presets.py"
-	maxWidth="100%"
+	maxWidth="600px"
 	noBorder={true}
-	gif={true}
+	transparent={true}
+	autoPlay={true}
 	caption="Field visualization showing contraction flow pattern"
 	figureId="Fig 3.1a"
 />
@@ -369,11 +373,12 @@ Radial waves emanate outward from the target with 3D oscillation perpendicular t
 
 <ManimVideo
 	client:visible
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldExpansion.gif"
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldExpansion_alpha.webm"
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/manim/vector_field_presets.py"
-	maxWidth="100%"
+	maxWidth="600px"
 	noBorder={true}
-	gif={true}
+	transparent={true}
+	autoPlay={true}
 	caption="Field visualization showing expansion flow pattern"
 	figureId="Fig 3.2a"
 />
@@ -394,11 +399,12 @@ A 3D swirling vortex that mixes rotation in multiple planes around the target.
 
 <ManimVideo
 	client:visible
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldCirculation.gif"
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldCirculation_alpha.webm"
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/manim/vector_field_presets.py"
-	maxWidth="100%"
+	maxWidth="600px"
 	noBorder={true}
-	gif={true}
+	transparent={true}
+	autoPlay={true}
 	caption="Field visualization showing circulation flow pattern"
 	figureId="Fig 3.3a"
 />
@@ -419,11 +425,12 @@ Rotating cellular patterns with an added spin component based on angular positio
 
 <ManimVideo
 	client:visible
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldVortex.gif"
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldVortex_alpha.webm"
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/manim/vector_field_presets.py"
-	maxWidth="100%"
+	maxWidth="600px"
 	noBorder={true}
-	gif={true}
+	transparent={true}
+	autoPlay={true}
 	caption="Field visualization showing vortex flow pattern"
 	figureId="Fig 3.4a"
 />
@@ -444,11 +451,12 @@ Sinusoidal interference patterns where each axis oscillates based on the other t
 
 <ManimVideo
 	client:visible
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldWaves.gif"
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/FieldWaves_alpha.webm"
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/manim/vector_field_presets.py"
-	maxWidth="100%"
+	maxWidth="600px"
 	noBorder={true}
-	gif={true}
+	transparent={true}
+	autoPlay={true}
 	caption="Field visualization showing wave interference pattern"
 	figureId="Fig 3.5a"
 />
@@ -548,11 +556,12 @@ for (int i = 0; i < 64; i++) {
 
 <ManimVideo
 	client:visible
-	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/MagneticField.gif"
+	src="/assets/visualizing-vector-fields-on-ar-glasses/videos/MagneticField_alpha.webm"
 	codeSrc="/assets/visualizing-vector-fields-on-ar-glasses/manim/magnetic_field.py"
-	maxWidth="100%"
+	maxWidth="600px"
 	noBorder={true}
-	gif={true}
+	transparent={true}
+	autoPlay={true}
 	caption="Magnetic field visualization showing dipole field computation and integration"
 	figureId="Fig 4.1"
 />
@@ -857,6 +866,19 @@ The final shader samples the correct frame based on elapsed time, computing UV c
 	<img src="/assets/visualizing-vector-fields-on-ar-glasses/captures/animated-sprite-sheet.png" alt="Animated sprite sheet material graph" loading="lazy" decoding="async" style={{ maxWidth: "600px", width: "100%", borderRadius: "8px" }} />
 </div>
 <p style={{ fontSize: "0.85em", color: "#888", textAlign: "center", fontStyle: "italic" }}>Material graph for the animated sprite sheet shader</p>
+
+---
+
+<span id="transparent-test"></span>
+## Transparent Animation Test
+
+Testing webp with alpha channel (keyed out black background):
+
+<div style={{ display: "flex", justifyContent: "center", margin: "16px 0" }}>
+	<video autoPlay loop muted playsInline style={{ maxWidth: "400px", width: "100%" }}>
+		<source src="/assets/visualizing-vector-fields-on-ar-glasses/videos/TestTransparent_alpha.webm" type="video/webm" />
+	</video>
+</div>
 
 ---
 
