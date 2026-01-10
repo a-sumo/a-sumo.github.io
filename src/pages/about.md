@@ -33,7 +33,7 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 <style>
 .about-images {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   justify-content: center;
   align-items: center;
 }
@@ -238,7 +238,7 @@ document.addEventListener('astro:page-load', renderInspirations);
 
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 32px 0;" />
 
-<p style="font-size: 0.85em; opacity: 0.8;">If you'd like to support my work, you can <a href="https://ko-fi.com/asumo" class="kofi-link-about">buy me a coffee<img src="/assets/icons/kofi-icon.png" alt="Ko-fi" class="kofi-icon-about" /></a>.</p>
+<p style="font-size: 0.85em; opacity: 0.8;"><a href="https://ko-fi.com/asumo" class="kofi-link-about">Here's a link<img src="/assets/icons/kofi-icon.png" alt="Ko-fi" class="kofi-icon-about" /></a> if you'd like to support my work.</p>
 
 <style>
 .kofi-link-about {
