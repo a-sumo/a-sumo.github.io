@@ -155,3 +155,4 @@ public/assets/visualizing-vector-fields-on-ar-glasses/*.py
 # Allow .py files in manim folder
 !public/assets/visualizing-vector-fields-on-ar-glasses/manim/*.py
 CLAUDE.md
+notes/
