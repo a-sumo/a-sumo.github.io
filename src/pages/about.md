@@ -95,19 +95,94 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 }
 .inspirations-section {
   margin-top: 8px;
+  position: relative;
+  max-height: 320px;
+  overflow: hidden;
+  transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: max-height;
+}
+.inspirations-section.revealed {
+  max-height: 3000px;
+}
+.inspirations-heading {
+  text-align: center;
+  margin: 0 0 12px;
+  font-size: 1.1em;
+  font-weight: 500;
+  position: relative;
+  z-index: 3;
 }
 .inspirations-title {
   text-align: center;
   margin-bottom: 8px;
-  font-size: 1.1em;
-  opacity: 0.9;
+  font-size: 0.9em;
+  font-style: normal;
+  opacity: 0.8;
 }
 .inspirations-disclaimer {
   text-align: center;
-  font-size: 0.85em;
-  opacity: 0.7;
+  font-size: 0.8em;
+  opacity: 0.6;
   margin-bottom: 24px;
-  font-style: italic;
+  font-style: normal;
+}
+.inspirations-blur-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(var(--color-fill), 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: opacity;
+  mask-image: linear-gradient(to bottom, transparent 0%, transparent 8%, black 25%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, transparent 8%, black 25%, black 100%);
+}
+.inspirations-section.revealed .inspirations-blur-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+.inspirations-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  z-index: 4;
+  background: none;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.inspirations-toggle:hover {
+  opacity: 1;
+}
+.inspirations-toggle::before,
+.inspirations-toggle::after {
+  content: '';
+  position: absolute;
+  background: currentColor;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.inspirations-toggle::before {
+  width: 12px;
+  height: 1.5px;
+}
+.inspirations-toggle::after {
+  width: 1.5px;
+  height: 12px;
+}
+.inspirations-section.revealed .inspirations-toggle::after {
+  transform: rotate(90deg);
+  opacity: 0;
 }
 .inspirations-grid {
   display: grid;
@@ -137,6 +212,9 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
   margin: 0;
 }
 @media (max-width: 600px) {
+  .inspirations-section {
+    max-height: 280px;
+  }
   .inspirations-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
@@ -180,10 +258,13 @@ Always happy to chat. Feel free to reach out on [LinkedIn](https://www.linkedin.
 
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 32px 0;" />
 
-<div class="inspirations-section">
-  <h3 class="inspirations-title">People whose example pushes me to attempt the impossible and persevere, and who showed me that clear mindedness is the foundation of purposeful creation.</h3>
+<div class="inspirations-section" id="inspirations-section">
+  <h3 class="inspirations-heading">Inspirations</h3>
+  <button class="inspirations-toggle" id="inspirations-toggle" aria-label="Toggle inspirations"></button>
+  <p class="inspirations-title">People whose example pushes me to attempt the impossible and persevere, and who showed me that clear mindedness is the foundation of purposeful creation.</p>
   <p class="inspirations-disclaimer">This is one path among many, and everyone must find their own beacons.</p>
   <div class="inspirations-grid" id="inspirations-grid"></div>
+  <div class="inspirations-blur-overlay" id="inspirations-overlay"></div>
 </div>
 
 <script is:inline>
@@ -238,8 +319,27 @@ function renderInspirations() {
   `).join('');
 }
 
+function initInspirationsReveal() {
+  const section = document.getElementById('inspirations-section');
+  const overlay = document.getElementById('inspirations-overlay');
+  const toggle = document.getElementById('inspirations-toggle');
+  if (!toggle || toggle.dataset.initialized) return;
+  toggle.dataset.initialized = 'true';
+
+  function toggleSection() {
+    section.classList.toggle('revealed');
+  }
+
+  overlay.addEventListener('click', toggleSection);
+  toggle.addEventListener('click', toggleSection);
+}
+
 renderInspirations();
-document.addEventListener('astro:page-load', renderInspirations);
+initInspirationsReveal();
+document.addEventListener('astro:page-load', () => {
+  renderInspirations();
+  initInspirationsReveal();
+});
 </script>
 
 <hr style="border: none; border-top: 2px dotted rgb(140, 169, 255); margin: 32px 0;" />
