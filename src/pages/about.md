@@ -200,7 +200,7 @@ const inspirations = [
   {
     name: "Jetsunma Tenzin Palmo",
     image: "/assets/Individuals/Tenzin-Palmo.jpg",
-    description: "An extraordinary woman who made me realize there were genuine super heroes walking on this Earth."
+    description: "Made me realize there were genuine super heroes walking on this Earth."
   },
   {
     name: "Walter Russell",
