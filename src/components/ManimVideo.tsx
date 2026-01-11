@@ -188,13 +188,15 @@ export default function ManimVideo({
           {/* Collapsible Code Panel */}
           <div
             style={{
-              maxHeight: isCodeOpen ? "400px" : "0",
-              overflow: "hidden",
-              transition: "max-height 0.3s ease",
+              display: "grid",
+              gridTemplateRows: isCodeOpen ? "1fr" : "0fr",
+              opacity: isCodeOpen ? 1 : 0,
+              transition: "grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease",
             }}
           >
             <div
               style={{
+                overflow: "hidden",
                 background: "rgb(40, 44, 52)",
               }}
             >
@@ -250,21 +252,34 @@ export default function ManimVideo({
             </div>
 
             {/* Code Content */}
-            <pre
-              style={{
-                margin: 0,
-                padding: "12px",
-                overflow: "auto",
-                maxHeight: "340px",
-                fontSize: "12px",
-                lineHeight: 1.5,
-                fontFamily: "Roboto Mono, monospace",
-              }}
-            >
-              <code style={{ color: "rgb(220, 220, 220)" }}>
-                {error || code || "Loading..."}
-              </code>
-            </pre>
+            <div style={{ position: "relative" }}>
+              <pre
+                style={{
+                  margin: 0,
+                  padding: "12px",
+                  overflow: "auto",
+                  maxHeight: "340px",
+                  fontSize: "12px",
+                  lineHeight: 1.5,
+                  fontFamily: "Roboto Mono, monospace",
+                }}
+              >
+                <code style={{ color: "rgb(220, 220, 220)" }}>
+                  {error || code || "Loading..."}
+                </code>
+              </pre>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: "40px",
+                  background: "linear-gradient(to bottom, transparent, rgb(40, 44, 52))",
+                  pointerEvents: "none",
+                }}
+              />
+            </div>
             </div>
           </div>
         </div>
