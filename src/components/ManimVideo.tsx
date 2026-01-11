@@ -144,58 +144,60 @@ export default function ManimVideo({
           </video>
         )}
 
-        {/* Source Code Toggle Bar */}
+        {/* Source Code Section */}
         <div
           style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "8px 12px",
-            background: "white",
             border: "1px solid black",
-            borderRadius: isCodeOpen ? "6px 6px 0 0" : "6px",
-            borderBottom: isCodeOpen ? "none" : "1px solid black",
-            cursor: "pointer",
-          }}
-          onClick={() => setIsCodeOpen(!isCodeOpen)}
-        >
-          <span
-            style={{
-              fontSize: "13px",
-              color: "black",
-              fontFamily: "monospace",
-            }}
-          >
-            Manim Source
-          </span>
-          <span
-            style={{
-              fontSize: "16px",
-              fontWeight: "bold",
-              color: "black",
-              fontFamily: "monospace",
-            }}
-          >
-            {isCodeOpen ? "−" : "+"}
-          </span>
-        </div>
-
-        {/* Collapsible Code Panel */}
-        <div
-          style={{
-            maxHeight: isCodeOpen ? "400px" : "0",
+            borderRadius: "6px",
             overflow: "hidden",
-            transition: "max-height 0.3s ease",
           }}
         >
+          {/* Toggle Bar */}
           <div
             style={{
-              background: "rgb(40, 44, 52)",
-              border: "1px solid black",
-              borderTop: "none",
-              borderRadius: "0 0 6px 6px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "8px 12px",
+              background: "white",
+              cursor: "pointer",
+            }}
+            onClick={() => setIsCodeOpen(!isCodeOpen)}
+          >
+            <span
+              style={{
+                fontSize: "13px",
+                color: "black",
+                fontFamily: "monospace",
+              }}
+            >
+              Manim Source
+            </span>
+            <span
+              style={{
+                fontSize: "16px",
+                fontWeight: "bold",
+                color: "black",
+                fontFamily: "monospace",
+              }}
+            >
+              {isCodeOpen ? "−" : "+"}
+            </span>
+          </div>
+
+          {/* Collapsible Code Panel */}
+          <div
+            style={{
+              maxHeight: isCodeOpen ? "400px" : "0",
+              overflow: "hidden",
+              transition: "max-height 0.3s ease",
             }}
           >
+            <div
+              style={{
+                background: "rgb(40, 44, 52)",
+              }}
+            >
             {/* Code Header */}
             <div
               style={{
@@ -263,6 +265,7 @@ export default function ManimVideo({
                 {error || code || "Loading..."}
               </code>
             </pre>
+            </div>
           </div>
         </div>
       </div>
