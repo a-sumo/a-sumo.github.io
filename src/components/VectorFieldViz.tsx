@@ -44,6 +44,86 @@ const fieldLabels: Record<FieldType, string> = {
   sink: "Sink",
 };
 
+const codeSnippets = {
+  fields: `// Vector field functions - each returns velocity at point (x,y)
+const vectorFields = {
+  dipole: (x, y) => {
+    const r = Math.sqrt(x * x + y * y);
+    if (r < 0.1) return { x: 0, y: 0 };
+    const r3 = r * r * r;
+    const mx = 0, my = 1; // dipole moment
+    const dot = mx * x + my * y;
+    return {
+      x: (3 * dot * x / (r * r) - mx) / r3,
+      y: (3 * dot * y / (r * r) - my) / r3,
+    };
+  },
+  vortex: (x, y) => {
+    const r = Math.sqrt(x * x + y * y);
+    const strength = 1 / (1 + r * 0.5);
+    return { x: -y * strength, y: x * strength };
+  },
+  uniform: () => ({ x: 1, y: 0.3 }),
+  sink: (x, y) => {
+    const r = Math.sqrt(x * x + y * y);
+    return { x: -x / (r * r), y: -y / (r * r) };
+  },
+};`,
+  particles: `// Particle simulation with velocity smoothing
+particles.forEach((p) => {
+  // Sample field at particle position
+  const field = vectorFields[fieldType](p.pos.x, p.pos.y);
+  const mag = Math.sqrt(field.x * field.x + field.y * field.y);
+
+  if (mag > 0.01) {
+    // Smooth velocity update (0.9 momentum + 0.1 field)
+    const speed = Math.min(mag * 0.5, 0.08);
+    p.vel.x = p.vel.x * 0.9 + (field.x / mag) * speed * 0.1;
+    p.vel.y = p.vel.y * 0.9 + (field.y / mag) * speed * 0.1;
+  }
+
+  // Euler integration
+  p.pos.x += p.vel.x;
+  p.pos.y += p.vel.y;
+
+  // Store trail history
+  p.trail.push({ x: p.pos.x, y: p.pos.y });
+  if (p.trail.length > 50) p.trail.shift();
+
+  // Respawn if stuck or out of bounds
+  if (r < 0.3 || speed < 0.001 || outOfBounds) {
+    p.pos = randomPosition();
+    p.trail = [];
+  }
+});`,
+  rendering: `// Three.js rendering setup
+const scene = new THREE.Scene();
+scene.background = null; // transparent
+
+const camera = new THREE.OrthographicCamera(
+  -frustumSize * aspect, frustumSize * aspect,
+  frustumSize, -frustumSize, 0.1, 100
+);
+
+// Draw particles as circles
+const geometry = new THREE.CircleGeometry(0.05, 8);
+const material = new THREE.MeshBasicMaterial({ color: 0xff6b35 });
+particles.forEach(p => {
+  const mesh = new THREE.Mesh(geometry, material);
+  mesh.position.set(p.pos.x, p.pos.y, 0);
+  scene.add(mesh);
+});
+
+// Draw trails with gradient colors
+const trailGeometry = new THREE.BufferGeometry();
+trailGeometry.setFromPoints(p.trail);
+const colors = trail.map((_, i) => {
+  const t = i / trail.length;
+  return new THREE.Color().lerpColors(purple, orange, t);
+});
+trailGeometry.setAttribute('color', colors);`,
+};
+
 export default function VectorFieldViz({
   fieldType: initialFieldType = "dipole",
 }: VectorFieldVizProps) {
@@ -61,6 +141,8 @@ export default function VectorFieldViz({
   const [mode, setMode] = useState<VizMode>("particles");
   const [fieldType, setFieldType] = useState<FieldType>(initialFieldType);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [codeOpen, setCodeOpen] = useState(false);
+  const [codeTab, setCodeTab] = useState<"fields" | "particles" | "rendering">("fields");
   const [blendProgress, setBlendProgress] = useState(0); // 0-1 for carousel position
   const timeRef = useRef(0);
   const fieldTypeRef = useRef<FieldType>(initialFieldType);
@@ -624,6 +706,27 @@ export default function VectorFieldViz({
         </div>
       </div>
 
+      {/* Source Code Section */}
+      <div className="vfv-source-section">
+        <button className="vfv-source-toggle" onClick={() => setCodeOpen(!codeOpen)}>
+          <span>Source</span>
+          <span>{codeOpen ? "−" : "+"}</span>
+        </button>
+        <div className={`vfv-source-panel ${codeOpen ? "open" : ""}`}>
+          <div className="vfv-source-content">
+            <div className="vfv-source-tabs">
+              <button className={codeTab === "fields" ? "active" : ""} onClick={() => setCodeTab("fields")}>Fields</button>
+              <button className={codeTab === "particles" ? "active" : ""} onClick={() => setCodeTab("particles")}>Particles</button>
+              <button className={codeTab === "rendering" ? "active" : ""} onClick={() => setCodeTab("rendering")}>Rendering</button>
+            </div>
+            <div className="vfv-code-container">
+              <pre><code>{codeSnippets[codeTab]}</code></pre>
+              <div className="vfv-code-fade" />
+            </div>
+          </div>
+        </div>
+      </div>
+
       <style>{`
         .vector-field-viz {
           display: flex;
@@ -847,6 +950,99 @@ export default function VectorFieldViz({
         }
         @keyframes vfv-spin {
           to { transform: rotate(360deg); }
+        }
+        .vfv-source-section {
+          width: 100%;
+          max-width: 600px;
+          border: 1px solid black;
+          border-radius: 6px;
+          overflow: hidden;
+        }
+        .vfv-source-toggle {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 12px;
+          background: white;
+          border: none;
+          cursor: pointer;
+          font-family: monospace;
+          font-size: 13px;
+          color: black;
+        }
+        .vfv-source-toggle:hover {
+          background: #f5f5f5;
+        }
+        .vfv-source-panel {
+          display: grid;
+          grid-template-rows: 0fr;
+          transition: grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .vfv-source-panel.open {
+          grid-template-rows: 1fr;
+        }
+        .vfv-source-content {
+          overflow: hidden;
+          background: rgb(40, 44, 52);
+        }
+        .vfv-source-panel:not(.open) .vfv-source-content {
+          opacity: 0;
+          transition: opacity 0.15s ease;
+        }
+        .vfv-source-panel.open .vfv-source-content {
+          opacity: 1;
+          transition: opacity 0.3s ease 0.1s;
+        }
+        .vfv-source-tabs {
+          display: flex;
+          gap: 2px;
+          padding: 8px;
+          background: rgb(33, 37, 43);
+          border-bottom: 1px solid rgb(60, 64, 72);
+        }
+        .vfv-source-tabs button {
+          padding: 6px 12px;
+          border: none;
+          background: transparent;
+          color: rgb(140, 140, 140);
+          cursor: pointer;
+          border-radius: 4px;
+          font-family: monospace;
+          font-size: 11px;
+          transition: all 0.2s ease;
+        }
+        .vfv-source-tabs button:hover {
+          background: rgba(255, 255, 255, 0.1);
+          color: rgb(200, 200, 200);
+        }
+        .vfv-source-tabs button.active {
+          background: rgb(100, 130, 220);
+          color: white;
+        }
+        .vfv-code-container {
+          position: relative;
+        }
+        .vfv-code-container pre {
+          margin: 0;
+          padding: 12px;
+          overflow: auto;
+          max-height: 280px;
+          font-size: 11px;
+          line-height: 1.5;
+          font-family: "SF Mono", "Monaco", "Inconsolata", monospace;
+        }
+        .vfv-code-container code {
+          color: rgb(220, 220, 220);
+        }
+        .vfv-code-fade {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 40px;
+          background: linear-gradient(to bottom, transparent, rgb(40, 44, 52));
+          pointer-events: none;
         }
       `}</style>
     </div>
