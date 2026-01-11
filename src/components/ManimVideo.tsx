@@ -15,6 +15,7 @@ interface ManimVideoProps {
   caption?: string;
   figureId?: string;
   gif?: boolean;
+  transparent?: boolean;
 }
 
 export default function ManimVideo({
@@ -31,6 +32,7 @@ export default function ManimVideo({
   caption,
   figureId,
   gif = false,
+  transparent = false,
 }: ManimVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isCodeOpen, setIsCodeOpen] = useState(false);
@@ -104,10 +106,10 @@ export default function ManimVideo({
         style={{
           maxWidth,
           width: "100%",
-          borderRadius: noBorder ? "0" : borderRadius,
+          borderRadius: (noBorder || transparent) ? "0" : borderRadius,
           overflow: "hidden",
-          boxShadow: noBorder ? "none" : "0 4px 20px rgba(0,0,0,0.15)",
-          background: "rgb(30, 30, 30)",
+          boxShadow: (noBorder || transparent) ? "none" : "0 4px 20px rgba(0,0,0,0.15)",
+          background: transparent ? "transparent" : "rgb(30, 30, 30)",
         }}
       >
         {/* Video or GIF */}
@@ -134,9 +136,10 @@ export default function ManimVideo({
             style={{
               width: "100%",
               display: "block",
+              background: transparent ? "transparent" : undefined,
             }}
           >
-            <source src={actualSrc} type="video/mp4" />
+            <source src={actualSrc} type={actualSrc.endsWith(".webm") ? "video/webm" : "video/mp4"} />
             Your browser does not support the video tag.
           </video>
         )}
@@ -148,52 +151,32 @@ export default function ManimVideo({
             justifyContent: "space-between",
             alignItems: "center",
             padding: "8px 12px",
-            background: "rgb(40, 44, 52)",
-            borderTop: "1px solid rgb(60, 64, 72)",
+            background: "white",
+            border: "1px solid black",
+            borderRadius: "6px",
             cursor: "pointer",
           }}
           onClick={() => setIsCodeOpen(!isCodeOpen)}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="rgb(140, 169, 255)"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="16 18 22 12 16 6" />
-              <polyline points="8 6 2 12 8 18" />
-            </svg>
-            <span
-              style={{
-                fontSize: "13px",
-                color: "rgb(140, 169, 255)",
-                fontFamily: "monospace",
-              }}
-            >
-              Manim Source
-            </span>
-          </div>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="rgb(140, 140, 140)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <span
             style={{
-              transform: isCodeOpen ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "transform 0.2s ease",
+              fontSize: "13px",
+              color: "black",
+              fontFamily: "monospace",
             }}
           >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+            Manim Source
+          </span>
+          <span
+            style={{
+              fontSize: "16px",
+              fontWeight: "bold",
+              color: "black",
+              fontFamily: "monospace",
+            }}
+          >
+            {isCodeOpen ? "−" : "+"}
+          </span>
         </div>
 
         {/* Collapsible Code Panel */}
