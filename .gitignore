@@ -156,3 +156,6 @@ public/assets/visualizing-vector-fields-on-ar-glasses/*.py
 !public/assets/visualizing-vector-fields-on-ar-glasses/manim/*.py
 CLAUDE.md
 notes/
+
+# Source assets (large files not needed in repo)
+source-assets/

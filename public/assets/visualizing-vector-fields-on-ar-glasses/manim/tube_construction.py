@@ -9,14 +9,14 @@ class TubeConstruction(ThreeDScene):
         tube_radius = 1.1
         tube_length = 4.5
 
-        # Colors (dark-friendly for black bg removal)
+        # Colors (text dark for white bg after keying)
         vertex_color = "#3A6B8C"
         body_face_color = "#4A90A4"
         cap_face_color = "#C27C7C"
         cap_vertex_color = "#8B5A5A"
         edge_color = "#555555"
-        highlight_color = "#B8860B"  # darker gold
-        text_color = "#AAAAAA"  # gray text, no white
+        highlight_color = "#B8860B"
+        text_color = "#333333"
 
         # Camera
         self.set_camera_orientation(phi=65 * DEGREES, theta=-35 * DEGREES)
@@ -37,12 +37,11 @@ class TubeConstruction(ThreeDScene):
         # ========================================
         # STAGE 1: Generate Vertices
         # ========================================
-        title1 = Text("1. Generate Vertices", font="Helvetica Neue", font_size=42, color=text_color).to_edge(UP)
+        title1 = Text("1. Generate Vertices", font="SF Pro Display", font_size=42, color=text_color).to_edge(UP)
         self.add_fixed_in_frame_mobjects(title1)
 
         vertex_dots = VGroup()
 
-        # Use Dot3D instead of Sphere - much faster
         for i in range(path_length):
             for j in range(circle_segments):
                 pos = vertices[i][j]
@@ -56,10 +55,10 @@ class TubeConstruction(ThreeDScene):
         # STAGE 2: Set Triangle Indices
         # ========================================
         self.remove(title1)
-        title2 = Text("2. Set Triangle Indices", font="Helvetica Neue", font_size=42, color=text_color).to_edge(UP)
+        title2 = Text("2. Set Triangle Indices", font="SF Pro Display", font_size=42, color=text_color).to_edge(UP)
         self.add_fixed_in_frame_mobjects(title2)
 
-        all_faces = VGroup()  # Will hold all faces for depth sorting
+        all_faces = VGroup()
         highlight_edges = None
 
         for segment in range(path_length - 1):
@@ -104,7 +103,7 @@ class TubeConstruction(ThreeDScene):
         # STAGE 3: Create End Caps
         # ========================================
         self.remove(title2)
-        title3 = Text("3. Create End Caps", font="Helvetica Neue", font_size=42, color=text_color).to_edge(UP)
+        title3 = Text("3. Create End Caps", font="SF Pro Display", font_size=42, color=text_color).to_edge(UP)
         self.add_fixed_in_frame_mobjects(title3)
 
         # START CAP
@@ -145,13 +144,12 @@ class TubeConstruction(ThreeDScene):
         # STAGE 4: Complete Tube Mesh
         # ========================================
         self.remove(title3)
-        title4 = Text("Complete Tube Mesh", font="Helvetica Neue", font_size=48, color=text_color).to_edge(UP)
+        title4 = Text("Complete Tube Mesh", font="SF Pro Display", font_size=48, color=text_color).to_edge(UP)
         self.add_fixed_in_frame_mobjects(title4)
 
         # Depth sorting updater for rotation
         def sort_by_depth(group):
             camera = self.camera
-            # Get camera position from phi and theta
             phi = camera.get_phi()
             theta = camera.get_theta()
             r = camera.get_distance()
@@ -160,14 +158,13 @@ class TubeConstruction(ThreeDScene):
                 r * np.sin(phi) * np.sin(theta),
                 r * np.cos(phi)
             ])
-            # Sort faces by distance from camera (farthest first = lowest z_index)
             for mob in group:
                 center = mob.get_center()
                 dist = np.linalg.norm(center - cam_pos)
                 mob.set_z_index(-dist)
 
         all_faces.add_updater(sort_by_depth)
-        vertex_dots.add_updater(lambda g: [d.set_z_index(1000) for d in g])  # Dots always on top
+        vertex_dots.add_updater(lambda g: [d.set_z_index(1000) for d in g])
 
         self.begin_ambient_camera_rotation(rate=0.2)
         self.wait(4)
@@ -178,4 +175,4 @@ class TubeConstruction(ThreeDScene):
         self.wait(0.5)
 
 
-# Run: manim -qh tube_construction.py TubeConstruction -r 1920,1080 --fps 30
+# Run: manim -qh tube_construction.py TubeConstruction

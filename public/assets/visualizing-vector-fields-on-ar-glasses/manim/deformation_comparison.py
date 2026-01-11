@@ -3,7 +3,7 @@ import numpy as np
 
 class NaiveOffset(Scene):
     def construct(self):
-        outline_color = "#FFFFFF"
+        outline_color = BLACK
         wrong_color = "#E63946"
         fill_color = "#4A90A4"
 
@@ -66,12 +66,12 @@ class NaiveOffset(Scene):
         wrong_endcap_top = create_ring_line_horizontal(bent_centers[2], tube_width, wrong_color)
         wrong_endcap_bottom = create_ring_line_horizontal(bent_centers[0], tube_width, wrong_color)
 
-        label = Text("Naive offset", font_size=36, color=wrong_color).to_edge(UP, buff=0.5)
+        label = Text("Naive offset", font_size=36, fill_color=wrong_color).to_edge(UP, buff=0.5)
 
         x_mark = VGroup(
             Line(UP*0.3 + LEFT*0.3, DOWN*0.3 + RIGHT*0.3, stroke_width=7),
             Line(UP*0.3 + RIGHT*0.3, DOWN*0.3 + LEFT*0.3, stroke_width=7)
-        ).set_color(wrong_color).shift(RIGHT * 2.5)
+        , fill_color=wrong_color).shift(RIGHT * 2.5)
 
         self.play(FadeIn(label), ShowCreation(straight_tube), run_time=0.6)
         self.wait(0.3)
@@ -84,7 +84,7 @@ class NaiveOffset(Scene):
 
 class TNBFrame(Scene):
     def construct(self):
-        outline_color = "#FFFFFF"
+        outline_color = BLACK
         correct_color = "#2A9D8F"
         tangent_color = "#E63946"
         normal_color = "#2A9D8F"
@@ -162,7 +162,7 @@ class TNBFrame(Scene):
             for i in range(3)
         ])
 
-        label = Text("TNB frame", font_size=36, color=correct_color).to_edge(UP, buff=0.5)
+        label = Text("TNB frame", font_size=36, fill_color=correct_color).to_edge(UP, buff=0.5)
 
         check_mark = VMobject(stroke_width=7, color=correct_color)
         check_mark.set_points_as_corners([LEFT*0.25, DOWN*0.25 + RIGHT*0.05, UP*0.35 + RIGHT*0.35])
@@ -170,9 +170,9 @@ class TNBFrame(Scene):
 
         legend = VGroup(
             VGroup(Line(ORIGIN, RIGHT*0.4, color=tangent_color, stroke_width=4),
-                   Text("T", font_size=24, color=tangent_color)).arrange(RIGHT, buff=0.15),
+                   Text("T", font_size=24, fill_color=tangent_color)).arrange(RIGHT, buff=0.15),
             VGroup(Line(ORIGIN, RIGHT*0.4, color=normal_color, stroke_width=4),
-                   Text("N", font_size=24, color=normal_color)).arrange(RIGHT, buff=0.15),
+                   Text("N", font_size=24, fill_color=normal_color)).arrange(RIGHT, buff=0.15),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.15).to_corner(UR).shift(DOWN*0.5 + LEFT*0.3)
 
         self.play(FadeIn(label), ShowCreation(straight_tube), run_time=0.6)

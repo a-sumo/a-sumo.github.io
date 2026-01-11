@@ -13,7 +13,7 @@ class MagneticField(ThreeDScene):
         binormal_color = "#E9C46A"
         north_color = "#E63946"  # Red for North
         south_color = "#4A90A4"  # Blue for South
-        text_color = "#CCCCCC"
+        text_color = BLACK
 
         # Camera - wider view
         frame = self.camera.frame
@@ -121,7 +121,7 @@ class MagneticField(ThreeDScene):
         # ========================================
         # STAGE 1: Show magnets
         # ========================================
-        title1 = Text("1. Define Magnetic Dipoles", font_size=42, color=text_color)
+        title1 = Text("1. Define Magnetic Dipoles", font_size=42, fill_color=text_color)
         title1.fix_in_frame()
         title1.to_edge(UP)
         self.add(title1)
@@ -136,12 +136,12 @@ class MagneticField(ThreeDScene):
         # STAGE 2: Show dipole formula
         # ========================================
         self.play(FadeOut(title1))
-        title2 = Text("2. Compute Dipole Field", font_size=42, color=text_color)
+        title2 = Text("2. Compute Dipole Field", font_size=42, fill_color=text_color)
         title2.fix_in_frame()
         title2.to_edge(UP)
         self.add(title2)
 
-        formula = Text("B = (3(m·r)r - m) / r³", font_size=28, color=text_color)
+        formula = Text("B = (3(m·r)r - m) / r³", font_size=28, fill_color=text_color)
         formula.fix_in_frame()
         formula.to_corner(DL).shift(UP * 0.5 + RIGHT * 0.5)
         self.play(FadeIn(formula), run_time=0.5)
@@ -167,7 +167,7 @@ class MagneticField(ThreeDScene):
         # STAGE 3: Integration
         # ========================================
         self.play(FadeOut(title2), FadeOut(formula))
-        title3 = Text("3. Integrate Field Lines", font_size=42, color=text_color)
+        title3 = Text("3. Integrate Field Lines", font_size=42, fill_color=text_color)
         title3.fix_in_frame()
         title3.to_edge(UP)
         self.add(title3)
@@ -175,11 +175,11 @@ class MagneticField(ThreeDScene):
         # Legend
         legend = VGroup(
             VGroup(Line(ORIGIN, RIGHT * 0.4, color=tangent_color, stroke_width=6),
-                   Text("T (tangent)", font_size=22, color=tangent_color)).arrange(RIGHT, buff=0.15),
+                   Text("T (tangent)", font_size=22, fill_color=tangent_color)).arrange(RIGHT, buff=0.15),
             VGroup(Line(ORIGIN, RIGHT * 0.4, color=normal_color, stroke_width=6),
-                   Text("N (normal)", font_size=22, color=normal_color)).arrange(RIGHT, buff=0.15),
+                   Text("N (normal)", font_size=22, fill_color=normal_color)).arrange(RIGHT, buff=0.15),
             VGroup(Line(ORIGIN, RIGHT * 0.4, color=binormal_color, stroke_width=6),
-                   Text("B (binormal)", font_size=22, color=binormal_color)).arrange(RIGHT, buff=0.15),
+                   Text("B (binormal)", font_size=22, fill_color=binormal_color)).arrange(RIGHT, buff=0.15),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         legend.fix_in_frame()
         legend.to_corner(UL).shift(DOWN * 0.9)
@@ -270,7 +270,7 @@ class MagneticField(ThreeDScene):
         if prev_frame:
             self.play(FadeOut(prev_frame), run_time=0.2)
 
-        title4 = Text("4. Trace Multiple Field Lines", font_size=42, color=text_color)
+        title4 = Text("4. Trace Multiple Field Lines", font_size=42, fill_color=text_color)
         title4.fix_in_frame()
         title4.to_edge(UP)
         self.add(title4)
@@ -322,7 +322,7 @@ class MagneticField(ThreeDScene):
         # STAGE 5: Final view - Flow Lines
         # ========================================
         self.play(FadeOut(title4))
-        title5 = Text("Magnetic Field Lines", font_size=48, color=text_color)
+        title5 = Text("Magnetic Field Lines", font_size=48, fill_color=text_color)
         title5.fix_in_frame()
         title5.to_edge(UP)
         self.add(title5)

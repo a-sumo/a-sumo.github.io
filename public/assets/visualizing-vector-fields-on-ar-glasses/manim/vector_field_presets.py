@@ -101,7 +101,7 @@ class VectorFieldPreset(ThreeDScene):
         normal_color = "#2A9D8F"
         binormal_color = "#E9C46A"
         target_color = "#FF6B9D"
-        text_color = "#CCCCCC"
+        text_color = BLACK
 
         # Camera
         frame = self.camera.frame
@@ -149,7 +149,7 @@ class VectorFieldPreset(ThreeDScene):
         # ========================================
         # STAGE 1: Vector field
         # ========================================
-        title1 = Text(f"1. Define {self.FIELD_NAME} Field", font_size=42, color=text_color)
+        title1 = Text(f"1. Define {self.FIELD_NAME} Field", font_size=42, fill_color=text_color)
         title1.fix_in_frame()
         title1.to_edge(UP)
         self.add(title1)
@@ -179,7 +179,7 @@ class VectorFieldPreset(ThreeDScene):
         # STAGE 2: Starting point
         # ========================================
         self.play(FadeOut(title1))
-        title2 = Text("2. Select Starting Point", font_size=42, color=text_color)
+        title2 = Text("2. Select Starting Point", font_size=42, fill_color=text_color)
         title2.fix_in_frame()
         title2.to_edge(UP)
         self.add(title2)
@@ -194,7 +194,7 @@ class VectorFieldPreset(ThreeDScene):
         # STAGE 3: Integration with T/N/B frame
         # ========================================
         self.play(FadeOut(title2))
-        title3 = Text("3. Integrate Along Field", font_size=42, color=text_color)
+        title3 = Text("3. Integrate Along Field", font_size=42, fill_color=text_color)
         title3.fix_in_frame()
         title3.to_edge(UP)
         self.add(title3)
@@ -202,11 +202,11 @@ class VectorFieldPreset(ThreeDScene):
         # Legend
         legend = VGroup(
             VGroup(Line(ORIGIN, RIGHT * 0.4, color=tangent_color, stroke_width=6),
-                   Text("T (tangent)", font_size=22, color=tangent_color)).arrange(RIGHT, buff=0.15),
+                   Text("T (tangent)", font_size=22, fill_color=tangent_color)).arrange(RIGHT, buff=0.15),
             VGroup(Line(ORIGIN, RIGHT * 0.4, color=normal_color, stroke_width=6),
-                   Text("N (normal)", font_size=22, color=normal_color)).arrange(RIGHT, buff=0.15),
+                   Text("N (normal)", font_size=22, fill_color=normal_color)).arrange(RIGHT, buff=0.15),
             VGroup(Line(ORIGIN, RIGHT * 0.4, color=binormal_color, stroke_width=6),
-                   Text("B (binormal)", font_size=22, color=binormal_color)).arrange(RIGHT, buff=0.15),
+                   Text("B (binormal)", font_size=22, fill_color=binormal_color)).arrange(RIGHT, buff=0.15),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         legend.fix_in_frame()
         legend.to_corner(UL).shift(DOWN * 0.9)
@@ -287,7 +287,7 @@ class VectorFieldPreset(ThreeDScene):
         if prev_frame:
             self.play(FadeOut(prev_frame), run_time=0.2)
 
-        title4 = Text("4. Integrate Multiple Paths", font_size=42, color=text_color)
+        title4 = Text("4. Integrate Multiple Paths", font_size=42, fill_color=text_color)
         title4.fix_in_frame()
         title4.to_edge(UP)
         self.add(title4)
@@ -338,7 +338,7 @@ class VectorFieldPreset(ThreeDScene):
         # STAGE 5: Flow Lines
         # ========================================
         self.play(FadeOut(title4))
-        title5 = Text("Flow Lines", font_size=48, color=text_color)
+        title5 = Text("Flow Lines", font_size=48, fill_color=text_color)
         title5.fix_in_frame()
         title5.to_edge(UP)
         self.add(title5)
