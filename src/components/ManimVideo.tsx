@@ -190,14 +190,17 @@ export default function ManimVideo({
             style={{
               display: "grid",
               gridTemplateRows: isCodeOpen ? "1fr" : "0fr",
-              opacity: isCodeOpen ? 1 : 0,
-              transition: "grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease",
+              transition: "grid-template-rows 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           >
             <div
               style={{
                 overflow: "hidden",
                 background: "rgb(40, 44, 52)",
+                opacity: isCodeOpen ? 1 : 0,
+                transition: isCodeOpen
+                  ? "opacity 0.3s ease 0.1s"
+                  : "opacity 0.15s ease",
               }}
             >
             {/* Code Header */}
