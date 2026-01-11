@@ -153,7 +153,8 @@ export default function ManimVideo({
             padding: "8px 12px",
             background: "white",
             border: "1px solid black",
-            borderRadius: "6px",
+            borderRadius: isCodeOpen ? "6px 6px 0 0" : "6px",
+            borderBottom: isCodeOpen ? "none" : "1px solid black",
             cursor: "pointer",
           }}
           onClick={() => setIsCodeOpen(!isCodeOpen)}
@@ -190,7 +191,9 @@ export default function ManimVideo({
           <div
             style={{
               background: "rgb(40, 44, 52)",
-              borderTop: "1px solid rgb(60, 64, 72)",
+              border: "1px solid black",
+              borderTop: "none",
+              borderRadius: "0 0 6px 6px",
             }}
           >
             {/* Code Header */}
